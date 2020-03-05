@@ -1,0 +1,134 @@
+- Fill out form (2/26/2020)
+    - Name: name-of-instance
+    - Region: us-west1 (Oregon)
+    - Zone: us-west1-b
+    - Machine Configuration
+        - Machine Family: General-Purpose
+        - Series: N1
+        - Machine Type: n1-highmem-8 (8 vCPU, 52 GB Memory)
+        - CPU Platform: Automatic
+        - GPUs:
+            - GPU Type: NVIDIA Tesla K80
+            - Number of GPUs: 1
+    - Boot Disk
+        - OS: Ubuntu
+        - Version: Ubuntu 18.04 LTS
+        - Boot disk type: SSD persistent disk
+        - Size: 100 GB
+    - Firewall
+        - Check Allow HTTP traffic
+        - Check Allow HTTPS traffic
+    - Click Create
+- Set firewall rule to allow jupyter notebook development
+    - Go to Left Menu >> Networking >> VPC Network >> Firewall rules >> Create firewall rule
+    - Fill out form
+        - Name
+        - Network: default
+        - Priority: 10000
+        - Direction of traffic: Ingress
+        - Action on match: Allow
+		- Targets: Specified target tags.
+            - Target tags: name-of-instance
+        - Source filter: IP ranges.
+		- Source IP ranges: 0.0.0.0/0 (traffic from any network)
+        - Protocols and ports
+            - tcp:8888
+            - tcp:8889
+    - Add firewall rule to VM instance.
+        - Click on VM instance >> Click Edit.
+		- Add previously made Network Tag name.
+		- Click Save.
+		- Reboot VM instance.
+- Install items on VM
+    - Connect to VM
+    - Run commands 
+        - sudo -i
+        - sudo apt-get update
+        - sudo apt-get upgrade
+        - sudo apt-get install -y build-essential
+    - Install Anaconda
+        - Download and install
+            - cd to root/tmp
+            - curl -O <newest example: https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh>
+            - sha256sum Anaconda3-2019.10-Linux-x86_64.sh
+            - bash Anaconda3-2019.10-Linux-x86_64.sh
+            - Enter 'yes' or Enter for all of them.
+        - Close Terminal and Reopen.
+        - Update anaconda
+            - conda update --all
+        - Verify
+            - conda list
+    - Install CUDA Toolkit (https://tech.amikelive.com/node-731/how-to-properly-install-nvidia-graphics-driver-on-ubuntu-16-04/)
+        - Check for nvidia (should get command not found error):
+            - nvidia-smi
+        - Check that the graphics card is connected to PCI bus:
+            - lspci | grep -i nvidia
+        - Check existing NVIDIA driver packages cached by apt:
+            - sudo apt-cache search nvidia | grep -E “nvidia-[0-9]{3}"
+        - Check the NVIDIA driver that is currently installed:
+            - dpkg -l | grep -E “nvidia-[0-9]{3}"
+        - Clean:
+			- sudo apt-get purge nvidia-*
+		- Add NVIDIA private repository for graphics drivers
+			- sudo add-apt-repository ppa:graphics-drivers/ppa
+        - Update apt index
+			- sudo apt-get update
+		- Verify once again the NVIDIA driver packages to install
+			- sudo apt-cache search nvidia | grep -E “nvidia\-[0-9]{3}"
+        - Install the latest / recommended NVIDIA driver (check the list from above).
+            - sudo apt-get install nvidia-driver-390
+        - Reboot the system
+			- sudo reboot
+        - Check the custom driver has been installed by invoking nvidia-smi command.
+			- nvidia-smi
+    - Download and Install CUDA
+        - Set up environment:
+			- Add to ~/.bashrc
+				export CUDA_HOME=/usr/local/cuda-10.1
+				export LD_LIBRARY_PATH=\${CUDA_HOME}/lib64
+				export PATH=\${CUDA_HOME}/bin:\${PATH}
+			- Create directories:
+				mkdir /usr/local/cuda-10.1/include
+				mkdir /usr/local/cuda-10.1/lib64
+            - Follow directions on:
+		        - https://mc.ai/tensorflow-gpu-installation-on-ubuntu-18-04/
+		        - https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1804&target_type=debnetwork
+    - Download and Install cuDNN
+        - Make an account at https://developer.nvidia.com/developer-program
+        - Download cuDNN for Linux
+        - Upload downloaded file to VM instance by running on local (https://cloud.google.com/compute/docs/instances/transfer-files#transfergcloud):
+            gcloud compute scp [LOCAL_FILE_PATH] root@[INSTANCE_NAME]:/tmp
+        - Uncompress on VM instance
+            - cd /tmp
+            - tar xvzf cudnn<press tab>
+            - sudo cp -P cuda/include/cudnn.h $CUDA_HOME/include
+            - sudo cp -P cuda/lib64/libcudnn* $CUDA_HOME/lib64
+            - sudo chmod u+w $CUDA_HOME/include/cudnn.h
+            - sudo chmod a+r $CUDA_HOME/lib64/libcudnn*
+    	- Configure Jupyter Notebook
+			- Create file:
+				jupyter notebook --generate-config
+			- Edit file:
+				vi ~/.jupyter/jupyter_notebook_config.py
+			- Insert (https://www.cs.colostate.edu/helpdocs/vi.html):
+				c= get_config()
+				c.NotebookApp.ip = '*'
+				c.NotebookApp.open_browser = False
+				c.NotebookApp.port = 8889
+				c.NotebookApp.password_required = True
+				c.NotebookApp.allow_root = True
+				c.NotebookApp.iopub_data_rate_limit = 10000000
+			- Create password (Enter the following command then type password):
+				python -m notebook.auth password
+			- Run:
+				jupyter notebook
+			- Open browser:
+				http://[EXTERNAL_IP_ADDRESS]:8889
+- Set up Python Environment
+    - Create environment (each command takes a while)
+        - conda create -n image_env python=3.6.3 anaconda
+        - conda install tensorflow-gpu
+        - conda install -c conda-forge opencv
+        - conda install ffmpeg x264=20131218 -c conda-forge
+        - sudo apt-get update
+        - sudo apt-get install libgtk2.0-dev
