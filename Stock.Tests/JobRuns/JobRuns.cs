@@ -33,6 +33,13 @@ namespace Stock.Tests.JobRuns
     }
 
     [Test()]
+    public void Run_SaveChartImagesV2()
+    {
+      var service = new StockService();
+      service.CreateChartImagesV2();
+    }
+
+    [Test()]
     public void Run_CreateCsvForPrediction()
     {
       var fileName = $"{DOWNLOAD_PATH}charts_1_50_o20200215.csv";

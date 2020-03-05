@@ -22,7 +22,7 @@ namespace Stock.Services.Services
     int AddStockPriceFromCsv(string symbol, string filePath);
     int GetRecentPriceHistoryForAllStocks();
     int SaveChartImages(List<SaveChartImageReq> items);
-    int SaveChartImagesV2();
+    int CreateChartImagesV2();
     List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request);
     void CreateCsvForPrediction(string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, int version);
   }
@@ -202,15 +202,16 @@ namespace Stock.Services.Services
     /// Combines v1 with Dow Jones Chart Image
     /// </summary>
     /// <returns></returns>
-    public int SaveChartImagesV2()
+    public int CreateChartImagesV2()
     {
       var ret = 0;
       var models = new List<ChartImage>();
-      var v1Items = DB.ChartImage.Where(c => c.Symbol != Consts.SYMBOL_DOW_JONES).ToList();
+      var v1Items = DB.ChartImage.Where(c => c.Symbol != Consts.SYMBOL_DOW_JONES && c.Version == Consts.CHART_V1).ToList();
       if (v1Items != null)
       {
         foreach (var v1Item in v1Items)
         {
+          LogUtils.Debug($"Begin {v1Item.Symbol}");
           var orgV2 = GetChartImage(v1Item.Symbol, v1Item.PriceDate, Consts.CHART_V2);
           if (orgV2 != null)
           {
@@ -258,6 +259,7 @@ namespace Stock.Services.Services
         }
         ret += Insert<ChartImage>(models);
       }
+      return ret;
     }
 
     /// <summary>
@@ -539,7 +541,7 @@ namespace Stock.Services.Services
               var otherChart = DB.ChartImage.FirstOrDefault(c =>
                 c.Symbol != Consts.SYMBOL_DOW_JONES &&
                 c.PriceDate == items[currentIndex].PriceDate);
-              isValid = (otherChart == null);
+              isValid = (otherChart != null);
             }
 
             // Check if ChartImage already exists
