@@ -24,7 +24,7 @@ namespace Stock.Services.Services
     int SaveChartImages(List<SaveChartImageReq> items);
     int CreateChartImagesV2();
     List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request);
-    void CreateCsvForPrediction(string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, int version);
+    void CreateCsvForPrediction(string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, int version, bool isExcludeNullYActual);
   }
 
   public class StockService : BaseService, IStockService
@@ -568,7 +568,13 @@ namespace Stock.Services.Services
       return ret;
     }
 
-    public void CreateCsvForPrediction(string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, int version)
+    public void CreateCsvForPrediction(
+      string fileName, 
+      DateTime dateFrom, 
+      DateTime dateTo, 
+      bool isBetween, 
+      int version,
+      bool isExcludeNullYActual)
     {
       var query = DB.ChartImage.AsQueryable();
       query = query.Where(c => c.Version == version);
@@ -580,6 +586,10 @@ namespace Stock.Services.Services
       else
       {
         query = query.Where(c => c.PriceDate <= dateFrom || c.PriceDate >= dateTo);
+      }
+      if (isExcludeNullYActual)
+      {
+        query = query.Where(c => c.YActual != null);
       }
       CsvUtils.WriteCsv(fileName, query.ToList());
     }
