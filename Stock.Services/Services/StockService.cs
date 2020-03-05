@@ -22,6 +22,7 @@ namespace Stock.Services.Services
     int AddStockPriceFromCsv(string symbol, string filePath);
     int GetRecentPriceHistoryForAllStocks();
     int SaveChartImages(List<SaveChartImageReq> items);
+    int SaveChartImagesV2();
     List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request);
     void CreateCsvForPrediction(string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, int version);
   }
@@ -194,6 +195,69 @@ namespace Stock.Services.Services
         ret += Insert<ChartImage>(models);
       }
       return ret;
+    }
+
+    /// <summary>
+    /// Save Chart Image for v2
+    /// Combines v1 with Dow Jones Chart Image
+    /// </summary>
+    /// <returns></returns>
+    public int SaveChartImagesV2()
+    {
+      var ret = 0;
+      var models = new List<ChartImage>();
+      var v1Items = DB.ChartImage.Where(c => c.Symbol != Consts.SYMBOL_DOW_JONES).ToList();
+      if (v1Items != null)
+      {
+        foreach (var v1Item in v1Items)
+        {
+          var orgV2 = GetChartImage(v1Item.Symbol, v1Item.PriceDate, Consts.CHART_V2);
+          if (orgV2 != null)
+          {
+            continue;
+          }
+
+          var dowItem = GetChartImage(Consts.SYMBOL_DOW_JONES, v1Item.PriceDate, Consts.CHART_V1);
+          if (dowItem == null)
+          {
+            continue;
+          }
+
+          var v1ByteArray = StringUtils.ToByteArray(v1Item.XImage);
+          var dowByteArray = StringUtils.ToByteArray(dowItem.XImage);
+          using (var v1Ms = new MemoryStream(v1ByteArray))
+          using (var dowMs = new MemoryStream(dowByteArray))
+          {
+            using (var v1Image = Image.FromStream(v1Ms))
+            using (var dowImage = Image.FromStream(dowMs))
+            {
+              using (var bitMap = new Bitmap(Consts.CHART_IMAGE_WIDTH_V2, Consts.CHART_IMAGE_HEIGHT_V2))
+              {
+                using (var canvas = Graphics.FromImage(bitMap))
+                {
+                  canvas.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                  canvas.DrawImage(v1Image, 0, 0, v1Image.Width, v1Image.Height);
+                  canvas.DrawImage(dowImage, v1Image.Width, v1Image.Height, dowImage.Width, dowImage.Height);
+                  canvas.Save();
+                  using (var newMs = new MemoryStream())
+                  {
+                    bitMap.Save(newMs, System.Drawing.Imaging.ImageFormat.Png);
+                    models.Add(new ChartImage()
+                    {
+                      Symbol = v1Item.Symbol,
+                      PriceDate = v1Item.PriceDate,
+                      YActual = v1Item.YActual,
+                      XImage = StringUtils.ToString(newMs.ToArray()),
+                      Version = Consts.CHART_V2
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+        ret += Insert<ChartImage>(models);
+      }
     }
 
     /// <summary>

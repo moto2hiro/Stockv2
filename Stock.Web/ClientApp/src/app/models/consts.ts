@@ -43,6 +43,8 @@ export class Consts {
   // #region Charts
   public static readonly CHART_IMAGE_WIDTH = 224;
   public static readonly CHART_IMAGE_HEIGHT = 224;
+  public static readonly CHART_IMAGE_WIDTH_V2 = 448;
+  public static readonly CHART_IMAGE_HEIGHT_V2 = 448;
   public static readonly DEFAULT_CHART_PERIOD = 50;
   public static readonly CHART_V1 = 1;
   public static readonly CHART_V2 = 2;
