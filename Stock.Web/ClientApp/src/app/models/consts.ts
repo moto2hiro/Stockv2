@@ -36,9 +36,10 @@ export class Consts {
 
   // #region Stock.Services Consts
 
-  public static readonly SYMBOL_DOW_JONES = "^DJI";
   public static readonly CLASS_UP = 1;
   public static readonly CLASS_DOWN = 0;
+  public static readonly SYMBOL_DOW_JONES = "^DJI";
+  public static readonly SYMBOL_DOW_ETF = "DIA";
     
   // #region Charts
   public static readonly CHART_IMAGE_WIDTH = 224;

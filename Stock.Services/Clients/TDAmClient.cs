@@ -10,9 +10,38 @@ using System.Web;
 
 namespace Stock.Services.Clients
 {
-  // https://developer.tdameritrade.com/apis
+  /// <summary>
+  /// https://developer.tdameritrade.com/apis
+  /// TO DO: Refactor
+  /// </summary>
   public class TDAmClient
   {
+    public static List<TDAmPriceCurrentResp> GetPriceCurrent(List<TDAmPriceCurrentReq> models)
+    {
+      var ret = new List<TDAmPriceCurrentResp>();
+      if (models != null)
+      {
+        var results = new List<string>();
+        foreach (var model in models)
+        {
+          var url = Consts.TDAM_URL_PRICE_CURRENT;
+          var client = new CustomHttpClient(url);
+          client.AppendParams(model, null);
+
+          // There is an unknown limit on number of requests
+          System.Threading.Thread.Sleep(1000);
+          var result = client.GetAsync().Result;
+          LogUtils.Debug(result);
+          ret.Add(StringUtils.Deserialize<TDAmPriceCurrentResp>(
+            result,
+            new Dictionary<string, string>() { 
+              { model.symbol, nameof(TDAmPriceCurrentResp.symbol) }
+            }));
+        }
+      }
+      return ret;
+    }
+
     public static List<TDAmPriceHistoryResp> GetPriceHistory(List<TDAmPriceHistoryReq> models)
     {
       var ret = new List<TDAmPriceHistoryResp>();

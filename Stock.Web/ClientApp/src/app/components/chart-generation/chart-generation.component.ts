@@ -276,6 +276,6 @@ export class ChartGenerationComponent implements OnInit {
   }
 
   isDowJones(symbol: string) {
-    return symbol === Consts.SYMBOL_DOW_JONES;
+    return (symbol === Consts.SYMBOL_DOW_JONES) || (symbol === Consts.SYMBOL_DOW_ETF);
   }
 }

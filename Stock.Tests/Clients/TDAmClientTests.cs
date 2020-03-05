@@ -10,6 +10,30 @@ namespace Stock.Tests.Clients
   public class TDAmClientTests : BaseTest
   {
     [Test()]
+    public void GetPriceCurrent_Should_Return_Prices()
+    {
+      // ARRANGE
+      var req = new List<TDAmPriceCurrentReq>();
+      var symbols = new string[] { "MSFT", "AMZN", "AAPL", "MA" };
+      foreach (var symbol in symbols)
+      {
+        req.Add(new TDAmPriceCurrentReq()
+        {
+          symbol = symbol,
+          apikey = Configs.TDAmApiKey,
+        });
+      }
+
+      // ACT
+      var items = TDAmClient.GetPriceCurrent(req);
+
+      // ASSERT
+      // Assert.IsNotNull(items);
+      // Assert.IsTrue(items.Count > 0);
+      // Assert.AreEqual(symbols.Length, items.Count);
+    }
+
+    [Test()]
     public void GetPriceHistory_Should_Return_Prices()
     {
       // ARRANGE

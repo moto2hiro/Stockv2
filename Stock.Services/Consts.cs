@@ -10,6 +10,7 @@ namespace Stock.Services
     public const int CLASS_UP = 1;
     public const int CLASS_DOWN = 0;
     public const string SYMBOL_DOW_JONES = "^DJI";
+    public const string SYMBOL_DOW_ETF = "DIA";
 
     #region Charts
     public const int CHART_IMAGE_WIDTH = 224;
@@ -59,6 +60,7 @@ namespace Stock.Services
     #endregion
 
     #region TD Ameritrade
+    public const string TDAM_URL_PRICE_CURRENT = "https://api.tdameritrade.com/v1/marketdata/quotes";
     public const string TDAM_URL_PRICE_HISTORY = "https://api.tdameritrade.com/v1/marketdata/{0}/pricehistory";
     public const string TDAM_PERIOD_DAY = "day";
     public const string TDAM_PERIOD_MONTH = "month";

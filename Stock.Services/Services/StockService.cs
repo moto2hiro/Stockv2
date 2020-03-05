@@ -206,7 +206,10 @@ namespace Stock.Services.Services
     {
       var ret = 0;
       var models = new List<ChartImage>();
-      var v1Items = DB.ChartImage.Where(c => c.Symbol != Consts.SYMBOL_DOW_JONES && c.Version == Consts.CHART_V1).ToList();
+      var v1Items = DB.ChartImage.Where(c =>
+        c.Symbol != Consts.SYMBOL_DOW_JONES &&
+        c.Symbol != Consts.SYMBOL_DOW_ETF &&
+        c.Version == Consts.CHART_V1).ToList();
       if (v1Items != null)
       {
         foreach (var v1Item in v1Items)
@@ -221,7 +224,11 @@ namespace Stock.Services.Services
           var dowItem = GetChartImage(Consts.SYMBOL_DOW_JONES, v1Item.PriceDate, Consts.CHART_V1);
           if (dowItem == null)
           {
-            continue;
+            dowItem = GetChartImage(Consts.SYMBOL_DOW_ETF, v1Item.PriceDate, Consts.CHART_V1);
+            if (dowItem == null)
+            {
+              continue;
+            }
           }
 
           var v1ByteArray = StringUtils.ToByteArray(v1Item.XImage);
@@ -536,10 +543,11 @@ namespace Stock.Services.Services
               hasLowLocal);
 
             // Force require Dow Jones if Charts for a stock exists for that day
-            if (request.Symbol == Consts.SYMBOL_DOW_JONES)
+            if (request.Symbol == Consts.SYMBOL_DOW_JONES || request.Symbol == Consts.SYMBOL_DOW_ETF)
             {
               var otherChart = DB.ChartImage.FirstOrDefault(c =>
                 c.Symbol != Consts.SYMBOL_DOW_JONES &&
+                c.Symbol != Consts.SYMBOL_DOW_ETF &&
                 c.PriceDate == items[currentIndex].PriceDate);
               isValid = (otherChart != null);
             }
@@ -569,16 +577,16 @@ namespace Stock.Services.Services
     }
 
     public void CreateCsvForPrediction(
-      string fileName, 
-      DateTime dateFrom, 
-      DateTime dateTo, 
-      bool isBetween, 
+      string fileName,
+      DateTime dateFrom,
+      DateTime dateTo,
+      bool isBetween,
       int version,
       bool isExcludeNullYActual)
     {
       var query = DB.ChartImage.AsQueryable();
       query = query.Where(c => c.Version == version);
-      query = query.Where(c => c.Symbol != Consts.SYMBOL_DOW_JONES);
+      query = query.Where(c => c.Symbol != Consts.SYMBOL_DOW_JONES && c.Symbol != Consts.SYMBOL_DOW_ETF);
       if (isBetween)
       {
         query = query.Where(c => c.PriceDate >= dateFrom && c.PriceDate <= dateTo);

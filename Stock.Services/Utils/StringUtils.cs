@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -46,11 +47,24 @@ namespace Stock.Services.Utils
       return null;
     }
 
-    public static T Deserialize<T>(string src)
+    public static T Deserialize<T>(string src, Dictionary<string, string> replacements = null)
     {
       if(!string.IsNullOrEmpty(src))
       {
-        return JsonConvert.DeserializeObject<T>(src);
+        var jObj = JObject.Parse(src);
+        if(replacements != null)
+        {
+          foreach (var replacement in replacements)
+          {
+            //if (!string.IsNullOrEmpty(replacement.Key) && !string.IsNullOrEmpty(replacement.Value))
+            //{
+            //  var org = jObj[(string)jObj[replacement.Key]];
+            //  jObj.Remove((string)jObj[replacement.Key]);
+            //  jObj[replacement.Value] = org;
+            //}
+          }
+        }
+        return jObj.ToObject<T>();
       }
       return default(T);
     }
