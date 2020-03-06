@@ -40,6 +40,7 @@ export class Consts {
   public static readonly CLASS_DOWN = 0;
   public static readonly SYMBOL_DOW_JONES = "^DJI";
   public static readonly SYMBOL_DOW_ETF = "DIA";
+  public static readonly PERFORMANCE_PERIODS = [ 5, 10, 20, 50, 200 ];
     
   // #region Charts
   public static readonly CHART_IMAGE_WIDTH = 224;

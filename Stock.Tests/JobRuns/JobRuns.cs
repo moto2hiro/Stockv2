@@ -17,7 +17,7 @@ namespace Stock.Tests.JobRuns
     public void Run_AddStockPriceFromCsv()
     {
       var fileNames = Directory.GetFiles($"{DOWNLOAD_PATH}Temp");
-      foreach(var fileName in fileNames)
+      foreach (var fileName in fileNames)
       {
         var symbol = Path.GetFileNameWithoutExtension(fileName);
         LogUtils.Debug(symbol);
@@ -49,8 +49,8 @@ namespace Stock.Tests.JobRuns
       var version = Consts.CHART_V2;
       var isExcludeNullYActual = true;
       new StockService().CreateCsvForPrediction(
-        fileName, 
-        dateFrom, 
+        fileName,
+        dateFrom,
         dateTo,
         isBetween,
         version,
@@ -60,8 +60,51 @@ namespace Stock.Tests.JobRuns
     [Test()]
     public void Run_SavePredictions()
     {
-      var fileName = $"{DOWNLOAD_PATH}v2_charts_1_50_wo2008.csv";
+      var fileName = $"{DOWNLOAD_PATH}predictions_charts_resnet_1_50_20200305.csv";
       new StockService().SavePredictions(fileName);
     }
+
+    #region Query
+    [Test()]
+    public void Run_GetPastAvgs()
+    {
+      var resp = new QueryService().GetPastAvgs(Consts.CHART_V1);
+      if (resp != null && resp.PastAvgs != null)
+      {
+        foreach(var pastAvg in resp.PastAvgs)
+        {
+          LogUtils.Debug($"Past Avg {pastAvg.Period} days = {pastAvg.Avg}% correct.");
+        }
+      }
+    }
+
+    [Test()]
+    public void Run_GetPastAvgs_Stock()
+    {
+      var symbol = "BIG";
+      var resp = new QueryService().GetPastAvgs(Consts.CHART_V1, symbol);
+      if (resp != null && resp.PastAvgs != null)
+      {
+        foreach (var pastAvg in resp.PastAvgs)
+        {
+          LogUtils.Debug($"{symbol} Past Avg {pastAvg.Period} days = {pastAvg.Avg}% correct.");
+        }
+      }
+    }
+
+    [Test()]
+    public void Run_GetPredictions()
+    {
+      var dateFrom = DateTime.Now.AddDays(-10);
+      var predictions = new QueryService().GetPredictions(dateFrom);
+      if (predictions != null)
+      {
+        foreach (var prediction in predictions)
+        {
+          LogUtils.Debug($"{prediction.Symbol} on {prediction.PriceDate:yyyy-MM-dd} Prediction = {prediction.YPredicted} at {prediction.YPredictedProbability}% probability.");
+        }
+      }
+    }
+    #endregion
   }
 }

@@ -611,7 +611,22 @@ namespace Stock.Services.Services
       var ret = 0;
       if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
       {
-
+        var models = new List<ChartImage>();
+        var predictions = CsvUtils.ParseCsv<ChartImage, MapPrediction>(fileName);
+        if (predictions != null)
+        {
+          foreach (var prediction in predictions)
+          {
+            var org = GetChartImage(prediction.Symbol, prediction.PriceDate, prediction.Version);
+            if (org != null)
+            {
+              org.YPredicted = prediction.YPredicted;
+              org.YPredictedProbability = prediction.YPredictedProbability;
+              models.Add(org);
+            }
+          }
+          ret += Update<ChartImage>(models);
+        }
       }
       return ret;
     }

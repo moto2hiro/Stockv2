@@ -11,6 +11,7 @@ namespace Stock.Services
     public const int CLASS_DOWN = 0;
     public const string SYMBOL_DOW_JONES = "^DJI";
     public const string SYMBOL_DOW_ETF = "DIA";
+    public static readonly int[] PERFORMANCE_PERIODS = new int[] { 14, 28, 60, 365, 20000 };
 
     #region Charts
     public const int CHART_IMAGE_WIDTH = 224;
