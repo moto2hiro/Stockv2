@@ -24,7 +24,7 @@ import { ChartGenerationComponent } from './components/chart-generation/chart-ge
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'chart-generation', component: ChartGenerationComponent },
       {
-        path: 'chart-generation/:skip/:symbol',
+        path: 'chart-generation/:symbol',
         component: ChartGenerationComponent
       },
     ])

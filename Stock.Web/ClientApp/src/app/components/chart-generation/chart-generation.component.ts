@@ -5,7 +5,6 @@ import { Consts } from '../../models/consts';
 import { SaveChartImageReq } from '../../models/save-chart-image-req';
 import { ActivatedRoute } from '@angular/router';
 import { GetPeriodsOfStockPricesReq } from '../../models/get-periods-of-stock-prices-req';
-import { StringUtils } from '../../utils/string-utils';
 
 @Component({
   selector: 'app-chart-generation',
@@ -24,23 +23,19 @@ export class ChartGenerationComponent implements OnInit {
   readonly TEST_SYMBOL: string = 'MSFT';
   readonly TEST_TAKE: number = 10;
   readonly MAX_TAKE: number = 100;
-  readonly MIN_SKIP: number = 0;
 
   constructor(
     private stockService: StockService,
-    private stringUtils: StringUtils,
     private activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.getDataReq.Version = Consts.CHART_V1;
     this.getDataReq.NoOfPeriods = Consts.DEFAULT_CHART_PERIOD;
     this.getDataReq.Take = this.MAX_TAKE;
-    this.getDataReq.Skip = this.stringUtils.toInt(this.activeRoute.snapshot.paramMap.get('skip'));
     this.getDataReq.Symbol = this.activeRoute.snapshot.paramMap.get('symbol');
     this.isDoAllSymbols = (this.getDataReq.Symbol) ? true : false;
     if (!this.getDataReq.Symbol) {
       this.getDataReq.Symbol = this.TEST_SYMBOL;
-      this.getDataReq.Skip = 0;
       this.getDataReq.Take = this.TEST_TAKE;
     }
     this.getDataReq.Symbol = this.getDataReq.Symbol.toUpperCase();
@@ -134,11 +129,9 @@ export class ChartGenerationComponent implements OnInit {
       this.stockService.saveChartImages(this.models).subscribe(response => {
 
         // Periods left for this Symbol
-        if (this.allItems.length > 0) {
-
-          var nextSkip = this.getDataReq.Skip + this.MAX_TAKE;
+        if (this.allItems.length === this.getDataReq.Take) {
           var nextSymbol = this.getDataReq.Symbol;
-          var path = `/chart-generation/${nextSkip}/${nextSymbol}`;
+          var path = `/chart-generation/${nextSymbol}`;
           window.location.replace(path);
 
           // Next Symbol
@@ -150,7 +143,7 @@ export class ChartGenerationComponent implements OnInit {
               var index = symbols.findIndex(s => s.Symbol.toLowerCase() === this.getDataReq.Symbol.toLowerCase());
               if (index !== -1 && index !== symbols.length - 1) {
                 var nextSymbol = symbols[index + 1].Symbol;
-                var path = `/chart-generation/0/${nextSymbol}`;
+                var path = `/chart-generation/${nextSymbol}`;
                 window.location.replace(path);
               }
             }

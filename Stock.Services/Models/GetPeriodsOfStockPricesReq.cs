@@ -9,7 +9,6 @@ namespace Stock.Services.Models
   {
     public string Symbol { get; set; }
     public int NoOfPeriods { get; set; }
-    public int Skip { get; set; }
     public int Take { get; set; }
     public int Version { get; set; }
   }

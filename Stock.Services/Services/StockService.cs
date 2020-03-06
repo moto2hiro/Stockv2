@@ -573,7 +573,7 @@ namespace Stock.Services.Services
         }
       }
 
-      ret = ret.Skip(request.Skip).Take(request.Take).ToList();
+      ret = ret.Take(request.Take).ToList();
       LogUtils.Debug($"END-{nameof(GetPeriodsOfStockPrices)}, Elasped={sp.Elapsed}, Count={ret.Count}, LastPriceDate={ret.LastOrDefault()?.LastOrDefault()?.PriceDate}");
       sp.Stop();
 
