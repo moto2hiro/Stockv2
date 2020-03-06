@@ -25,6 +25,7 @@ namespace Stock.Services.Services
     int CreateChartImagesV2();
     List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request);
     void CreateCsvForPrediction(string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, int version, bool isExcludeNullYActual);
+    int SavePredictions(string fileName);
   }
 
   public class StockService : BaseService, IStockService
@@ -46,13 +47,13 @@ namespace Stock.Services.Services
       return DB.ChartImage.FirstOrDefault(c => c.Symbol.ToUpper() == symbol.ToUpper() && c.PriceDate == priceDate && c.Version == version);
     }
 
-    public int AddStockPriceFromCsv(string symbol, string filePath)
+    public int AddStockPriceFromCsv(string symbol, string fileName)
     {
       var ret = 0;
-      if (!string.IsNullOrEmpty(symbol) && File.Exists(filePath))
+      if (!string.IsNullOrEmpty(symbol) && File.Exists(fileName))
       {
         var models = new List<StockPrice>();
-        var records = CsvUtils.ParseCsv<StockPrice, MapYahooStockPrice>(filePath);
+        var records = CsvUtils.ParseCsv<StockPrice, MapYahooStockPrice>(fileName);
         if (records != null)
         {
           foreach (var record in records)
@@ -557,12 +558,15 @@ namespace Stock.Services.Services
             {
               var orgChartImage = GetChartImage(request.Symbol, items[currentIndex].PriceDate, request.Version);
               isValid = isValid && orgChartImage == null;
+
+              // To maintain sparsity of charts
+              if (!isValid) lastAddedIndex = currentIndex;
             }
 
             if (isValid)
             {
               lastAddedIndex = currentIndex;
-              ret.Add(items.GetRange(currentIndex - request.NoOfPeriods, request.NoOfPeriods));
+              ret.Add(items.GetRange(currentIndex - request.NoOfPeriods + 1, request.NoOfPeriods));
             }
             #endregion
           }
@@ -600,6 +604,16 @@ namespace Stock.Services.Services
         query = query.Where(c => c.YActual != null);
       }
       CsvUtils.WriteCsv(fileName, query.ToList());
+    }
+
+    public int SavePredictions(string fileName)
+    {
+      var ret = 0;
+      if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+      {
+
+      }
+      return ret;
     }
   }
 }

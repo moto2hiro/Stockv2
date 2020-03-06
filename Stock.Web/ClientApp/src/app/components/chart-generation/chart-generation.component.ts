@@ -32,6 +32,7 @@ export class ChartGenerationComponent implements OnInit {
     private activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
+    this.getDataReq.Version = Consts.CHART_V1;
     this.getDataReq.NoOfPeriods = Consts.DEFAULT_CHART_PERIOD;
     this.getDataReq.Take = this.MAX_TAKE;
     this.getDataReq.Skip = this.stringUtils.toInt(this.activeRoute.snapshot.paramMap.get('skip'));
@@ -118,7 +119,6 @@ export class ChartGenerationComponent implements OnInit {
       this.models = [];
       for (var i = 0; i < this.finalCount; i++) {
         var lastIndex = Consts.DEFAULT_CHART_PERIOD - 1;
-        var IsCloseGreaterThanOpenTmrw = this.allItems[i][lastIndex].IsCloseGreaterThanOpenTmrw
         this.models.push({
           Symbol: this.allItems[i][lastIndex].Symbol,
           PriceDate: this.allItems[i][lastIndex].PriceDate,

@@ -16,12 +16,12 @@ namespace Stock.Tests.JobRuns
     [Test()]
     public void Run_AddStockPriceFromCsv()
     {
-      var filePaths = Directory.GetFiles($"{DOWNLOAD_PATH}Temp");
-      foreach(var filePath in filePaths)
+      var fileNames = Directory.GetFiles($"{DOWNLOAD_PATH}Temp");
+      foreach(var fileName in fileNames)
       {
-        var symbol = Path.GetFileNameWithoutExtension(filePath);
+        var symbol = Path.GetFileNameWithoutExtension(fileName);
         LogUtils.Debug(symbol);
-        new StockService().AddStockPriceFromCsv(symbol, filePath);
+        new StockService().AddStockPriceFromCsv(symbol, fileName);
       }
     }
 
@@ -55,6 +55,13 @@ namespace Stock.Tests.JobRuns
         isBetween,
         version,
         isExcludeNullYActual);
+    }
+
+    [Test()]
+    public void Run_SavePredictions()
+    {
+      var fileName = $"{DOWNLOAD_PATH}v2_charts_1_50_wo2008.csv";
+      new StockService().SavePredictions(fileName);
     }
   }
 }
