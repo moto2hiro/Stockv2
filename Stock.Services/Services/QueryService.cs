@@ -11,6 +11,7 @@ namespace Stock.Services.Services
   {
     PastAvgResp GetPastAvgs(int version);
     PastAvgResp GetPastAvgs(int version, string symbol);
+    PastAvgResp GetTopPastAvgs(int take);
     List<ChartImage> GetPredictions(DateTime dateFrom);
   }
 
@@ -25,22 +26,47 @@ namespace Stock.Services.Services
     {
       var ret = new PastAvgResp() { };
       var pastAvgs = new List<PastAvg>();
-      foreach (var period in Consts.PERFORMANCE_PERIODS)
+      foreach (var period in Consts.AVG_PERIODS)
       {
-        var date = DateTime.Now.AddDays(-1 * period);
-        var query = DB.ChartImage.AsQueryable();
-        query = query.Where(c => c.YActual != null && c.YPredicted != null);
-        query = query.Where(c => c.PriceDate > date);
-        query = query.Where(c => c.Version == version);
-        if (!string.IsNullOrEmpty(symbol)) query = query.Where(c => c.Symbol == symbol);
-        var noCorrect = query.Where(c => c.YActual.Value == c.YPredicted.Value).Count();
-        var noIncorrect = query.Where(c => c.YActual.Value != c.YPredicted.Value).Count();
-        var sum = (noCorrect > 0 && noIncorrect > 0) ? noCorrect + noIncorrect : 1;
-        var avg = NumberUtils.Round((noCorrect / (decimal)sum) * 100, 2);
-        pastAvgs.Add(new PastAvg() { Period = period, Avg = avg });
+        foreach (var avgType in Consts.AVG_TYPES)
+        {
+          var date = DateTime.Now.AddDays(-1 * period);
+          var query = DB.ChartImage.AsQueryable();
+          query = query.Where(c => c.YActual != null && c.YPredicted != null);
+          query = query.Where(c => c.PriceDate > date);
+          query = query.Where(c => c.Version == version);
+          if (!string.IsNullOrEmpty(symbol))
+          {
+            query = query.Where(c => c.Symbol == symbol);
+          }
+          var noCorrect = 0;
+          var noIncorrect = 0;
+          if (avgType == Consts.AVG_TYPE_UP)
+          {
+            query = query.Where(c => c.YActual.Value == Consts.CLASS_UP);
+          }
+          else if (avgType == Consts.AVG_TYPE_DOWN)
+          {
+            query = query.Where(c => c.YActual.Value == Consts.CLASS_DOWN);
+          }
+          noCorrect = query.Where(c => c.YActual.Value == c.YPredicted.Value).Count();
+          noIncorrect = query.Where(c => c.YActual.Value != c.YPredicted.Value).Count();
+          pastAvgs.Add(new PastAvg()
+          {
+            AvgType = avgType,
+            Period = period,
+            NoCorrect = noCorrect,
+            NoIncorrect = noIncorrect
+          });
+        }
       }
       ret.PastAvgs = pastAvgs;
       return ret;
+    }
+
+    public PastAvgResp GetTopPastAvgs(int take)
+    {
+      return null;
     }
 
     public List<ChartImage> GetPredictions(DateTime dateFrom)

@@ -71,9 +71,13 @@ namespace Stock.Tests.JobRuns
       var resp = new QueryService().GetPastAvgs(Consts.CHART_V1);
       if (resp != null && resp.PastAvgs != null)
       {
-        foreach(var pastAvg in resp.PastAvgs)
+        foreach (var pastAvg in resp.PastAvgs)
         {
-          LogUtils.Debug($"Past Avg {pastAvg.Period} days = {pastAvg.Avg}% correct.");
+          var text = string.Format("Past {0} days = {1}% correct for {2}.",
+            pastAvg.Period,
+            pastAvg.PctCorrect,
+            pastAvg.AvgType);
+          LogUtils.Debug(text);
         }
       }
     }
@@ -87,7 +91,12 @@ namespace Stock.Tests.JobRuns
       {
         foreach (var pastAvg in resp.PastAvgs)
         {
-          LogUtils.Debug($"{symbol} Past Avg {pastAvg.Period} days = {pastAvg.Avg}% correct.");
+          var text = string.Format("{0} Past {1} days = {2}% correct for {3}.",
+            symbol,
+            pastAvg.Period,
+            pastAvg.PctCorrect,
+            pastAvg.AvgType);
+          LogUtils.Debug(text);
         }
       }
     }
@@ -101,7 +110,12 @@ namespace Stock.Tests.JobRuns
       {
         foreach (var prediction in predictions)
         {
-          LogUtils.Debug($"{prediction.Symbol} on {prediction.PriceDate:yyyy-MM-dd} Prediction = {prediction.YPredicted} at {prediction.YPredictedProbability}% probability.");
+          var text = string.Format("{0} {1:yyyy-MM-dd} prediction = {2} at {3}% probability.",
+            prediction.Symbol,
+            prediction.PriceDate,
+            prediction.YPredicted,
+            prediction.YPredictedProbability);
+          LogUtils.Debug(text);
         }
       }
     }

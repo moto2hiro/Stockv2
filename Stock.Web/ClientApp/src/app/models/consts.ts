@@ -40,7 +40,11 @@ export class Consts {
   public static readonly CLASS_DOWN = 0;
   public static readonly SYMBOL_DOW_JONES = "^DJI";
   public static readonly SYMBOL_DOW_ETF = "DIA";
-  public static readonly PERFORMANCE_PERIODS = [ 5, 10, 20, 50, 200 ];
+  public static readonly PERFORMANCE_PERIODS = [5, 10, 20, 50, 200];
+  public static readonly AVG_TYPE_UP = "Up";
+  public static readonly AVG_TYPE_DOWN = "Down";
+  public static readonly AVG_TYPE_TOTAL = "Total";
+  public static readonly AVG_TYPES = [ Consts.AVG_TYPE_UP, Consts.AVG_TYPE_DOWN, Consts.AVG_TYPE_TOTAL];
     
   // #region Charts
   public static readonly CHART_IMAGE_WIDTH = 224;
