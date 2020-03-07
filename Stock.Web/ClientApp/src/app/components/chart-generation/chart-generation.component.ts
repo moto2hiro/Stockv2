@@ -29,7 +29,7 @@ export class ChartGenerationComponent implements OnInit {
     private activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
-    this.getDataReq.Version = Consts.CHART_V1;
+    this.getDataReq.Version = Consts.CHART_V3;
     this.getDataReq.NoOfPeriods = Consts.DEFAULT_CHART_PERIOD;
     this.getDataReq.Take = this.MAX_TAKE;
     this.getDataReq.Symbol = this.activeRoute.snapshot.paramMap.get('symbol');
@@ -120,7 +120,7 @@ export class ChartGenerationComponent implements OnInit {
           YActual: this.allItems[i][lastIndex].YActual,
           CandleImage: this.candleImages[i],
           VolumeImage: this.volumeImages[i],
-          Version: Consts.CHART_V1
+          Version: this.getDataReq.Version
         });
       }
 

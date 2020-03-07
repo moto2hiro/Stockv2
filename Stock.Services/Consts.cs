@@ -26,13 +26,16 @@ namespace Stock.Services
     public const int DEFAULT_CHART_PERIOD = 50;
     public const int CHART_V1 = 1;
     public const int CHART_V2 = 2;
+    public const int CHART_V3 = 3;
     #endregion
 
     #region Stock Analysis
     public const decimal PRICE_VOLUME_THRESHOLD = 20000000;
     public const decimal TRADING_VOLUME_THRESHOLD = 1000000;
     public const decimal RSI_HIGH_THRESHOLD = 70;
+    public const decimal RSI_MED_HIGH_THRESHOLD = 65;
     public const decimal RSI_LOW_THRESHOLD = 30;
+    public const decimal RSI_MED_LOW_THRESHOLD = 35;
     // TODO? public const string PERIOD_METRIC_EMA = "EMA";
     // TODO? public const string PERIOD_METRIC_MACD = "MACD";
     // TODO? public const string PERIOD_METRIC_OBV = "OBV";
@@ -48,6 +51,11 @@ namespace Stock.Services
     public const int SMA_PERIOD_50 = 50;
     public const int SMA_PERIOD_100 = 100;
     public const int SMA_PERIOD_200 = 200;
+    public const int EMA_PERIOD_5 = 5;
+    public const int EMA_PERIOD_9 = 9;
+    public const int EMA_PERIOD_10 = 10;
+    public const int EMA_PERIOD_12 = 12;
+    public const int EMA_PERIOD_26 = 26;
     public const int ADTV_PERIOD_20 = 20;
     public const int ADTV_PERIOD_30 = 30;
     public const int ADTV_PERIOD_50 = 50;

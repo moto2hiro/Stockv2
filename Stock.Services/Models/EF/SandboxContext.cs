@@ -18,6 +18,7 @@ namespace Stock.Services.Models.EF
         public virtual DbSet<ChartImage> ChartImage { get; set; }
         public virtual DbSet<StockPrice> StockPrice { get; set; }
         public virtual DbSet<SymbolMaster> SymbolMaster { get; set; }
+        public virtual DbSet<TechnicalItem> TechnicalItem { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -78,6 +79,75 @@ namespace Stock.Services.Models.EF
                     .IsRequired()
                     .HasMaxLength(15)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TechnicalItem>(entity =>
+            {
+                entity.Property(e => e.BollingerLowerStvDev120)
+                    .HasColumnName("BollingerLowerStvDev1_20")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.BollingerLowerStvDev220)
+                    .HasColumnName("BollingerLowerStvDev2_20")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.BollingerUpperStvDev120)
+                    .HasColumnName("BollingerUpperStvDev1_20")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.BollingerUpperStvDev220)
+                    .HasColumnName("BollingerUpperStvDev2_20")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.ClosePrice).HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Ema10)
+                    .HasColumnName("EMA10")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Ema12)
+                    .HasColumnName("EMA12")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Ema26)
+                    .HasColumnName("EMA26")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Ema5)
+                    .HasColumnName("EMA5")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Ema9)
+                    .HasColumnName("EMA9")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.LogType)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Rsi10)
+                    .HasColumnName("RSI10")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Rsi14)
+                    .HasColumnName("RSI14")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Sma200)
+                    .HasColumnName("SMA200")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Sma50)
+                    .HasColumnName("SMA50")
+                    .HasColumnType("decimal(13, 2)");
+
+                entity.Property(e => e.Symbol)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Yactual).HasColumnName("YActual");
             });
 
             OnModelCreatingPartial(modelBuilder);

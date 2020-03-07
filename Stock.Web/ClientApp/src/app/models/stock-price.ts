@@ -15,6 +15,11 @@ export class StockPrice {
   SMA_50: number;
   SMA_100: number;
   SMA_200: number;
+  EMA_5: number;
+  EMA_9: number;
+  EMA_10: number;
+  EMA_12: number;
+  EMA_26: number;
   ADTV_20: number;
   ADTV_30: number;
   ADTV_50: number;

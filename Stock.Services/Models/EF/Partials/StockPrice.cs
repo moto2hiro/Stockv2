@@ -31,6 +31,23 @@ namespace Stock.Services.Models.EF
     public decimal SMA_200 { get; set; }
     #endregion
 
+    #region EMA
+    [NotMapped]
+    public decimal EMA_5 { get; set; }
+
+    [NotMapped]
+    public decimal EMA_9 { get; set; }
+
+    [NotMapped]
+    public decimal EMA_10 { get; set; }
+
+    [NotMapped]
+    public decimal EMA_12 { get; set; }
+
+    [NotMapped]
+    public decimal EMA_26 { get; set; }
+    #endregion
+
     #region ADTV, ADPV
     [NotMapped]
     public decimal ADTV_20 { get; set; }

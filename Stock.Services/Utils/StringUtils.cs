@@ -47,6 +47,12 @@ namespace Stock.Services.Utils
       return null;
     }
 
+    public static string Serialize<T>(T model)
+    {
+      if (model == null) return "";
+      return JsonConvert.SerializeObject(model);
+    }
+
     public static T Deserialize<T>(string src, Dictionary<string, string> replacements = null)
     {
       if(!string.IsNullOrEmpty(src))
