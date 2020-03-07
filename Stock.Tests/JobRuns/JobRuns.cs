@@ -42,11 +42,11 @@ namespace Stock.Tests.JobRuns
     [Test()]
     public void Run_CreateCsvForPrediction()
     {
-      var fileName = $"{DOWNLOAD_PATH}v1_charts_1_50_a2008_w.csv";
-      var dateFrom = new DateTime(2018, 1, 1);
+      var fileName = $"{DOWNLOAD_PATH}v4_charts_1_50.csv";
+      var dateFrom = new DateTime(1800, 1, 1);
       var dateTo = new DateTime(2022, 1, 1);
       var isBetween = true;
-      var version = Consts.CHART_V1;
+      var version = Consts.CHART_V4;
       var isExcludeNullYActual = true;
       new StockService().CreateCsvForPrediction(
         fileName,

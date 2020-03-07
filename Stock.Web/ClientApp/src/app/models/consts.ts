@@ -52,9 +52,11 @@ export class Consts {
   public static readonly CHART_IMAGE_WIDTH_V2 = 448;
   public static readonly CHART_IMAGE_HEIGHT_V2 = 448;
   public static readonly DEFAULT_CHART_PERIOD = 50;
+  public static readonly CHART_V0 = 0;
   public static readonly CHART_V1 = 1;
   public static readonly CHART_V2 = 2;
   public static readonly CHART_V3 = 3;
+  public static readonly CHART_V4 = 4;
   // #endregion
 
   // #region Stock Analysis

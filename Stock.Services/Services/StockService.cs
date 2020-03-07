@@ -426,11 +426,17 @@ namespace Stock.Services.Services
             }
             #endregion
 
-            if (currentIndex < items.Count - 1)
+            if (currentIndex < items.Count - 1 && request.Version != Consts.CHART_V4)
             {
               var priceDiff = items[nextIndex].ClosePrice - items[nextIndex].OpenPrice;
               item.model.YActual = (priceDiff > 0) ? Consts.CLASS_UP : Consts.CLASS_DOWN;
             }
+            if (currentIndex < items.Count - 2 && request.Version == Consts.CHART_V4)
+            {
+              var priceDiff = items[nextIndex + 1].ClosePrice - items[nextIndex + 1].OpenPrice;
+              item.model.YActual = (priceDiff > 0) ? Consts.CLASS_UP : Consts.CLASS_DOWN;
+            }
+
             if (currentIndex > 0)
             {
               item.model.IsCloseGreaterToday = item.model.ClosePrice > items[prevIndex].ClosePrice;
@@ -548,7 +554,12 @@ namespace Stock.Services.Services
             // Check on minimum criteria
             var isValid = true;
             isValid = isValid && currentIndex > Consts.MAX_CALC_PERIOD + request.NoOfPeriods;
-            isValid = isValid && currentIndex > lastAddedIndex + request.NoOfPeriods; // To prevent data leaks
+
+            if (request.Version == Consts.CHART_V0 || request.Version == Consts.CHART_V4)
+              isValid = isValid && currentIndex - 1 > lastAddedIndex + request.NoOfPeriods; // To prevent data leaks
+            else
+              isValid = isValid && currentIndex > lastAddedIndex + request.NoOfPeriods; // To prevent data leaks
+
             isValid = isValid && item.model.ADTV_20 >= Consts.TRADING_VOLUME_THRESHOLD;
             isValid = isValid && item.model.ADPV_20 >= Consts.PRICE_VOLUME_THRESHOLD;
             isValid = isValid && (
@@ -566,7 +577,9 @@ namespace Stock.Services.Services
             var hasLowLocal = items[currentIndex].IsLocalMin_50;
             var hasMedHighRSI10 = items[currentIndex].RSI_10 >= Consts.RSI_MED_HIGH_THRESHOLD && items[currentIndex].RSI_10 < Consts.RSI_HIGH_THRESHOLD;
             var hasMedLowRSI10 = items[currentIndex].RSI_10 <= Consts.RSI_MED_LOW_THRESHOLD && items[currentIndex].RSI_10 > Consts.RSI_LOW_THRESHOLD;
-            if (request.Version == Consts.CHART_V1)
+            if (request.Version == Consts.CHART_V0 ||
+                request.Version == Consts.CHART_V1 ||
+                request.Version == Consts.CHART_V4)
             {
               // v1
               isValid = isValid && (
@@ -598,7 +611,10 @@ namespace Stock.Services.Services
             // Check if ChartImage already exists
             if (isValid)
             {
-              var orgChartImage = GetChartImage(request.Symbol, items[currentIndex].PriceDate, request.Version);
+              var orgChartImage = (request.Version == Consts.CHART_V0 || request.Version == Consts.CHART_V4) ?
+                GetChartImage(request.Symbol, items[currentIndex - 1].PriceDate, request.Version) :
+                GetChartImage(request.Symbol, items[currentIndex].PriceDate, request.Version);
+
               isValid = isValid && orgChartImage == null;
 
               // To maintain sparsity of charts
@@ -656,14 +672,26 @@ namespace Stock.Services.Services
                 //});
                 #endregion
 
-                lastAddedIndex = currentIndex;
+                if (request.Version == Consts.CHART_V0 || request.Version == Consts.CHART_V4)
+                  lastAddedIndex = currentIndex - 1;
+                else
+                  lastAddedIndex = currentIndex;
+
               }
             }
 
             if (isValid)
             {
-              lastAddedIndex = currentIndex;
-              ret.Add(items.GetRange(currentIndex - request.NoOfPeriods + 1, request.NoOfPeriods));
+              if (request.Version == Consts.CHART_V0 || request.Version == Consts.CHART_V4)
+              {
+                lastAddedIndex = currentIndex - 1;
+                ret.Add(items.GetRange(currentIndex - request.NoOfPeriods, request.NoOfPeriods));
+              }
+              else
+              {
+                lastAddedIndex = currentIndex;
+                ret.Add(items.GetRange(currentIndex - request.NoOfPeriods + 1, request.NoOfPeriods));
+              }
             }
             #endregion
           }

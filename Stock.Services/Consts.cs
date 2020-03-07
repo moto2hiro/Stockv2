@@ -24,9 +24,11 @@ namespace Stock.Services
     public const int CHART_IMAGE_WIDTH_V2 = 448;
     public const int CHART_IMAGE_HEIGHT_V2 = 448;
     public const int DEFAULT_CHART_PERIOD = 50;
+    public const int CHART_V0 = 0;
     public const int CHART_V1 = 1;
     public const int CHART_V2 = 2;
     public const int CHART_V3 = 3;
+    public const int CHART_V4 = 4;
     #endregion
 
     #region Stock Analysis
