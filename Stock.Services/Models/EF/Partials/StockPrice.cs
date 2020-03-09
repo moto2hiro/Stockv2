@@ -45,7 +45,13 @@ namespace Stock.Services.Models.EF
     public decimal EMA_12 { get; set; }
 
     [NotMapped]
+    public decimal EMA_13 { get; set; }
+
+    [NotMapped]
     public decimal EMA_26 { get; set; }
+
+    [NotMapped]
+    public decimal EMA_48 { get; set; }
     #endregion
 
     #region ADTV, ADPV
@@ -70,10 +76,19 @@ namespace Stock.Services.Models.EF
 
     #region RSI
     [NotMapped]
+    public decimal RSI_6 { get; set; }
+
+    [NotMapped]
     public decimal RSI_10 { get; set; }
 
     [NotMapped]
     public decimal RSI_14 { get; set; }
+
+    [NotMapped]
+    public decimal? AvgGain_6 { get; set; }
+
+    [NotMapped]
+    public decimal? AvgLoss_6 { get; set; }
 
     [NotMapped]
     public decimal? AvgGain_10 { get; set; }
@@ -120,6 +135,12 @@ namespace Stock.Services.Models.EF
 
     [NotMapped]
     public decimal BollingerLowerStvDev2_20 { get; set; }
+
+    [NotMapped]
+    public decimal BollingerUpperStvDev25_20 { get; set; }
+
+    [NotMapped]
+    public decimal BollingerLowerStvDev25_20 { get; set; }
     #endregion
   }
 }

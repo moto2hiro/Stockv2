@@ -29,8 +29,8 @@ export class ChartGenerationComponent implements OnInit {
     private activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
-    this.getDataReq.Version = Consts.CHART_V0;
-    this.getDataReq.NoOfPeriods = Consts.DEFAULT_CHART_PERIOD;
+    this.getDataReq.Version = Consts.CHART_V1;
+    this.getDataReq.NoOfPeriods = 25; //Consts.DEFAULT_CHART_PERIOD;
     this.getDataReq.Take = this.MAX_TAKE;
     this.getDataReq.Symbol = this.activeRoute.snapshot.paramMap.get('symbol');
     this.isDoAllSymbols = (this.getDataReq.Symbol) ? true : false;
@@ -61,10 +61,10 @@ export class ChartGenerationComponent implements OnInit {
               item.ClosePrice,
               item.HighPrice,
               item.SMA_20,
-              item.SMA_50,
-              item.SMA_200,
-              item.BollingerUpperStvDev2_20,
-              item.BollingerLowerStvDev2_20
+              item.BollingerUpperStvDev25_20,
+              item.BollingerLowerStvDev25_20,
+              //item.EMA_13,
+              //item.EMA_48
             ]);
             volumeItems.push([
               item.PriceDate.toString(),
@@ -113,7 +113,7 @@ export class ChartGenerationComponent implements OnInit {
       this.isProcessing = true;
       this.models = [];
       for (var i = 0; i < this.finalCount; i++) {
-        var lastIndex = Consts.DEFAULT_CHART_PERIOD - 1;
+        var lastIndex = this.getDataReq.NoOfPeriods - 1;
         this.models.push({
           Symbol: this.allItems[i][lastIndex].Symbol,
           PriceDate: this.allItems[i][lastIndex].PriceDate,
@@ -218,28 +218,28 @@ export class ChartGenerationComponent implements OnInit {
         1: {
           type: 'line',
           lineWidth: 1,
-          color: (this.isDowJones(symbol)) ? Consts.COLOR_YELLOW_INVERSE : Consts.COLOR_YELLOW
+          color: Consts.COLOR_YELLOW
         },
         2: {
           type: 'line',
           lineWidth: 1,
-          color: (this.isDowJones(symbol)) ? Consts.COLOR_ORANGE_INVERSE : Consts.COLOR_ORANGE
+          color: Consts.COLOR_BROWN
         },
         3: {
           type: 'line',
           lineWidth: 1,
-          color: (this.isDowJones(symbol)) ? Consts.COLOR_PURPLE_INVERSE : Consts.COLOR_PURPLE
-        },
-        4: {
-          type: 'line',
-          lineWidth: 1,
-          color: (this.isDowJones(symbol)) ? Consts.COLOR_BROWN_INVERSE : Consts.COLOR_BROWN
-        },
-        5: {
-          type: 'line',
-          lineWidth: 1,
-          color: (this.isDowJones(symbol)) ? Consts.COLOR_BROWN_INVERSE : Consts.COLOR_BROWN
+          color: Consts.COLOR_BROWN
         }
+        //4: {
+        //  type: 'line',
+        //  lineWidth: 1,
+        //  color: Consts.COLOR_ORANGE
+        //},
+        //5: {
+        //  type: 'line',
+        //  lineWidth: 1,
+        //  color: Consts.COLOR_PURPLE
+        //}
       }
     };
   }

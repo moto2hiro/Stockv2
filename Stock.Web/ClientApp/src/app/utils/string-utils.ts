@@ -8,7 +8,7 @@ export class StringUtils {
   constructor() { }
 
   toInt(input) {
-    return parseInt(input);
+    return (input) ? parseInt(input) : 0;
   }
 
   toBool(input) {

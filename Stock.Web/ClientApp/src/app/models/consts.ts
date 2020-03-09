@@ -57,6 +57,7 @@ export class Consts {
   public static readonly CHART_V2 = 2;
   public static readonly CHART_V3 = 3;
   public static readonly CHART_V4 = 4;
+  public static readonly CHART_V5 = 5;
   // #endregion
 
   // #region Stock Analysis
@@ -85,13 +86,16 @@ export class Consts {
   public static readonly EMA_PERIOD_9 = 9;
   public static readonly EMA_PERIOD_10 = 10;
   public static readonly EMA_PERIOD_12 = 12;
+  public static readonly EMA_PERIOD_13 = 13;
   public static readonly EMA_PERIOD_26 = 26;
+  public static readonly EMA_PERIOD_48 = 48;
   public static readonly ADTV_PERIOD_20 = 20;
   public static readonly ADTV_PERIOD_30 = 30;
   public static readonly ADTV_PERIOD_50 = 50;
   public static readonly ADPV_PERIOD_20 = 20;
   public static readonly ADPV_PERIOD_30 = 30;
   public static readonly ADPV_PERIOD_50 = 50;
+  public static readonly RSI_PERIOD_6 = 6;
   public static readonly RSI_PERIOD_10 = 10;
   public static readonly RSI_PERIOD_14 = 14;
   public static readonly LOCAL_MAX_PERIOD_10 = 10;

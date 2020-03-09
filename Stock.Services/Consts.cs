@@ -15,7 +15,7 @@ namespace Stock.Services
     public const string AVG_TYPE_UP = "Up";
     public const string AVG_TYPE_DOWN = "Down";
     public const string AVG_TYPE_TOTAL = "Total";
-    public static readonly string[] AVG_TYPES = 
+    public static readonly string[] AVG_TYPES =
       new string[] { AVG_TYPE_UP, AVG_TYPE_DOWN, AVG_TYPE_TOTAL };
 
     #region Charts
@@ -24,20 +24,23 @@ namespace Stock.Services
     public const int CHART_IMAGE_WIDTH_V2 = 448;
     public const int CHART_IMAGE_HEIGHT_V2 = 448;
     public const int DEFAULT_CHART_PERIOD = 50;
-    public const int CHART_V0 = 0;
-    public const int CHART_V1 = 1;
-    public const int CHART_V2 = 2;
-    public const int CHART_V3 = 3;
-    public const int CHART_V4 = 4;
+    public const int CHART_V0 = 0; // t - 1 80% success idk threshold.
+    public const int CHART_V1 = 1; // t 50%
+    public const int CHART_V2 = 2; // dow jones
+    public const int CHART_V3 = 3; // med threshold rsi
+    public const int CHART_V4 = 4; // t - 1 + 2 prediction 50%
+    public const int CHART_V5 = 5; // EMA 13 and 48 cross
     #endregion
 
     #region Stock Analysis
     public const decimal PRICE_VOLUME_THRESHOLD = 20000000;
     public const decimal TRADING_VOLUME_THRESHOLD = 1000000;
-    public const decimal RSI_HIGH_THRESHOLD = 70;
+    public const decimal RSI_HIGHEST_THRESHOLD = 85;
+    public const decimal RSI_HIGH_THRESHOLD = 80;
     public const decimal RSI_MED_HIGH_THRESHOLD = 65;
-    public const decimal RSI_LOW_THRESHOLD = 30;
+    public const decimal RSI_LOW_THRESHOLD = 20;
     public const decimal RSI_MED_LOW_THRESHOLD = 35;
+    public const decimal RSI_LOWEST_THRESHOLD = 15;
     // TODO? public const string PERIOD_METRIC_EMA = "EMA";
     // TODO? public const string PERIOD_METRIC_MACD = "MACD";
     // TODO? public const string PERIOD_METRIC_OBV = "OBV";
@@ -57,13 +60,16 @@ namespace Stock.Services
     public const int EMA_PERIOD_9 = 9;
     public const int EMA_PERIOD_10 = 10;
     public const int EMA_PERIOD_12 = 12;
+    public const int EMA_PERIOD_13 = 13;
     public const int EMA_PERIOD_26 = 26;
+    public const int EMA_PERIOD_48 = 48;
     public const int ADTV_PERIOD_20 = 20;
     public const int ADTV_PERIOD_30 = 30;
     public const int ADTV_PERIOD_50 = 50;
     public const int ADPV_PERIOD_20 = 20;
     public const int ADPV_PERIOD_30 = 30;
     public const int ADPV_PERIOD_50 = 50;
+    public const int RSI_PERIOD_6 = 6;
     public const int RSI_PERIOD_10 = 10;
     public const int RSI_PERIOD_14 = 14;
     public const int LOCAL_MAX_PERIOD_10 = 10;
@@ -86,6 +92,21 @@ namespace Stock.Services
     public const string TDAM_FREQUENCY_DAILY = "daily";
     public const string TDAM_FREQUENCY_WEEKLY = "weekly";
     public const string TDAM_FREQUENCY_MONTHLY = "monthly";
+    #endregion
+
+    #region WorldPrice
+    public const string SYMBOL_GSPC = "^GSPC";
+    public const string SYMBOL_SPY = "SPY";
+    public const string SYMBOL_DJI = "^DJI";
+    public const string SYMBOL_DIA = "DIA";
+    public const string SYMBOL_N225 = "^N225";
+    public const string SYMBOL_AXJO = "^AXJO";
+    public const string SYMBOL_HSI = "^HSI";
+    public const string SYMBOL_SSEC = "^SSEC";
+    public const string SYMBOL_BSESN = "^BSESN";
+    public const string SYMBOL_NIFTY = "^NIFTY";
+    public const string SYMBOL_KS11 = "^KS11";
+    public const string SYMBOL_TWII = "^TWII";
     #endregion
   }
 }

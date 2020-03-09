@@ -32,7 +32,7 @@ namespace Stock.Services.Services
   {
     public List<SymbolMaster> GetSymbols()
     {
-      return DB.SymbolMaster.ToList();
+      return DB.SymbolMaster.Where(s => s.Symbol != Consts.SYMBOL_DOW_ETF && s.Symbol != Consts.SYMBOL_DOW_JONES).OrderBy(s => s.Symbol).ToList();
     }
 
     public StockPrice GetStockPrice(string symbol, DateTime priceDate)
@@ -273,6 +273,7 @@ namespace Stock.Services.Services
     /// <summary>
     /// Gets Periods of Stock Prices
     /// Filtered by Business Logic
+    /// - rsi filter
     /// </summary>
     /// <param name="symbol"></param>
     /// <param name="noOfPeriods"></param>
@@ -282,7 +283,6 @@ namespace Stock.Services.Services
       LogUtils.Debug($"START-{nameof(GetPeriodsOfStockPrices)}, Symbol={request.Symbol}, NoOfPeriods={request.NoOfPeriods}");
       var sp = new Stopwatch();
       sp.Start();
-
 
 
       // ========== Temp Log for Analysis
@@ -305,7 +305,7 @@ namespace Stock.Services.Services
           var nextIndex = currentIndex + 1;
           if (currentIndex >= Consts.MAX_CALC_PERIOD)
           {
-            // TO DO: OBV?
+            #region Declarations
             var sumClosePrice10 = 0m;
             var sumClosePrice20 = 0m;
             var sumClosePrice50 = 0m;
@@ -317,8 +317,10 @@ namespace Stock.Services.Services
             var sumPriceVolume20 = 0m;
             var sumPriceVolume30 = 0m;
             var sumPriceVolume50 = 0m;
+            var sumClosePriceGain6 = 0m;
             var sumClosePriceGain10 = 0m;
             var sumClosePriceGain14 = 0m;
+            var sumClosePriceLoss6 = 0m;
             var sumClosePriceLoss10 = 0m;
             var sumClosePriceLoss14 = 0m;
             var maxClosePrice10 = 0m;
@@ -327,6 +329,7 @@ namespace Stock.Services.Services
             var minClosePrice10 = 0m;
             var minClosePrice20 = 0m;
             var minClosePrice50 = 0m;
+            #endregion
 
             #region Loop past data for metrics
             var stopIndex = currentIndex - Consts.MAX_CALC_PERIOD;
@@ -381,6 +384,13 @@ namespace Stock.Services.Services
 
               #region RSI
               var priceDiff = (i - 1 >= 0) ? items[i].ClosePrice - items[i - 1].ClosePrice : 0;
+              if (i >= currentIndex - Consts.RSI_PERIOD_6)
+              {
+                if (priceDiff > 0)
+                  sumClosePriceGain6 += priceDiff;
+                else if (priceDiff < 0)
+                  sumClosePriceLoss6 += Math.Abs(priceDiff);
+              }
               if (i >= currentIndex - Consts.RSI_PERIOD_10)
               {
                 if (priceDiff > 0)
@@ -426,14 +436,9 @@ namespace Stock.Services.Services
             }
             #endregion
 
-            if (currentIndex < items.Count - 1 && request.Version != Consts.CHART_V4)
+            if (currentIndex < items.Count - 1)
             {
               var priceDiff = items[nextIndex].ClosePrice - items[nextIndex].OpenPrice;
-              item.model.YActual = (priceDiff > 0) ? Consts.CLASS_UP : Consts.CLASS_DOWN;
-            }
-            if (currentIndex < items.Count - 2 && request.Version == Consts.CHART_V4)
-            {
-              var priceDiff = items[nextIndex + 1].ClosePrice - items[nextIndex + 1].OpenPrice;
               item.model.YActual = (priceDiff > 0) ? Consts.CLASS_UP : Consts.CLASS_DOWN;
             }
 
@@ -460,17 +465,23 @@ namespace Stock.Services.Services
               var alpha9 = 2m / (Consts.EMA_PERIOD_9 + 1);
               var alpha10 = 2m / (Consts.EMA_PERIOD_10 + 1);
               var alpha12 = 2m / (Consts.EMA_PERIOD_12 + 1);
+              var alpha13 = 2m / (Consts.EMA_PERIOD_13 + 1);
               var alpha26 = 2m / (Consts.EMA_PERIOD_26 + 1);
+              var alpha48 = 2m / (Consts.EMA_PERIOD_48 + 1);
               var prevEma5 = (items[prevIndex].EMA_5 > 0) ? items[prevIndex].EMA_5 : items[currentIndex].ClosePrice;
               var prevEma9 = (items[prevIndex].EMA_9 > 0) ? items[prevIndex].EMA_9 : items[currentIndex].ClosePrice;
               var prevEma10 = (items[prevIndex].EMA_10 > 0) ? items[prevIndex].EMA_10 : items[currentIndex].ClosePrice;
               var prevEma12 = (items[prevIndex].EMA_12 > 0) ? items[prevIndex].EMA_12 : items[currentIndex].ClosePrice;
+              var prevEma13 = (items[prevIndex].EMA_13 > 0) ? items[prevIndex].EMA_13 : items[currentIndex].ClosePrice;
               var prevEma26 = (items[prevIndex].EMA_26 > 0) ? items[prevIndex].EMA_26 : items[currentIndex].ClosePrice;
+              var prevEma48 = (items[prevIndex].EMA_48 > 0) ? items[prevIndex].EMA_48 : items[currentIndex].ClosePrice;
               item.model.EMA_5 = (alpha5 * item.model.ClosePrice) + ((1 - alpha5) * prevEma5);
               item.model.EMA_9 = (alpha9 * item.model.ClosePrice) + ((1 - alpha9) * prevEma9);
               item.model.EMA_10 = (alpha10 * item.model.ClosePrice) + ((1 - alpha10) * prevEma10);
               item.model.EMA_12 = (alpha12 * item.model.ClosePrice) + ((1 - alpha12) * prevEma12);
+              item.model.EMA_13 = (alpha13 * item.model.ClosePrice) + ((1 - alpha12) * prevEma13);
               item.model.EMA_26 = (alpha26 * item.model.ClosePrice) + ((1 - alpha26) * prevEma26);
+              item.model.EMA_48 = (alpha48 * item.model.ClosePrice) + ((1 - alpha48) * prevEma48);
             }
             #endregion
 
@@ -491,6 +502,8 @@ namespace Stock.Services.Services
             // First AvgLoss = Sum / 14
             // Next AvgGain = (Prev AvgGain * 13 + CurrentGain) / 14
             // Next AvgLoss = (Prev AvgLoss * 13 + CurrentLoss) / 14
+            var avgGain6 = sumClosePriceGain6 / Consts.RSI_PERIOD_6;
+            var avgLoss6 = sumClosePriceLoss6 / Consts.RSI_PERIOD_6;
             var avgGain10 = sumClosePriceGain10 / Consts.RSI_PERIOD_10;
             var avgLoss10 = sumClosePriceLoss10 / Consts.RSI_PERIOD_10;
             var avgGain14 = sumClosePriceGain14 / Consts.RSI_PERIOD_14;
@@ -500,6 +513,11 @@ namespace Stock.Services.Services
               var priceDiff = items[currentIndex].ClosePrice - items[prevIndex].ClosePrice;
               var currentGain = (priceDiff > 0) ? priceDiff : 0;
               var currentLoss = (priceDiff < 0) ? Math.Abs(priceDiff) : 0;
+              if (items[prevIndex].AvgGain_6 != null && items[prevIndex].AvgLoss_6 != null)
+              {
+                avgGain6 = (items[prevIndex].AvgGain_6.GetValueOrDefault() * (Consts.RSI_PERIOD_6 - 1) + currentGain) / Consts.RSI_PERIOD_6;
+                avgLoss6 = (items[prevIndex].AvgLoss_6.GetValueOrDefault() * (Consts.RSI_PERIOD_6 - 1) + currentLoss) / Consts.RSI_PERIOD_6;
+              }
               if (items[prevIndex].AvgGain_10 != null && items[prevIndex].AvgLoss_10 != null)
               {
                 avgGain10 = (items[prevIndex].AvgGain_10.GetValueOrDefault() * (Consts.RSI_PERIOD_10 - 1) + currentGain) / Consts.RSI_PERIOD_10;
@@ -511,14 +529,19 @@ namespace Stock.Services.Services
                 avgLoss14 = (items[prevIndex].AvgLoss_14.GetValueOrDefault() * (Consts.RSI_PERIOD_14 - 1) + currentLoss) / Consts.RSI_PERIOD_14;
               }
             }
+            var rs6 = (avgLoss6 > 0) ? avgGain6 / avgLoss6 : 0;
             var rs10 = (avgLoss10 > 0) ? avgGain10 / avgLoss10 : 0;
             var rs14 = (avgLoss14 > 0) ? avgGain14 / avgLoss14 : 0;
+            var rsi6 = NumberUtils.Round(100 - (100 / (1 + rs6)));
             var rsi10 = NumberUtils.Round(100 - (100 / (1 + rs10)));
             var rsi14 = NumberUtils.Round(100 - (100 / (1 + rs14)));
+            item.model.AvgGain_6 = avgGain6;
+            item.model.AvgLoss_6 = avgLoss6;
             item.model.AvgGain_10 = avgGain10;
             item.model.AvgLoss_10 = avgLoss10;
             item.model.AvgGain_14 = avgGain14;
             item.model.AvgLoss_14 = avgLoss14;
+            item.model.RSI_6 = rsi6;
             item.model.RSI_10 = rsi10;
             item.model.RSI_14 = rsi14;
             #endregion
@@ -548,6 +571,8 @@ namespace Stock.Services.Services
             item.model.BollingerLowerStvDev1_20 = item.model.SMA_20 - stdDev20;
             item.model.BollingerUpperStvDev2_20 = item.model.SMA_20 + stdDev20 * 2;
             item.model.BollingerLowerStvDev2_20 = item.model.SMA_20 - stdDev20 * 2;
+            item.model.BollingerUpperStvDev25_20 = item.model.SMA_20 + stdDev20 * 2.5m;
+            item.model.BollingerLowerStvDev25_20 = item.model.SMA_20 - stdDev20 * 2.5m;
             #endregion
 
             #region Check criteria
@@ -569,33 +594,28 @@ namespace Stock.Services.Services
             // Check on points of interest
             var hasSMA50CrossAboveSMA200 = items[prevIndex].SMA_50 < items[prevIndex].SMA_200 && items[currentIndex].SMA_50 > items[currentIndex].SMA_200;
             var hasSMA50CrossBelowSMA200 = items[prevIndex].SMA_50 > items[prevIndex].SMA_200 && items[currentIndex].SMA_50 < items[currentIndex].SMA_200;
+            var hasEMA13CrossAboveEMA48 = items[prevIndex].EMA_13 < items[prevIndex].EMA_48 && items[currentIndex].EMA_13 > items[currentIndex].EMA_48;
+            var hasEMA13CrossBelowEMA48 = items[prevIndex].EMA_13 > items[prevIndex].EMA_48 && items[currentIndex].EMA_13 < items[currentIndex].EMA_48;
+            var hasHighRSI6 = items[currentIndex].RSI_6 > Consts.RSI_HIGH_THRESHOLD;
+            var hasLowRSI6 = items[currentIndex].RSI_6 < Consts.RSI_LOW_THRESHOLD;
             var hasHighRSI10 = items[currentIndex].RSI_10 > Consts.RSI_HIGH_THRESHOLD;
             var hasLowRSI10 = items[currentIndex].RSI_10 < Consts.RSI_LOW_THRESHOLD;
             var hasHighRSI14 = items[currentIndex].RSI_14 > Consts.RSI_HIGH_THRESHOLD;
             var hasLowRSI14 = items[currentIndex].RSI_14 < Consts.RSI_LOW_THRESHOLD;
+            var hasHighestRSI14 = items[currentIndex].RSI_14 > Consts.RSI_HIGHEST_THRESHOLD;
+            var hasLowestRSI14 = items[currentIndex].RSI_14 < Consts.RSI_LOWEST_THRESHOLD;
             var hasHighLocal = items[currentIndex].IsLocalMax_50;
             var hasLowLocal = items[currentIndex].IsLocalMin_50;
             var hasMedHighRSI10 = items[currentIndex].RSI_10 >= Consts.RSI_MED_HIGH_THRESHOLD && items[currentIndex].RSI_10 < Consts.RSI_HIGH_THRESHOLD;
             var hasMedLowRSI10 = items[currentIndex].RSI_10 <= Consts.RSI_MED_LOW_THRESHOLD && items[currentIndex].RSI_10 > Consts.RSI_LOW_THRESHOLD;
-            if (request.Version == Consts.CHART_V0 ||
-                request.Version == Consts.CHART_V1 ||
-                request.Version == Consts.CHART_V4)
+            var isAboveBollingerUpperStdDev25_20 = item.model.ClosePrice > item.model.BollingerUpperStvDev25_20;
+            var isBelowBollingerLowerStdDev25_20 = item.model.ClosePrice < item.model.BollingerLowerStvDev25_20;
+            
+            if (request.Version == Consts.CHART_V1)
             {
-              // v1
               isValid = isValid && (
-                hasSMA50CrossAboveSMA200 ||
-                hasSMA50CrossBelowSMA200 ||
-                hasHighRSI10 ||
-                hasHighRSI14 ||
-                hasLowRSI10 ||
-                hasLowRSI14 ||
-                hasHighLocal ||
-                hasLowLocal);
-            }
-            else if (request.Version == Consts.CHART_V3)
-            {
-              // v3
-              isValid = isValid && (hasMedHighRSI10 || hasMedLowRSI10);
+                (isAboveBollingerUpperStdDev25_20 && hasHighRSI6) || 
+                (isBelowBollingerLowerStdDev25_20 && hasLowRSI6));
             }
 
             // Force require Dow Jones if Charts for a stock exists for that day
@@ -611,10 +631,7 @@ namespace Stock.Services.Services
             // Check if ChartImage already exists
             if (isValid)
             {
-              var orgChartImage = (request.Version == Consts.CHART_V0 || request.Version == Consts.CHART_V4) ?
-                GetChartImage(request.Symbol, items[currentIndex - 1].PriceDate, request.Version) :
-                GetChartImage(request.Symbol, items[currentIndex].PriceDate, request.Version);
-
+              var orgChartImage = GetChartImage(request.Symbol, items[currentIndex].PriceDate, request.Version);
               isValid = isValid && orgChartImage == null;
 
               // To maintain sparsity of charts
@@ -672,26 +689,14 @@ namespace Stock.Services.Services
                 //});
                 #endregion
 
-                if (request.Version == Consts.CHART_V0 || request.Version == Consts.CHART_V4)
-                  lastAddedIndex = currentIndex - 1;
-                else
-                  lastAddedIndex = currentIndex;
-
+                lastAddedIndex = currentIndex;
               }
             }
 
             if (isValid)
             {
-              if (request.Version == Consts.CHART_V0 || request.Version == Consts.CHART_V4)
-              {
-                lastAddedIndex = currentIndex - 1;
-                ret.Add(items.GetRange(currentIndex - request.NoOfPeriods, request.NoOfPeriods));
-              }
-              else
-              {
-                lastAddedIndex = currentIndex;
-                ret.Add(items.GetRange(currentIndex - request.NoOfPeriods + 1, request.NoOfPeriods));
-              }
+              lastAddedIndex = currentIndex;
+              ret.Add(items.GetRange(currentIndex - request.NoOfPeriods + 1, request.NoOfPeriods));
             }
             #endregion
           }
@@ -735,15 +740,16 @@ namespace Stock.Services.Services
       {
         query = query.Where(c => c.YActual != null);
       }
-      var badSymbols = new string[] {
-        "JPM", "FISV", "CBRE", "OMC", "PFE", "APA", "CMA", "CMG", "MGM", "FIS", "AGEN",
-        "TMO", "BGS", "EWBC", "NAVI", "PNC", "WYND", "ALL", "HRB", "SEAS", "SCHW",
-        "NSP", "PFG", "RCL", "AIG", "FICO", "CVX", "AEP", "AMTD", "CDW", "DFS",
-        "WDAY", "UNH", "AES", "AFL", "BAH", "ALLY", "ABT", "C", "GS", "NWSA",
-        "AWK", "WFC", "BAC", "AMGN", "MO", "BX", "XOM", "IVV", "GEL", "BRK-B",
-        "PGR", "BK", "PGRE", "CHK", "ETFC", "SABR", "PRU", "FRC", "SIX", "FNF",
-        "MS", "COF", "EIX", "PMT", "KOS", "MET", "CIT", "USB", "NYT", "ANTM" };
-      query = query.Where(c => !badSymbols.Contains(c.Symbol));
+
+      //var badSymbols = new string[] {
+      //  "JPM", "FISV", "CBRE", "OMC", "PFE", "APA", "CMA", "CMG", "MGM", "FIS", "AGEN",
+      //  "TMO", "BGS", "EWBC", "NAVI", "PNC", "WYND", "ALL", "HRB", "SEAS", "SCHW",
+      //  "NSP", "PFG", "RCL", "AIG", "FICO", "CVX", "AEP", "AMTD", "CDW", "DFS",
+      //  "WDAY", "UNH", "AES", "AFL", "BAH", "ALLY", "ABT", "C", "GS", "NWSA",
+      //  "AWK", "WFC", "BAC", "AMGN", "MO", "BX", "XOM", "IVV", "GEL", "BRK-B",
+      //  "PGR", "BK", "PGRE", "CHK", "ETFC", "SABR", "PRU", "FRC", "SIX", "FNF",
+      //  "MS", "COF", "EIX", "PMT", "KOS", "MET", "CIT", "USB", "NYT", "ANTM" };
+      //query = query.Where(c => !badSymbols.Contains(c.Symbol));
 
       CsvUtils.WriteCsv(fileName, query.ToList());
     }

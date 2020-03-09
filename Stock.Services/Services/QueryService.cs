@@ -9,6 +9,7 @@ namespace Stock.Services.Services
 {
   public interface IQueryService
   {
+    List<ChartImage> GetRandomCharts(int version);
     PastAvgResp GetPastAvgs(int version);
     PastAvgResp GetPastAvgs(int version, string symbol);
     PastAvgResp GetTopPastAvgs(int take);
@@ -17,6 +18,14 @@ namespace Stock.Services.Services
 
   public class QueryService : BaseService, IQueryService
   {
+    public List<ChartImage> GetRandomCharts(int version)
+    {
+      var query = DB.ChartImage.Where(c => c.Version == version);
+      query = query.Where(c => c.Symbol != Consts.SYMBOL_DOW_ETF && c.Symbol != Consts.SYMBOL_DOW_JONES);
+      var randomIndex = new Random().Next(0, query.Count() - 1);
+      return query.Skip(randomIndex).Take(100).ToList();
+    }
+
     public PastAvgResp GetPastAvgs(int version)
     {
       return GetPastAvgs(version, "");

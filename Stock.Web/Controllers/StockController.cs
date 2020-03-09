@@ -15,10 +15,12 @@ namespace Stock.Web.Controllers
   public class StockController : ControllerBase
   {
     private readonly IStockService _StockService;
+    private readonly IQueryService _QueryService;
 
-    public StockController(IStockService stockService)
+    public StockController(IStockService stockService, IQueryService queryService)
     {
       _StockService = stockService;
+      _QueryService = queryService;
     }
 
     [HttpGet("symbols")]
@@ -37,6 +39,12 @@ namespace Stock.Web.Controllers
     public List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request)
     {
       return _StockService.GetPeriodsOfStockPrices(request);
+    }
+
+    [HttpGet("random/{version}")]
+    public List<ChartImage> GetRandomCharts(int version)
+    {
+      return _QueryService.GetRandomCharts(version);
     }
   }
 }

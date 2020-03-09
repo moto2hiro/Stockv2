@@ -19,15 +19,20 @@ export class StockPrice {
   EMA_9: number;
   EMA_10: number;
   EMA_12: number;
+  EMA_13: number;
   EMA_26: number;
+  EMA_48: number;
   ADTV_20: number;
   ADTV_30: number;
   ADTV_50: number;
   ADPV_20: number;
   ADPV_30: number;
   ADPV_50: number;
+  RSI_6: number;
   RSI_10: number;
   RSI_14: number;
+  AvgGain_6: number;
+  AvgLoss_6: number;
   AvgGain_10: number;
   AvgLoss_10: number;
   AvgGain_14: number;
@@ -42,4 +47,6 @@ export class StockPrice {
   BollingerLowerStvDev1_20: number;
   BollingerUpperStvDev2_20: number;
   BollingerLowerStvDev2_20: number;
+  BollingerUpperStvDev25_20: number;
+  BollingerLowerStvDev25_20: number;
 }

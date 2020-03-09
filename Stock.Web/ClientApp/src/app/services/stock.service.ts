@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { StockPrice } from '../models/stock-price';
 import { SaveChartImageReq } from '../models/save-chart-image-req';
 import { SymbolMaster } from '../models/symbol-master';
+import { ChartImage } from '../models/chart-image';
 import { GetPeriodsOfStockPricesReq } from '../models/get-periods-of-stock-prices-req';
 
 @Injectable({
@@ -23,5 +24,9 @@ export class StockService {
 
   saveChartImages(models: SaveChartImageReq[]) {
     return this.http.post<number>(`${StockService.serviceUrl}/saveChartImages`, models);
+  }
+
+  getRandomCharts(version: number) {
+    return this.http.get<ChartImage[]>(`${StockService.serviceUrl}/random/${version}`);
   }
 }
