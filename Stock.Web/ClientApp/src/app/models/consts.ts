@@ -67,16 +67,16 @@ export class Consts {
   public static readonly RSI_MED_HIGH_THRESHOLD = 65;
   public static readonly RSI_LOW_THRESHOLD = 30;
   public static readonly RSI_MED_LOW_THRESHOLD = 35;
-  // TODO? public static readonly PERIOD_METRIC_EMA = "EMA";
-  // TODO? public static readonly PERIOD_METRIC_MACD = "MACD";
-  // TODO? public static readonly PERIOD_METRIC_OBV = "OBV";
-  public static readonly PERIOD_METRIC_SMA = "SMA";
-  public static readonly PERIOD_METRIC_ADTV = "ADTV";
-  public static readonly PERIOD_METRIC_ADPV = "ADPV";
-  public static readonly PERIOD_METRIC_RSI = "RSI";
-  public static readonly PERIOD_METRIC_AvgGain = "AvgGain";
-  public static readonly PERIOD_METRIC_AvgLoss = "AvgLoss";
+  public static readonly RSI_85 = 85;
+  public static readonly RSI_80 = 80;
+  public static readonly RSI_75 = 75;
+  public static readonly RSI_70 = 70;
+  public static readonly RSI_30 = 30;
+  public static readonly RSI_25 = 25;
+  public static readonly RSI_20 = 20;
+  public static readonly RSI_15 = 15;
   public static readonly MAX_CALC_PERIOD = 200;
+  public static readonly MAX_FUTURE_PERIOD = 60;
   public static readonly SMA_PERIOD_10 = 10;
   public static readonly SMA_PERIOD_20 = 20;
   public static readonly SMA_PERIOD_50 = 50;
@@ -101,9 +101,11 @@ export class Consts {
   public static readonly LOCAL_MAX_PERIOD_10 = 10;
   public static readonly LOCAL_MAX_PERIOD_20 = 20;
   public static readonly LOCAL_MAX_PERIOD_50 = 50;
+  public static readonly LOCAL_MAX_PERIOD_200 = 200;
   public static readonly LOCAL_MIN_PERIOD_10 = 10;
   public static readonly LOCAL_MIN_PERIOD_20 = 20;
   public static readonly LOCAL_MIN_PERIOD_50 = 50;
+  public static readonly LOCAL_MIN_PERIOD_200 = 200;
   public static readonly BOLLINGER_PERIOD_20 = 20;
   // #endregion
 

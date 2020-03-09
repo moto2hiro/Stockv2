@@ -40,9 +40,11 @@ export class StockPrice {
   IsLocalMax_10: boolean
   IsLocalMax_20: boolean
   IsLocalMax_50: boolean
+  IsLocalMax_200: boolean
   IsLocalMin_10: boolean
   IsLocalMin_20: boolean
   IsLocalMin_50: boolean
+  IsLocalMin_200: boolean
   BollingerUpperStvDev1_20: number;
   BollingerLowerStvDev1_20: number;
   BollingerUpperStvDev2_20: number;

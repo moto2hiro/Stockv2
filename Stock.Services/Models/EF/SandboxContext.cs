@@ -16,6 +16,7 @@ namespace Stock.Services.Models.EF
         }
 
         public virtual DbSet<ChartImage> ChartImage { get; set; }
+        public virtual DbSet<JsonItem> JsonItem { get; set; }
         public virtual DbSet<StockPrice> StockPrice { get; set; }
         public virtual DbSet<SymbolMaster> SymbolMaster { get; set; }
         public virtual DbSet<TechnicalItem> TechnicalItem { get; set; }
@@ -52,6 +53,13 @@ namespace Stock.Services.Models.EF
                 entity.Property(e => e.YPredictedProbability)
                     .HasColumnName("Y_PredictedProbability")
                     .HasColumnType("decimal(13, 2)");
+            });
+
+            modelBuilder.Entity<JsonItem>(entity =>
+            {
+                entity.Property(e => e.JsonStr)
+                    .IsRequired()
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<StockPrice>(entity =>

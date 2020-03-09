@@ -41,16 +41,16 @@ namespace Stock.Services
     public const decimal RSI_LOW_THRESHOLD = 20;
     public const decimal RSI_MED_LOW_THRESHOLD = 35;
     public const decimal RSI_LOWEST_THRESHOLD = 15;
-    // TODO? public const string PERIOD_METRIC_EMA = "EMA";
-    // TODO? public const string PERIOD_METRIC_MACD = "MACD";
-    // TODO? public const string PERIOD_METRIC_OBV = "OBV";
-    public const string PERIOD_METRIC_SMA = "SMA";
-    public const string PERIOD_METRIC_ADTV = "ADTV";
-    public const string PERIOD_METRIC_ADPV = "ADPV";
-    public const string PERIOD_METRIC_RSI = "RSI";
-    public const string PERIOD_METRIC_AvgGain = "AvgGain";
-    public const string PERIOD_METRIC_AvgLoss = "AvgLoss";
+    public const decimal RSI_85 = 85;
+    public const decimal RSI_80 = 80;
+    public const decimal RSI_75 = 75;
+    public const decimal RSI_70 = 70;
+    public const decimal RSI_30 = 30;
+    public const decimal RSI_25 = 25;
+    public const decimal RSI_20 = 20;
+    public const decimal RSI_15 = 15;
     public const int MAX_CALC_PERIOD = 200;
+    public const int MAX_FUTURE_PERIOD = 60;
     public const int SMA_PERIOD_10 = 10;
     public const int SMA_PERIOD_20 = 20;
     public const int SMA_PERIOD_50 = 50;
@@ -75,9 +75,11 @@ namespace Stock.Services
     public const int LOCAL_MAX_PERIOD_10 = 10;
     public const int LOCAL_MAX_PERIOD_20 = 20;
     public const int LOCAL_MAX_PERIOD_50 = 50;
+    public const int LOCAL_MAX_PERIOD_200 = 200;
     public const int LOCAL_MIN_PERIOD_10 = 10;
     public const int LOCAL_MIN_PERIOD_20 = 20;
     public const int LOCAL_MIN_PERIOD_50 = 50;
+    public const int LOCAL_MIN_PERIOD_200 = 200;
     public const int BOLLINGER_PERIOD_20 = 20;
     #endregion
 
