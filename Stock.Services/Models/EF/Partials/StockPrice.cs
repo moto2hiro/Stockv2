@@ -584,6 +584,18 @@ namespace Stock.Services.Models.EF
 
     [NotMapped]
     public decimal BollingerLowerStvDev25_20 { get; set; }
+
+    [NotMapped]
+    public bool HasCrossAboveBollingerUpperStvDev2_20 { get; set; }
+
+    [NotMapped]
+    public bool HasCrossBelowBollingerLowerStvDev2_20 { get; set; }
+
+    [NotMapped]
+    public bool HasCrossAboveBollingerUpperStvDev25_20 { get; set; }
+
+    [NotMapped]
+    public bool HasCrossBelowBollingerLowerStvDev25_20 { get; set; }
     #endregion
   }
 }

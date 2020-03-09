@@ -16,10 +16,13 @@ namespace Stock.Services.Services
   {
     public void Transform()
     {
-      var models = new List<JsonItem>();
-      var symbols = DB.SymbolMaster.ToList();
+      //ebay
+      //DeleteAll<JsonItem>();
+
+      var symbols = DB.SymbolMaster.OrderBy(s => s.Symbol).ToList();
       foreach (var symbolMaster in symbols)
       {
+        var models = new List<JsonItem>();
         var symbol = symbolMaster.Symbol;
         var items = DB.StockPrice.Where(s => s.Symbol == symbol).OrderBy(s => s.PriceDate).ToList();
         var itemCount = items.Count();
@@ -441,8 +444,24 @@ namespace Stock.Services.Services
           item.model.BollingerLowerStvDev2_20 = item.model.SMA_20 - stdDev20 * 2;
           item.model.BollingerUpperStvDev25_20 = item.model.SMA_20 + stdDev20 * 2.5m;
           item.model.BollingerLowerStvDev25_20 = item.model.SMA_20 - stdDev20 * 2.5m;
+          item.model.HasCrossAboveBollingerUpperStvDev2_20 = items[prevIdx].ClosePrice < items[prevIdx].BollingerUpperStvDev2_20 && items[currIdx].ClosePrice > items[currIdx].BollingerUpperStvDev2_20;
+          item.model.HasCrossBelowBollingerLowerStvDev2_20 = items[prevIdx].ClosePrice > items[prevIdx].BollingerLowerStvDev2_20 && items[currIdx].ClosePrice < items[currIdx].BollingerLowerStvDev2_20;
+          item.model.HasCrossAboveBollingerUpperStvDev25_20 = items[prevIdx].ClosePrice < items[prevIdx].BollingerUpperStvDev25_20 && items[currIdx].ClosePrice > items[currIdx].BollingerUpperStvDev25_20;
+          item.model.HasCrossBelowBollingerLowerStvDev25_20 = items[prevIdx].ClosePrice > items[prevIdx].BollingerLowerStvDev25_20 && items[currIdx].ClosePrice < items[currIdx].BollingerLowerStvDev25_20;
           #endregion
+
+          models.Add(new JsonItem() { JsonStr = StringUtils.Serialize(item.model) });
         }
+
+        LogUtils.Debug($"INSERT START={symbol}");
+        var skip = 0;
+        while (skip < models.Count)
+        {
+          var query = models.Skip(skip).Take(500);
+          Insert<JsonItem>(query.ToList());
+          skip += 500;
+        }
+        LogUtils.Debug($"INSERT END={symbol}");
       }
     }
 
