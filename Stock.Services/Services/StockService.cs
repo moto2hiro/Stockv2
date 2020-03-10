@@ -1,8 +1,10 @@
-﻿using Stock.Services.Clients;
+﻿using CsvHelper.Configuration;
+using Stock.Services.Clients;
 using Stock.Services.Models;
 using Stock.Services.Models.CsvHelper;
 using Stock.Services.Models.EF;
 using Stock.Services.Models.TDAm;
+using Stock.Services.Services.CsvServices;
 using Stock.Services.Utils;
 using System;
 using System.Collections.Generic;
@@ -26,6 +28,7 @@ namespace Stock.Services.Services
     List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request);
     void CreateCsvForPrediction(string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, int version, bool isExcludeNullYActual);
     int SavePredictions(string fileName);
+    int SaveCsv<T, TMap>(string fileName) where TMap : ClassMap;
   }
 
   public class StockService : BaseService, IStockService
@@ -610,11 +613,11 @@ namespace Stock.Services.Services
             var hasMedLowRSI10 = items[currentIndex].RSI_10 <= Consts.RSI_MED_LOW_THRESHOLD && items[currentIndex].RSI_10 > Consts.RSI_LOW_THRESHOLD;
             var isAboveBollingerUpperStdDev25_20 = item.model.ClosePrice > item.model.BollingerUpperStvDev25_20;
             var isBelowBollingerLowerStdDev25_20 = item.model.ClosePrice < item.model.BollingerLowerStvDev25_20;
-            
+
             if (request.Version == Consts.CHART_V1)
             {
               isValid = isValid && (
-                (isAboveBollingerUpperStdDev25_20 && hasHighRSI6) || 
+                (isAboveBollingerUpperStdDev25_20 && hasHighRSI6) ||
                 (isBelowBollingerLowerStdDev25_20 && hasLowRSI6));
             }
 
@@ -777,6 +780,20 @@ namespace Stock.Services.Services
         }
       }
       return ret;
+    }
+
+    public int SaveCsv<T, TMap>(string fileName) where TMap : ClassMap
+    {
+      if(typeof(T) == typeof(Financial))
+      {
+        if (typeof(TMap) == typeof(MapSimfinFinancialIncome))
+          return new SimfinFinancialIncomeCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapSimfinFinancialBalance))
+          return new SimfinFinancialBalanceCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapSimfinFinancialCash))
+          return new SimfinFinancialCashCsvService().SaveCsv(fileName);
+      }
+      return 0;
     }
   }
 }
