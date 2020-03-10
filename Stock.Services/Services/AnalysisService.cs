@@ -10,19 +10,17 @@ namespace Stock.Services.Services
   public interface IAnalysisService
   {
     void Transform();
+    void SelectTest();
   }
 
   public class AnalysisService : BaseService, IAnalysisService
   {
     public void Transform()
     {
-      //ebay
-      //DeleteAll<JsonItem>();
-
       var symbols = DB.SymbolMaster.OrderBy(s => s.Symbol).ToList();
       foreach (var symbolMaster in symbols)
       {
-        var models = new List<JsonItem>();
+        var models = new List<Analysis>();
         var symbol = symbolMaster.Symbol;
         var items = DB.StockPrice.Where(s => s.Symbol == symbol).OrderBy(s => s.PriceDate).ToList();
         var itemCount = items.Count();
@@ -41,68 +39,77 @@ namespace Stock.Services.Services
           {
             continue;
           }
+          var model = new Analysis();
+          model.Symbol = item.model.Symbol;
+          model.PriceDate = item.model.PriceDate;
+          model.OpenPrice = item.model.OpenPrice;
+          model.HighPrice = item.model.HighPrice;
+          model.LowPrice = item.model.LowPrice;
+          model.ClosePrice = item.model.ClosePrice;
+          model.Volume = item.model.Volume;
+          model.PriceVolume = item.model.PriceVolume;
 
           #region YActual
-          item.model.YActual = GetClass(items[currIdx].ClosePrice, items[currIdx + 1].ClosePrice);
-          item.model.YActual2 = GetClass(items[currIdx].ClosePrice, items[currIdx + 2].ClosePrice);
-          item.model.YActual3 = GetClass(items[currIdx].ClosePrice, items[currIdx + 3].ClosePrice);
-          item.model.YActual4 = GetClass(items[currIdx].ClosePrice, items[currIdx + 4].ClosePrice);
-          item.model.YActual5 = GetClass(items[currIdx].ClosePrice, items[currIdx + 5].ClosePrice);
-          item.model.YActual6 = GetClass(items[currIdx].ClosePrice, items[currIdx + 6].ClosePrice);
-          item.model.YActual7 = GetClass(items[currIdx].ClosePrice, items[currIdx + 7].ClosePrice);
-          item.model.YActual8 = GetClass(items[currIdx].ClosePrice, items[currIdx + 8].ClosePrice);
-          item.model.YActual9 = GetClass(items[currIdx].ClosePrice, items[currIdx + 9].ClosePrice);
-          item.model.YActual10 = GetClass(items[currIdx].ClosePrice, items[currIdx + 10].ClosePrice);
-          item.model.YActual11 = GetClass(items[currIdx].ClosePrice, items[currIdx + 11].ClosePrice);
-          item.model.YActual12 = GetClass(items[currIdx].ClosePrice, items[currIdx + 12].ClosePrice);
-          item.model.YActual13 = GetClass(items[currIdx].ClosePrice, items[currIdx + 13].ClosePrice);
-          item.model.YActual14 = GetClass(items[currIdx].ClosePrice, items[currIdx + 14].ClosePrice);
-          item.model.YActual15 = GetClass(items[currIdx].ClosePrice, items[currIdx + 15].ClosePrice);
-          item.model.YActual16 = GetClass(items[currIdx].ClosePrice, items[currIdx + 16].ClosePrice);
-          item.model.YActual17 = GetClass(items[currIdx].ClosePrice, items[currIdx + 17].ClosePrice);
-          item.model.YActual18 = GetClass(items[currIdx].ClosePrice, items[currIdx + 18].ClosePrice);
-          item.model.YActual19 = GetClass(items[currIdx].ClosePrice, items[currIdx + 19].ClosePrice);
-          item.model.YActual20 = GetClass(items[currIdx].ClosePrice, items[currIdx + 20].ClosePrice);
-          item.model.YActual21 = GetClass(items[currIdx].ClosePrice, items[currIdx + 21].ClosePrice);
-          item.model.YActual22 = GetClass(items[currIdx].ClosePrice, items[currIdx + 22].ClosePrice);
-          item.model.YActual23 = GetClass(items[currIdx].ClosePrice, items[currIdx + 23].ClosePrice);
-          item.model.YActual24 = GetClass(items[currIdx].ClosePrice, items[currIdx + 24].ClosePrice);
-          item.model.YActual25 = GetClass(items[currIdx].ClosePrice, items[currIdx + 25].ClosePrice);
-          item.model.YActual26 = GetClass(items[currIdx].ClosePrice, items[currIdx + 26].ClosePrice);
-          item.model.YActual27 = GetClass(items[currIdx].ClosePrice, items[currIdx + 27].ClosePrice);
-          item.model.YActual28 = GetClass(items[currIdx].ClosePrice, items[currIdx + 28].ClosePrice);
-          item.model.YActual29 = GetClass(items[currIdx].ClosePrice, items[currIdx + 29].ClosePrice);
-          item.model.YActual30 = GetClass(items[currIdx].ClosePrice, items[currIdx + 30].ClosePrice);
-          item.model.YActual31 = GetClass(items[currIdx].ClosePrice, items[currIdx + 31].ClosePrice);
-          item.model.YActual32 = GetClass(items[currIdx].ClosePrice, items[currIdx + 32].ClosePrice);
-          item.model.YActual33 = GetClass(items[currIdx].ClosePrice, items[currIdx + 33].ClosePrice);
-          item.model.YActual34 = GetClass(items[currIdx].ClosePrice, items[currIdx + 34].ClosePrice);
-          item.model.YActual35 = GetClass(items[currIdx].ClosePrice, items[currIdx + 35].ClosePrice);
-          item.model.YActual36 = GetClass(items[currIdx].ClosePrice, items[currIdx + 36].ClosePrice);
-          item.model.YActual37 = GetClass(items[currIdx].ClosePrice, items[currIdx + 37].ClosePrice);
-          item.model.YActual38 = GetClass(items[currIdx].ClosePrice, items[currIdx + 38].ClosePrice);
-          item.model.YActual39 = GetClass(items[currIdx].ClosePrice, items[currIdx + 39].ClosePrice);
-          item.model.YActual40 = GetClass(items[currIdx].ClosePrice, items[currIdx + 40].ClosePrice);
-          item.model.YActual41 = GetClass(items[currIdx].ClosePrice, items[currIdx + 41].ClosePrice);
-          item.model.YActual42 = GetClass(items[currIdx].ClosePrice, items[currIdx + 42].ClosePrice);
-          item.model.YActual43 = GetClass(items[currIdx].ClosePrice, items[currIdx + 43].ClosePrice);
-          item.model.YActual44 = GetClass(items[currIdx].ClosePrice, items[currIdx + 44].ClosePrice);
-          item.model.YActual45 = GetClass(items[currIdx].ClosePrice, items[currIdx + 45].ClosePrice);
-          item.model.YActual46 = GetClass(items[currIdx].ClosePrice, items[currIdx + 46].ClosePrice);
-          item.model.YActual47 = GetClass(items[currIdx].ClosePrice, items[currIdx + 47].ClosePrice);
-          item.model.YActual48 = GetClass(items[currIdx].ClosePrice, items[currIdx + 48].ClosePrice);
-          item.model.YActual49 = GetClass(items[currIdx].ClosePrice, items[currIdx + 49].ClosePrice);
-          item.model.YActual50 = GetClass(items[currIdx].ClosePrice, items[currIdx + 50].ClosePrice);
-          item.model.YActual51 = GetClass(items[currIdx].ClosePrice, items[currIdx + 51].ClosePrice);
-          item.model.YActual52 = GetClass(items[currIdx].ClosePrice, items[currIdx + 52].ClosePrice);
-          item.model.YActual53 = GetClass(items[currIdx].ClosePrice, items[currIdx + 53].ClosePrice);
-          item.model.YActual54 = GetClass(items[currIdx].ClosePrice, items[currIdx + 54].ClosePrice);
-          item.model.YActual55 = GetClass(items[currIdx].ClosePrice, items[currIdx + 55].ClosePrice);
-          item.model.YActual56 = GetClass(items[currIdx].ClosePrice, items[currIdx + 56].ClosePrice);
-          item.model.YActual57 = GetClass(items[currIdx].ClosePrice, items[currIdx + 57].ClosePrice);
-          item.model.YActual58 = GetClass(items[currIdx].ClosePrice, items[currIdx + 58].ClosePrice);
-          item.model.YActual59 = GetClass(items[currIdx].ClosePrice, items[currIdx + 59].ClosePrice);
-          item.model.YActual60 = GetClass(items[currIdx].ClosePrice, items[currIdx + 60].ClosePrice);
+          model.Yactual = GetClass(items[currIdx].ClosePrice, items[currIdx + 1].ClosePrice);
+          model.Yactual2 = GetClass(items[currIdx].ClosePrice, items[currIdx + 2].ClosePrice);
+          model.Yactual3 = GetClass(items[currIdx].ClosePrice, items[currIdx + 3].ClosePrice);
+          model.Yactual4 = GetClass(items[currIdx].ClosePrice, items[currIdx + 4].ClosePrice);
+          model.Yactual5 = GetClass(items[currIdx].ClosePrice, items[currIdx + 5].ClosePrice);
+          model.Yactual6 = GetClass(items[currIdx].ClosePrice, items[currIdx + 6].ClosePrice);
+          model.Yactual7 = GetClass(items[currIdx].ClosePrice, items[currIdx + 7].ClosePrice);
+          model.Yactual8 = GetClass(items[currIdx].ClosePrice, items[currIdx + 8].ClosePrice);
+          model.Yactual9 = GetClass(items[currIdx].ClosePrice, items[currIdx + 9].ClosePrice);
+          model.Yactual10 = GetClass(items[currIdx].ClosePrice, items[currIdx + 10].ClosePrice);
+          model.Yactual11 = GetClass(items[currIdx].ClosePrice, items[currIdx + 11].ClosePrice);
+          model.Yactual12 = GetClass(items[currIdx].ClosePrice, items[currIdx + 12].ClosePrice);
+          model.Yactual13 = GetClass(items[currIdx].ClosePrice, items[currIdx + 13].ClosePrice);
+          model.Yactual14 = GetClass(items[currIdx].ClosePrice, items[currIdx + 14].ClosePrice);
+          model.Yactual15 = GetClass(items[currIdx].ClosePrice, items[currIdx + 15].ClosePrice);
+          model.Yactual16 = GetClass(items[currIdx].ClosePrice, items[currIdx + 16].ClosePrice);
+          model.Yactual17 = GetClass(items[currIdx].ClosePrice, items[currIdx + 17].ClosePrice);
+          model.Yactual18 = GetClass(items[currIdx].ClosePrice, items[currIdx + 18].ClosePrice);
+          model.Yactual19 = GetClass(items[currIdx].ClosePrice, items[currIdx + 19].ClosePrice);
+          model.Yactual20 = GetClass(items[currIdx].ClosePrice, items[currIdx + 20].ClosePrice);
+          model.Yactual21 = GetClass(items[currIdx].ClosePrice, items[currIdx + 21].ClosePrice);
+          model.Yactual22 = GetClass(items[currIdx].ClosePrice, items[currIdx + 22].ClosePrice);
+          model.Yactual23 = GetClass(items[currIdx].ClosePrice, items[currIdx + 23].ClosePrice);
+          model.Yactual24 = GetClass(items[currIdx].ClosePrice, items[currIdx + 24].ClosePrice);
+          model.Yactual25 = GetClass(items[currIdx].ClosePrice, items[currIdx + 25].ClosePrice);
+          model.Yactual26 = GetClass(items[currIdx].ClosePrice, items[currIdx + 26].ClosePrice);
+          model.Yactual27 = GetClass(items[currIdx].ClosePrice, items[currIdx + 27].ClosePrice);
+          model.Yactual28 = GetClass(items[currIdx].ClosePrice, items[currIdx + 28].ClosePrice);
+          model.Yactual29 = GetClass(items[currIdx].ClosePrice, items[currIdx + 29].ClosePrice);
+          model.Yactual30 = GetClass(items[currIdx].ClosePrice, items[currIdx + 30].ClosePrice);
+          model.Yactual31 = GetClass(items[currIdx].ClosePrice, items[currIdx + 31].ClosePrice);
+          model.Yactual32 = GetClass(items[currIdx].ClosePrice, items[currIdx + 32].ClosePrice);
+          model.Yactual33 = GetClass(items[currIdx].ClosePrice, items[currIdx + 33].ClosePrice);
+          model.Yactual34 = GetClass(items[currIdx].ClosePrice, items[currIdx + 34].ClosePrice);
+          model.Yactual35 = GetClass(items[currIdx].ClosePrice, items[currIdx + 35].ClosePrice);
+          model.Yactual36 = GetClass(items[currIdx].ClosePrice, items[currIdx + 36].ClosePrice);
+          model.Yactual37 = GetClass(items[currIdx].ClosePrice, items[currIdx + 37].ClosePrice);
+          model.Yactual38 = GetClass(items[currIdx].ClosePrice, items[currIdx + 38].ClosePrice);
+          model.Yactual39 = GetClass(items[currIdx].ClosePrice, items[currIdx + 39].ClosePrice);
+          model.Yactual40 = GetClass(items[currIdx].ClosePrice, items[currIdx + 40].ClosePrice);
+          model.Yactual41 = GetClass(items[currIdx].ClosePrice, items[currIdx + 41].ClosePrice);
+          model.Yactual42 = GetClass(items[currIdx].ClosePrice, items[currIdx + 42].ClosePrice);
+          model.Yactual43 = GetClass(items[currIdx].ClosePrice, items[currIdx + 43].ClosePrice);
+          model.Yactual44 = GetClass(items[currIdx].ClosePrice, items[currIdx + 44].ClosePrice);
+          model.Yactual45 = GetClass(items[currIdx].ClosePrice, items[currIdx + 45].ClosePrice);
+          model.Yactual46 = GetClass(items[currIdx].ClosePrice, items[currIdx + 46].ClosePrice);
+          model.Yactual47 = GetClass(items[currIdx].ClosePrice, items[currIdx + 47].ClosePrice);
+          model.Yactual48 = GetClass(items[currIdx].ClosePrice, items[currIdx + 48].ClosePrice);
+          model.Yactual49 = GetClass(items[currIdx].ClosePrice, items[currIdx + 49].ClosePrice);
+          model.Yactual50 = GetClass(items[currIdx].ClosePrice, items[currIdx + 50].ClosePrice);
+          model.Yactual51 = GetClass(items[currIdx].ClosePrice, items[currIdx + 51].ClosePrice);
+          model.Yactual52 = GetClass(items[currIdx].ClosePrice, items[currIdx + 52].ClosePrice);
+          model.Yactual53 = GetClass(items[currIdx].ClosePrice, items[currIdx + 53].ClosePrice);
+          model.Yactual54 = GetClass(items[currIdx].ClosePrice, items[currIdx + 54].ClosePrice);
+          model.Yactual55 = GetClass(items[currIdx].ClosePrice, items[currIdx + 55].ClosePrice);
+          model.Yactual56 = GetClass(items[currIdx].ClosePrice, items[currIdx + 56].ClosePrice);
+          model.Yactual57 = GetClass(items[currIdx].ClosePrice, items[currIdx + 57].ClosePrice);
+          model.Yactual58 = GetClass(items[currIdx].ClosePrice, items[currIdx + 58].ClosePrice);
+          model.Yactual59 = GetClass(items[currIdx].ClosePrice, items[currIdx + 59].ClosePrice);
+          model.Yactual60 = GetClass(items[currIdx].ClosePrice, items[currIdx + 60].ClosePrice);
           #endregion
 
           #region Declarations
@@ -253,26 +260,31 @@ namespace Stock.Services.Services
           item.model.SMA_50 = NumberUtils.Round(sumClosePrice50 / Consts.SMA_PERIOD_50);
           item.model.SMA_100 = NumberUtils.Round(sumClosePrice100 / Consts.SMA_PERIOD_100);
           item.model.SMA_200 = NumberUtils.Round(sumClosePrice200 / Consts.SMA_PERIOD_200);
-          item.model.HasSMA10CrossAbove20 = items[prevIdx].SMA_10 < items[prevIdx].SMA_20 && items[currIdx].SMA_10 > items[currIdx].SMA_20;
-          item.model.HasSMA10CrossBelow20 = items[prevIdx].SMA_10 > items[prevIdx].SMA_20 && items[currIdx].SMA_10 < items[currIdx].SMA_20;
-          item.model.HasSMA10CrossAbove50 = items[prevIdx].SMA_10 < items[prevIdx].SMA_50 && items[currIdx].SMA_10 > items[currIdx].SMA_50;
-          item.model.HasSMA10CrossBelow50 = items[prevIdx].SMA_10 > items[prevIdx].SMA_50 && items[currIdx].SMA_10 < items[currIdx].SMA_50;
-          item.model.HasSMA10CrossAbove100 = items[prevIdx].SMA_10 < items[prevIdx].SMA_100 && items[currIdx].SMA_10 > items[currIdx].SMA_100;
-          item.model.HasSMA10CrossBelow100 = items[prevIdx].SMA_10 > items[prevIdx].SMA_100 && items[currIdx].SMA_10 < items[currIdx].SMA_100;
-          item.model.HasSMA10CrossAbove200 = items[prevIdx].SMA_10 < items[prevIdx].SMA_200 && items[currIdx].SMA_10 > items[currIdx].SMA_200;
-          item.model.HasSMA10CrossBelow200 = items[prevIdx].SMA_10 > items[prevIdx].SMA_200 && items[currIdx].SMA_10 < items[currIdx].SMA_200;
-          item.model.HasSMA20CrossAbove50 = items[prevIdx].SMA_20 < items[prevIdx].SMA_50 && items[currIdx].SMA_20 > items[currIdx].SMA_50;
-          item.model.HasSMA20CrossBelow50 = items[prevIdx].SMA_20 > items[prevIdx].SMA_50 && items[currIdx].SMA_20 < items[currIdx].SMA_50;
-          item.model.HasSMA20CrossAbove100 = items[prevIdx].SMA_20 < items[prevIdx].SMA_100 && items[currIdx].SMA_20 > items[currIdx].SMA_100;
-          item.model.HasSMA20CrossBelow100 = items[prevIdx].SMA_20 > items[prevIdx].SMA_100 && items[currIdx].SMA_20 < items[currIdx].SMA_100;
-          item.model.HasSMA20CrossAbove200 = items[prevIdx].SMA_20 < items[prevIdx].SMA_200 && items[currIdx].SMA_20 > items[currIdx].SMA_200;
-          item.model.HasSMA20CrossBelow200 = items[prevIdx].SMA_20 > items[prevIdx].SMA_200 && items[currIdx].SMA_20 < items[currIdx].SMA_200;
-          item.model.HasSMA50CrossAbove100 = items[prevIdx].SMA_50 < items[prevIdx].SMA_100 && items[currIdx].SMA_50 > items[currIdx].SMA_100;
-          item.model.HasSMA50CrossBelow100 = items[prevIdx].SMA_50 > items[prevIdx].SMA_100 && items[currIdx].SMA_50 < items[currIdx].SMA_100;
-          item.model.HasSMA50CrossAbove200 = items[prevIdx].SMA_50 < items[prevIdx].SMA_200 && items[currIdx].SMA_50 > items[currIdx].SMA_200;
-          item.model.HasSMA50CrossBelow200 = items[prevIdx].SMA_50 > items[prevIdx].SMA_200 && items[currIdx].SMA_50 < items[currIdx].SMA_200;
-          item.model.HasSMA100CrossAbove200 = items[prevIdx].SMA_100 < items[prevIdx].SMA_200 && items[currIdx].SMA_100 > items[currIdx].SMA_200;
-          item.model.HasSMA100CrossBelow200 = items[prevIdx].SMA_100 > items[prevIdx].SMA_200 && items[currIdx].SMA_100 < items[currIdx].SMA_200;
+          model.Sma10 = item.model.SMA_10;
+          model.Sma20 = item.model.SMA_20;
+          model.Sma50 = item.model.SMA_50;
+          model.Sma100 = item.model.SMA_100;
+          model.Sma200 = item.model.SMA_200;
+          model.HasSma10crossAbove20 = items[prevIdx].SMA_10 < items[prevIdx].SMA_20 && items[currIdx].SMA_10 > items[currIdx].SMA_20;
+          model.HasSma10crossBelow20 = items[prevIdx].SMA_10 > items[prevIdx].SMA_20 && items[currIdx].SMA_10 < items[currIdx].SMA_20;
+          model.HasSma10crossAbove50 = items[prevIdx].SMA_10 < items[prevIdx].SMA_50 && items[currIdx].SMA_10 > items[currIdx].SMA_50;
+          model.HasSma10crossBelow50 = items[prevIdx].SMA_10 > items[prevIdx].SMA_50 && items[currIdx].SMA_10 < items[currIdx].SMA_50;
+          model.HasSma10crossAbove100 = items[prevIdx].SMA_10 < items[prevIdx].SMA_100 && items[currIdx].SMA_10 > items[currIdx].SMA_100;
+          model.HasSma10crossBelow100 = items[prevIdx].SMA_10 > items[prevIdx].SMA_100 && items[currIdx].SMA_10 < items[currIdx].SMA_100;
+          model.HasSma10crossAbove200 = items[prevIdx].SMA_10 < items[prevIdx].SMA_200 && items[currIdx].SMA_10 > items[currIdx].SMA_200;
+          model.HasSma10crossBelow200 = items[prevIdx].SMA_10 > items[prevIdx].SMA_200 && items[currIdx].SMA_10 < items[currIdx].SMA_200;
+          model.HasSma20crossAbove50 = items[prevIdx].SMA_20 < items[prevIdx].SMA_50 && items[currIdx].SMA_20 > items[currIdx].SMA_50;
+          model.HasSma20crossBelow50 = items[prevIdx].SMA_20 > items[prevIdx].SMA_50 && items[currIdx].SMA_20 < items[currIdx].SMA_50;
+          model.HasSma20crossAbove100 = items[prevIdx].SMA_20 < items[prevIdx].SMA_100 && items[currIdx].SMA_20 > items[currIdx].SMA_100;
+          model.HasSma20crossBelow100 = items[prevIdx].SMA_20 > items[prevIdx].SMA_100 && items[currIdx].SMA_20 < items[currIdx].SMA_100;
+          model.HasSma20crossAbove200 = items[prevIdx].SMA_20 < items[prevIdx].SMA_200 && items[currIdx].SMA_20 > items[currIdx].SMA_200;
+          model.HasSma20crossBelow200 = items[prevIdx].SMA_20 > items[prevIdx].SMA_200 && items[currIdx].SMA_20 < items[currIdx].SMA_200;
+          model.HasSma50crossAbove100 = items[prevIdx].SMA_50 < items[prevIdx].SMA_100 && items[currIdx].SMA_50 > items[currIdx].SMA_100;
+          model.HasSma50crossBelow100 = items[prevIdx].SMA_50 > items[prevIdx].SMA_100 && items[currIdx].SMA_50 < items[currIdx].SMA_100;
+          model.HasSma50crossAbove200 = items[prevIdx].SMA_50 < items[prevIdx].SMA_200 && items[currIdx].SMA_50 > items[currIdx].SMA_200;
+          model.HasSma50crossBelow200 = items[prevIdx].SMA_50 > items[prevIdx].SMA_200 && items[currIdx].SMA_50 < items[currIdx].SMA_200;
+          model.HasSma100crossAbove200 = items[prevIdx].SMA_100 < items[prevIdx].SMA_200 && items[currIdx].SMA_100 > items[currIdx].SMA_200;
+          model.HasSma100crossBelow200 = items[prevIdx].SMA_100 > items[prevIdx].SMA_200 && items[currIdx].SMA_100 < items[currIdx].SMA_200;
           #endregion
 
           #region Calculate EMA
@@ -300,57 +312,64 @@ namespace Stock.Services.Services
           item.model.EMA_13 = NumberUtils.Round((alpha13 * item.model.ClosePrice) + ((1 - alpha13) * prevEma13));
           item.model.EMA_26 = NumberUtils.Round((alpha26 * item.model.ClosePrice) + ((1 - alpha26) * prevEma26));
           item.model.EMA_48 = NumberUtils.Round((alpha48 * item.model.ClosePrice) + ((1 - alpha48) * prevEma48));
-          item.model.HasEMA5CrossAbove9 = items[prevIdx].EMA_5 < items[prevIdx].EMA_9 && items[currIdx].EMA_5 > items[currIdx].EMA_9;
-          item.model.HasEMA5CrossBelow9 = items[prevIdx].EMA_5 > items[prevIdx].EMA_9 && items[currIdx].EMA_5 < items[currIdx].EMA_9;
-          item.model.HasEMA5CrossAbove10 = items[prevIdx].EMA_5 < items[prevIdx].EMA_10 && items[currIdx].EMA_5 > items[currIdx].EMA_10;
-          item.model.HasEMA5CrossBelow10 = items[prevIdx].EMA_5 > items[prevIdx].EMA_10 && items[currIdx].EMA_5 < items[currIdx].EMA_10;
-          item.model.HasEMA5CrossAbove12 = items[prevIdx].EMA_5 < items[prevIdx].EMA_12 && items[currIdx].EMA_5 > items[currIdx].EMA_12;
-          item.model.HasEMA5CrossBelow12 = items[prevIdx].EMA_5 > items[prevIdx].EMA_12 && items[currIdx].EMA_5 < items[currIdx].EMA_12;
-          item.model.HasEMA5CrossAbove13 = items[prevIdx].EMA_5 < items[prevIdx].EMA_13 && items[currIdx].EMA_5 > items[currIdx].EMA_13;
-          item.model.HasEMA5CrossBelow13 = items[prevIdx].EMA_5 > items[prevIdx].EMA_13 && items[currIdx].EMA_5 < items[currIdx].EMA_13;
-          item.model.HasEMA5CrossAbove26 = items[prevIdx].EMA_5 < items[prevIdx].EMA_26 && items[currIdx].EMA_5 > items[currIdx].EMA_26;
-          item.model.HasEMA5CrossBelow26 = items[prevIdx].EMA_5 > items[prevIdx].EMA_26 && items[currIdx].EMA_5 < items[currIdx].EMA_26;
-          item.model.HasEMA5CrossAbove48 = items[prevIdx].EMA_5 < items[prevIdx].EMA_48 && items[currIdx].EMA_5 > items[currIdx].EMA_48;
-          item.model.HasEMA5CrossBelow48 = items[prevIdx].EMA_5 > items[prevIdx].EMA_48 && items[currIdx].EMA_5 < items[currIdx].EMA_48;
-          item.model.HasEMA9CrossAbove10 = items[prevIdx].EMA_9 < items[prevIdx].EMA_10 && items[currIdx].EMA_9 > items[currIdx].EMA_10;
-          item.model.HasEMA9CrossBelow10 = items[prevIdx].EMA_9 > items[prevIdx].EMA_10 && items[currIdx].EMA_9 < items[currIdx].EMA_10;
-          item.model.HasEMA9CrossAbove12 = items[prevIdx].EMA_9 < items[prevIdx].EMA_12 && items[currIdx].EMA_9 > items[currIdx].EMA_12;
-          item.model.HasEMA9CrossBelow12 = items[prevIdx].EMA_9 > items[prevIdx].EMA_12 && items[currIdx].EMA_9 < items[currIdx].EMA_12;
-          item.model.HasEMA9CrossAbove13 = items[prevIdx].EMA_9 < items[prevIdx].EMA_13 && items[currIdx].EMA_9 > items[currIdx].EMA_13;
-          item.model.HasEMA9CrossBelow13 = items[prevIdx].EMA_9 > items[prevIdx].EMA_13 && items[currIdx].EMA_9 < items[currIdx].EMA_13;
-          item.model.HasEMA9CrossAbove26 = items[prevIdx].EMA_9 < items[prevIdx].EMA_26 && items[currIdx].EMA_9 > items[currIdx].EMA_26;
-          item.model.HasEMA9CrossBelow26 = items[prevIdx].EMA_9 > items[prevIdx].EMA_26 && items[currIdx].EMA_9 < items[currIdx].EMA_26;
-          item.model.HasEMA9CrossAbove48 = items[prevIdx].EMA_9 < items[prevIdx].EMA_48 && items[currIdx].EMA_9 > items[currIdx].EMA_48;
-          item.model.HasEMA9CrossBelow48 = items[prevIdx].EMA_9 > items[prevIdx].EMA_48 && items[currIdx].EMA_9 < items[currIdx].EMA_48;
-          item.model.HasEMA10CrossAbove12 = items[prevIdx].EMA_10 < items[prevIdx].EMA_12 && items[currIdx].EMA_10 > items[currIdx].EMA_12;
-          item.model.HasEMA10CrossBelow12 = items[prevIdx].EMA_10 > items[prevIdx].EMA_12 && items[currIdx].EMA_10 < items[currIdx].EMA_12;
-          item.model.HasEMA10CrossAbove13 = items[prevIdx].EMA_10 < items[prevIdx].EMA_13 && items[currIdx].EMA_10 > items[currIdx].EMA_13;
-          item.model.HasEMA10CrossBelow13 = items[prevIdx].EMA_10 > items[prevIdx].EMA_13 && items[currIdx].EMA_10 < items[currIdx].EMA_13;
-          item.model.HasEMA10CrossAbove26 = items[prevIdx].EMA_10 < items[prevIdx].EMA_26 && items[currIdx].EMA_10 > items[currIdx].EMA_26;
-          item.model.HasEMA10CrossBelow26 = items[prevIdx].EMA_10 > items[prevIdx].EMA_26 && items[currIdx].EMA_10 < items[currIdx].EMA_26;
-          item.model.HasEMA10CrossAbove48 = items[prevIdx].EMA_10 < items[prevIdx].EMA_48 && items[currIdx].EMA_10 > items[currIdx].EMA_48;
-          item.model.HasEMA10CrossBelow48 = items[prevIdx].EMA_10 > items[prevIdx].EMA_48 && items[currIdx].EMA_10 < items[currIdx].EMA_48;
-          item.model.HasEMA12CrossAbove13 = items[prevIdx].EMA_12 < items[prevIdx].EMA_13 && items[currIdx].EMA_12 > items[currIdx].EMA_13;
-          item.model.HasEMA12CrossBelow13 = items[prevIdx].EMA_12 > items[prevIdx].EMA_13 && items[currIdx].EMA_12 < items[currIdx].EMA_13;
-          item.model.HasEMA12CrossAbove26 = items[prevIdx].EMA_12 < items[prevIdx].EMA_26 && items[currIdx].EMA_12 > items[currIdx].EMA_26;
-          item.model.HasEMA12CrossBelow26 = items[prevIdx].EMA_12 > items[prevIdx].EMA_26 && items[currIdx].EMA_12 < items[currIdx].EMA_26;
-          item.model.HasEMA12CrossAbove48 = items[prevIdx].EMA_12 < items[prevIdx].EMA_48 && items[currIdx].EMA_12 > items[currIdx].EMA_48;
-          item.model.HasEMA12CrossBelow48 = items[prevIdx].EMA_12 > items[prevIdx].EMA_48 && items[currIdx].EMA_12 < items[currIdx].EMA_48;
-          item.model.HasEMA13CrossAbove26 = items[prevIdx].EMA_13 < items[prevIdx].EMA_26 && items[currIdx].EMA_13 > items[currIdx].EMA_26;
-          item.model.HasEMA13CrossBelow26 = items[prevIdx].EMA_13 > items[prevIdx].EMA_26 && items[currIdx].EMA_13 < items[currIdx].EMA_26;
-          item.model.HasEMA13CrossAbove48 = items[prevIdx].EMA_13 < items[prevIdx].EMA_48 && items[currIdx].EMA_13 > items[currIdx].EMA_48;
-          item.model.HasEMA13CrossBelow48 = items[prevIdx].EMA_13 > items[prevIdx].EMA_48 && items[currIdx].EMA_13 < items[currIdx].EMA_48;
-          item.model.HasEMA26CrossAbove48 = items[prevIdx].EMA_26 < items[prevIdx].EMA_48 && items[currIdx].EMA_26 > items[currIdx].EMA_48;
-          item.model.HasEMA26CrossBelow48 = items[prevIdx].EMA_26 > items[prevIdx].EMA_48 && items[currIdx].EMA_26 < items[currIdx].EMA_48;
+          model.Ema5 = item.model.EMA_5;
+          model.Ema9 = item.model.EMA_9;
+          model.Ema10 = item.model.EMA_10;
+          model.Ema12 = item.model.EMA_12;
+          model.Ema13 = item.model.EMA_13;
+          model.Ema26 = item.model.EMA_26;
+          model.Ema48 = item.model.EMA_48;
+          model.HasEma5crossAbove9 = items[prevIdx].EMA_5 < items[prevIdx].EMA_9 && items[currIdx].EMA_5 > items[currIdx].EMA_9;
+          model.HasEma5crossBelow9 = items[prevIdx].EMA_5 > items[prevIdx].EMA_9 && items[currIdx].EMA_5 < items[currIdx].EMA_9;
+          model.HasEma5crossAbove10 = items[prevIdx].EMA_5 < items[prevIdx].EMA_10 && items[currIdx].EMA_5 > items[currIdx].EMA_10;
+          model.HasEma5crossBelow10 = items[prevIdx].EMA_5 > items[prevIdx].EMA_10 && items[currIdx].EMA_5 < items[currIdx].EMA_10;
+          model.HasEma5crossAbove12 = items[prevIdx].EMA_5 < items[prevIdx].EMA_12 && items[currIdx].EMA_5 > items[currIdx].EMA_12;
+          model.HasEma5crossBelow12 = items[prevIdx].EMA_5 > items[prevIdx].EMA_12 && items[currIdx].EMA_5 < items[currIdx].EMA_12;
+          model.HasEma5crossAbove13 = items[prevIdx].EMA_5 < items[prevIdx].EMA_13 && items[currIdx].EMA_5 > items[currIdx].EMA_13;
+          model.HasEma5crossBelow13 = items[prevIdx].EMA_5 > items[prevIdx].EMA_13 && items[currIdx].EMA_5 < items[currIdx].EMA_13;
+          model.HasEma5crossAbove26 = items[prevIdx].EMA_5 < items[prevIdx].EMA_26 && items[currIdx].EMA_5 > items[currIdx].EMA_26;
+          model.HasEma5crossBelow26 = items[prevIdx].EMA_5 > items[prevIdx].EMA_26 && items[currIdx].EMA_5 < items[currIdx].EMA_26;
+          model.HasEma5crossAbove48 = items[prevIdx].EMA_5 < items[prevIdx].EMA_48 && items[currIdx].EMA_5 > items[currIdx].EMA_48;
+          model.HasEma5crossBelow48 = items[prevIdx].EMA_5 > items[prevIdx].EMA_48 && items[currIdx].EMA_5 < items[currIdx].EMA_48;
+          model.HasEma9crossAbove10 = items[prevIdx].EMA_9 < items[prevIdx].EMA_10 && items[currIdx].EMA_9 > items[currIdx].EMA_10;
+          model.HasEma9crossBelow10 = items[prevIdx].EMA_9 > items[prevIdx].EMA_10 && items[currIdx].EMA_9 < items[currIdx].EMA_10;
+          model.HasEma9crossAbove12 = items[prevIdx].EMA_9 < items[prevIdx].EMA_12 && items[currIdx].EMA_9 > items[currIdx].EMA_12;
+          model.HasEma9crossBelow12 = items[prevIdx].EMA_9 > items[prevIdx].EMA_12 && items[currIdx].EMA_9 < items[currIdx].EMA_12;
+          model.HasEma9crossAbove13 = items[prevIdx].EMA_9 < items[prevIdx].EMA_13 && items[currIdx].EMA_9 > items[currIdx].EMA_13;
+          model.HasEma9crossBelow13 = items[prevIdx].EMA_9 > items[prevIdx].EMA_13 && items[currIdx].EMA_9 < items[currIdx].EMA_13;
+          model.HasEma9crossAbove26 = items[prevIdx].EMA_9 < items[prevIdx].EMA_26 && items[currIdx].EMA_9 > items[currIdx].EMA_26;
+          model.HasEma9crossBelow26 = items[prevIdx].EMA_9 > items[prevIdx].EMA_26 && items[currIdx].EMA_9 < items[currIdx].EMA_26;
+          model.HasEma9crossAbove48 = items[prevIdx].EMA_9 < items[prevIdx].EMA_48 && items[currIdx].EMA_9 > items[currIdx].EMA_48;
+          model.HasEma9crossBelow48 = items[prevIdx].EMA_9 > items[prevIdx].EMA_48 && items[currIdx].EMA_9 < items[currIdx].EMA_48;
+          model.HasEma10crossAbove12 = items[prevIdx].EMA_10 < items[prevIdx].EMA_12 && items[currIdx].EMA_10 > items[currIdx].EMA_12;
+          model.HasEma10crossBelow12 = items[prevIdx].EMA_10 > items[prevIdx].EMA_12 && items[currIdx].EMA_10 < items[currIdx].EMA_12;
+          model.HasEma10crossAbove13 = items[prevIdx].EMA_10 < items[prevIdx].EMA_13 && items[currIdx].EMA_10 > items[currIdx].EMA_13;
+          model.HasEma10crossBelow13 = items[prevIdx].EMA_10 > items[prevIdx].EMA_13 && items[currIdx].EMA_10 < items[currIdx].EMA_13;
+          model.HasEma10crossAbove26 = items[prevIdx].EMA_10 < items[prevIdx].EMA_26 && items[currIdx].EMA_10 > items[currIdx].EMA_26;
+          model.HasEma10crossBelow26 = items[prevIdx].EMA_10 > items[prevIdx].EMA_26 && items[currIdx].EMA_10 < items[currIdx].EMA_26;
+          model.HasEma10crossAbove48 = items[prevIdx].EMA_10 < items[prevIdx].EMA_48 && items[currIdx].EMA_10 > items[currIdx].EMA_48;
+          model.HasEma10crossBelow48 = items[prevIdx].EMA_10 > items[prevIdx].EMA_48 && items[currIdx].EMA_10 < items[currIdx].EMA_48;
+          model.HasEma12crossAbove13 = items[prevIdx].EMA_12 < items[prevIdx].EMA_13 && items[currIdx].EMA_12 > items[currIdx].EMA_13;
+          model.HasEma12crossBelow13 = items[prevIdx].EMA_12 > items[prevIdx].EMA_13 && items[currIdx].EMA_12 < items[currIdx].EMA_13;
+          model.HasEma12crossAbove26 = items[prevIdx].EMA_12 < items[prevIdx].EMA_26 && items[currIdx].EMA_12 > items[currIdx].EMA_26;
+          model.HasEma12crossBelow26 = items[prevIdx].EMA_12 > items[prevIdx].EMA_26 && items[currIdx].EMA_12 < items[currIdx].EMA_26;
+          model.HasEma12crossAbove48 = items[prevIdx].EMA_12 < items[prevIdx].EMA_48 && items[currIdx].EMA_12 > items[currIdx].EMA_48;
+          model.HasEma12crossBelow48 = items[prevIdx].EMA_12 > items[prevIdx].EMA_48 && items[currIdx].EMA_12 < items[currIdx].EMA_48;
+          model.HasEma13crossAbove26 = items[prevIdx].EMA_13 < items[prevIdx].EMA_26 && items[currIdx].EMA_13 > items[currIdx].EMA_26;
+          model.HasEma13crossBelow26 = items[prevIdx].EMA_13 > items[prevIdx].EMA_26 && items[currIdx].EMA_13 < items[currIdx].EMA_26;
+          model.HasEma13crossAbove48 = items[prevIdx].EMA_13 < items[prevIdx].EMA_48 && items[currIdx].EMA_13 > items[currIdx].EMA_48;
+          model.HasEma13crossBelow48 = items[prevIdx].EMA_13 > items[prevIdx].EMA_48 && items[currIdx].EMA_13 < items[currIdx].EMA_48;
+          model.HasEma26crossAbove48 = items[prevIdx].EMA_26 < items[prevIdx].EMA_48 && items[currIdx].EMA_26 > items[currIdx].EMA_48;
+          model.HasEma26crossBelow48 = items[prevIdx].EMA_26 > items[prevIdx].EMA_48 && items[currIdx].EMA_26 < items[currIdx].EMA_48;
           #endregion
 
           #region Calculate ADTV, ADPV
-          item.model.ADTV_20 = NumberUtils.Round(sumVolume20 / Consts.ADTV_PERIOD_20);
-          item.model.ADTV_30 = NumberUtils.Round(sumVolume30 / Consts.ADTV_PERIOD_30);
-          item.model.ADTV_50 = NumberUtils.Round(sumVolume50 / Consts.ADTV_PERIOD_50);
-          item.model.ADPV_20 = NumberUtils.Round(sumPriceVolume20 / Consts.ADPV_PERIOD_20);
-          item.model.ADPV_30 = NumberUtils.Round(sumPriceVolume30 / Consts.ADPV_PERIOD_30);
-          item.model.ADPV_50 = NumberUtils.Round(sumPriceVolume50 / Consts.ADPV_PERIOD_50);
+          model.Adtv20 = NumberUtils.Round(sumVolume20 / Consts.ADTV_PERIOD_20);
+          model.Adtv30 = NumberUtils.Round(sumVolume30 / Consts.ADTV_PERIOD_30);
+          model.Adtv50 = NumberUtils.Round(sumVolume50 / Consts.ADTV_PERIOD_50);
+          model.Adtv20 = NumberUtils.Round(sumPriceVolume20 / Consts.ADPV_PERIOD_20);
+          model.Adtv30 = NumberUtils.Round(sumPriceVolume30 / Consts.ADPV_PERIOD_30);
+          model.Adtv50 = NumberUtils.Round(sumPriceVolume50 / Consts.ADPV_PERIOD_50);
           #endregion
 
           #region Calculate RSI
@@ -400,30 +419,39 @@ namespace Stock.Services.Services
           item.model.RSI_6 = rsi6;
           item.model.RSI_10 = rsi10;
           item.model.RSI_14 = rsi14;
-          item.model.HasRSI6CrossAbove70 = items[prevIdx].RSI_6 < Consts.RSI_70 && items[currIdx].RSI_6 > Consts.RSI_70;
-          item.model.HasRSI6CrossAbove75 = items[prevIdx].RSI_6 < Consts.RSI_75 && items[currIdx].RSI_6 > Consts.RSI_75;
-          item.model.HasRSI6CrossAbove80 = items[prevIdx].RSI_6 < Consts.RSI_80 && items[currIdx].RSI_6 > Consts.RSI_80;
-          item.model.HasRSI6CrossAbove85 = items[prevIdx].RSI_6 < Consts.RSI_85 && items[currIdx].RSI_6 > Consts.RSI_85;
-          item.model.HasRSI6CrossBelow30 = items[prevIdx].RSI_6 > Consts.RSI_30 && items[currIdx].RSI_6 < Consts.RSI_30;
-          item.model.HasRSI6CrossBelow25 = items[prevIdx].RSI_6 > Consts.RSI_25 && items[currIdx].RSI_6 < Consts.RSI_25;
-          item.model.HasRSI6CrossBelow20 = items[prevIdx].RSI_6 > Consts.RSI_20 && items[currIdx].RSI_6 < Consts.RSI_20;
-          item.model.HasRSI6CrossBelow15 = items[prevIdx].RSI_6 > Consts.RSI_15 && items[currIdx].RSI_6 < Consts.RSI_15;
-          item.model.HasRSI10CrossAbove70 = items[prevIdx].RSI_10 < Consts.RSI_70 && items[currIdx].RSI_10 > Consts.RSI_70;
-          item.model.HasRSI10CrossAbove75 = items[prevIdx].RSI_10 < Consts.RSI_75 && items[currIdx].RSI_10 > Consts.RSI_75;
-          item.model.HasRSI10CrossAbove80 = items[prevIdx].RSI_10 < Consts.RSI_80 && items[currIdx].RSI_10 > Consts.RSI_80;
-          item.model.HasRSI10CrossAbove85 = items[prevIdx].RSI_10 < Consts.RSI_85 && items[currIdx].RSI_10 > Consts.RSI_85;
-          item.model.HasRSI10CrossBelow30 = items[prevIdx].RSI_10 > Consts.RSI_30 && items[currIdx].RSI_10 < Consts.RSI_30;
-          item.model.HasRSI10CrossBelow25 = items[prevIdx].RSI_10 > Consts.RSI_25 && items[currIdx].RSI_10 < Consts.RSI_25;
-          item.model.HasRSI10CrossBelow20 = items[prevIdx].RSI_10 > Consts.RSI_20 && items[currIdx].RSI_10 < Consts.RSI_20;
-          item.model.HasRSI10CrossBelow15 = items[prevIdx].RSI_10 > Consts.RSI_15 && items[currIdx].RSI_10 < Consts.RSI_15;
-          item.model.HasRSI14CrossAbove70 = items[prevIdx].RSI_14 < Consts.RSI_70 && items[currIdx].RSI_14 > Consts.RSI_70;
-          item.model.HasRSI14CrossAbove75 = items[prevIdx].RSI_14 < Consts.RSI_75 && items[currIdx].RSI_14 > Consts.RSI_75;
-          item.model.HasRSI14CrossAbove80 = items[prevIdx].RSI_14 < Consts.RSI_80 && items[currIdx].RSI_14 > Consts.RSI_80;
-          item.model.HasRSI14CrossAbove85 = items[prevIdx].RSI_14 < Consts.RSI_85 && items[currIdx].RSI_14 > Consts.RSI_85;
-          item.model.HasRSI14CrossBelow30 = items[prevIdx].RSI_14 > Consts.RSI_30 && items[currIdx].RSI_14 < Consts.RSI_30;
-          item.model.HasRSI14CrossBelow25 = items[prevIdx].RSI_14 > Consts.RSI_25 && items[currIdx].RSI_14 < Consts.RSI_25;
-          item.model.HasRSI14CrossBelow20 = items[prevIdx].RSI_14 > Consts.RSI_20 && items[currIdx].RSI_14 < Consts.RSI_20;
-          item.model.HasRSI14CrossBelow15 = items[prevIdx].RSI_14 > Consts.RSI_15 && items[currIdx].RSI_14 < Consts.RSI_15;
+          model.AvgGain6 = item.model.AvgGain_6;
+          model.AvgLoss6 = item.model.AvgLoss_6;
+          model.AvgGain10 = item.model.AvgGain_10;
+          model.AvgLoss10 = item.model.AvgLoss_10;
+          model.AvgGain14 = item.model.AvgGain_14;
+          model.AvgLoss14 = item.model.AvgLoss_14;
+          model.Rsi6 = item.model.RSI_6;
+          model.Rsi10 = item.model.RSI_10;
+          model.Rsi14 = item.model.RSI_14;
+          model.HasRsi6crossAbove70 = items[prevIdx].RSI_6 < Consts.RSI_70 && items[currIdx].RSI_6 > Consts.RSI_70;
+          model.HasRsi6crossAbove75 = items[prevIdx].RSI_6 < Consts.RSI_75 && items[currIdx].RSI_6 > Consts.RSI_75;
+          model.HasRsi6crossAbove80 = items[prevIdx].RSI_6 < Consts.RSI_80 && items[currIdx].RSI_6 > Consts.RSI_80;
+          model.HasRsi6crossAbove85 = items[prevIdx].RSI_6 < Consts.RSI_85 && items[currIdx].RSI_6 > Consts.RSI_85;
+          model.HasRsi6crossBelow30 = items[prevIdx].RSI_6 > Consts.RSI_30 && items[currIdx].RSI_6 < Consts.RSI_30;
+          model.HasRsi6crossBelow25 = items[prevIdx].RSI_6 > Consts.RSI_25 && items[currIdx].RSI_6 < Consts.RSI_25;
+          model.HasRsi6crossBelow20 = items[prevIdx].RSI_6 > Consts.RSI_20 && items[currIdx].RSI_6 < Consts.RSI_20;
+          model.HasRsi6crossBelow15 = items[prevIdx].RSI_6 > Consts.RSI_15 && items[currIdx].RSI_6 < Consts.RSI_15;
+          model.HasRsi10crossAbove70 = items[prevIdx].RSI_10 < Consts.RSI_70 && items[currIdx].RSI_10 > Consts.RSI_70;
+          model.HasRsi10crossAbove75 = items[prevIdx].RSI_10 < Consts.RSI_75 && items[currIdx].RSI_10 > Consts.RSI_75;
+          model.HasRsi10crossAbove80 = items[prevIdx].RSI_10 < Consts.RSI_80 && items[currIdx].RSI_10 > Consts.RSI_80;
+          model.HasRsi10crossAbove85 = items[prevIdx].RSI_10 < Consts.RSI_85 && items[currIdx].RSI_10 > Consts.RSI_85;
+          model.HasRsi10crossBelow30 = items[prevIdx].RSI_10 > Consts.RSI_30 && items[currIdx].RSI_10 < Consts.RSI_30;
+          model.HasRsi10crossBelow25 = items[prevIdx].RSI_10 > Consts.RSI_25 && items[currIdx].RSI_10 < Consts.RSI_25;
+          model.HasRsi10crossBelow20 = items[prevIdx].RSI_10 > Consts.RSI_20 && items[currIdx].RSI_10 < Consts.RSI_20;
+          model.HasRsi10crossBelow15 = items[prevIdx].RSI_10 > Consts.RSI_15 && items[currIdx].RSI_10 < Consts.RSI_15;
+          model.HasRsi14crossAbove70 = items[prevIdx].RSI_14 < Consts.RSI_70 && items[currIdx].RSI_14 > Consts.RSI_70;
+          model.HasRsi14crossAbove75 = items[prevIdx].RSI_14 < Consts.RSI_75 && items[currIdx].RSI_14 > Consts.RSI_75;
+          model.HasRsi14crossAbove80 = items[prevIdx].RSI_14 < Consts.RSI_80 && items[currIdx].RSI_14 > Consts.RSI_80;
+          model.HasRsi14crossAbove85 = items[prevIdx].RSI_14 < Consts.RSI_85 && items[currIdx].RSI_14 > Consts.RSI_85;
+          model.HasRsi14crossBelow30 = items[prevIdx].RSI_14 > Consts.RSI_30 && items[currIdx].RSI_14 < Consts.RSI_30;
+          model.HasRsi14crossBelow25 = items[prevIdx].RSI_14 > Consts.RSI_25 && items[currIdx].RSI_14 < Consts.RSI_25;
+          model.HasRsi14crossBelow20 = items[prevIdx].RSI_14 > Consts.RSI_20 && items[currIdx].RSI_14 < Consts.RSI_20;
+          model.HasRsi14crossBelow15 = items[prevIdx].RSI_14 > Consts.RSI_15 && items[currIdx].RSI_14 < Consts.RSI_15;
           #endregion
 
           #region Calculate Bollinger Bands
@@ -444,22 +472,28 @@ namespace Stock.Services.Services
           item.model.BollingerLowerStvDev2_20 = item.model.SMA_20 - stdDev20 * 2;
           item.model.BollingerUpperStvDev25_20 = item.model.SMA_20 + stdDev20 * 2.5m;
           item.model.BollingerLowerStvDev25_20 = item.model.SMA_20 - stdDev20 * 2.5m;
-          item.model.HasCrossAboveBollingerUpperStvDev2_20 = items[prevIdx].ClosePrice < items[prevIdx].BollingerUpperStvDev2_20 && items[currIdx].ClosePrice > items[currIdx].BollingerUpperStvDev2_20;
-          item.model.HasCrossBelowBollingerLowerStvDev2_20 = items[prevIdx].ClosePrice > items[prevIdx].BollingerLowerStvDev2_20 && items[currIdx].ClosePrice < items[currIdx].BollingerLowerStvDev2_20;
-          item.model.HasCrossAboveBollingerUpperStvDev25_20 = items[prevIdx].ClosePrice < items[prevIdx].BollingerUpperStvDev25_20 && items[currIdx].ClosePrice > items[currIdx].BollingerUpperStvDev25_20;
-          item.model.HasCrossBelowBollingerLowerStvDev25_20 = items[prevIdx].ClosePrice > items[prevIdx].BollingerLowerStvDev25_20 && items[currIdx].ClosePrice < items[currIdx].BollingerLowerStvDev25_20;
+          model.BollingerUpperStvDev120 = item.model.BollingerUpperStvDev1_20;
+          model.BollingerLowerStvDev120 = item.model.BollingerLowerStvDev1_20;
+          model.BollingerUpperStvDev220 = item.model.BollingerUpperStvDev2_20;
+          model.BollingerLowerStvDev220 = item.model.BollingerLowerStvDev2_20;
+          model.BollingerUpperStvDev2520 = item.model.BollingerUpperStvDev25_20;
+          model.BollingerLowerStvDev2520 = item.model.BollingerLowerStvDev25_20;
+          model.HasCrossAboveBollingerUpperStvDev220 = items[prevIdx].ClosePrice < items[prevIdx].BollingerUpperStvDev2_20 && items[currIdx].ClosePrice > items[currIdx].BollingerUpperStvDev2_20;
+          model.HasCrossBelowBollingerLowerStvDev220 = items[prevIdx].ClosePrice > items[prevIdx].BollingerLowerStvDev2_20 && items[currIdx].ClosePrice < items[currIdx].BollingerLowerStvDev2_20;
+          model.HasCrossAboveBollingerUpperStvDev2520 = items[prevIdx].ClosePrice < items[prevIdx].BollingerUpperStvDev25_20 && items[currIdx].ClosePrice > items[currIdx].BollingerUpperStvDev25_20;
+          model.HasCrossBelowBollingerLowerStvDev2520 = items[prevIdx].ClosePrice > items[prevIdx].BollingerLowerStvDev25_20 && items[currIdx].ClosePrice < items[currIdx].BollingerLowerStvDev25_20;
           #endregion
 
-          models.Add(new JsonItem() { JsonStr = StringUtils.Serialize(item.model) });
+          models.Add(model);
         }
 
         LogUtils.Debug($"INSERT START={symbol}");
         var skip = 0;
         while (skip < models.Count)
         {
-          var query = models.Skip(skip).Take(500);
-          Insert<JsonItem>(query.ToList());
-          skip += 500;
+          var query = models.Skip(skip).Take(100);
+          Insert<Analysis>(query.ToList());
+          skip += 100;
         }
         LogUtils.Debug($"INSERT END={symbol}");
       }
@@ -468,6 +502,11 @@ namespace Stock.Services.Services
     public int GetClass(decimal pastPrice, decimal futurePrice)
     {
       return (futurePrice > pastPrice) ? Consts.CLASS_UP : Consts.CLASS_DOWN;
+    }
+
+    public void SelectTest()
+    {
+      LogUtils.Debug($"tests.Count");
     }
   }
 }

@@ -15,5 +15,11 @@ namespace Stock.Tests.JobRuns
     {
       new AnalysisService().Transform();
     }
+
+    [Test()]
+    public void Run_SelectTest()
+    {
+      new AnalysisService().SelectTest();
+    }
   }
 }
