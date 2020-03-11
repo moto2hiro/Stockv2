@@ -9,7 +9,7 @@ namespace Stock.Services.Services.CsvServices
 {
   public abstract class BaseCsvService<T, TMap> : BaseService where TMap : ClassMap
   {
-    protected abstract int Save(List<T> records);
+    protected abstract int Save(string fileName, List<T> records);
 
     public int SaveCsv(string fileName)
     {
@@ -19,7 +19,7 @@ namespace Stock.Services.Services.CsvServices
         var records = CsvUtils.ParseCsv<T, TMap>(fileName);
         if (records != null)
         {
-          ret += Save(records);
+          ret += Save(fileName, records);
         }
       }
       return ret;

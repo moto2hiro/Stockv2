@@ -790,8 +790,8 @@ namespace Stock.Services.Services
           return new SimfinFinancialIncomeCsvService().SaveCsv(fileName);
         else if (typeof(TMap) == typeof(MapSimfinFinancialBalance))
           return new SimfinFinancialBalanceCsvService().SaveCsv(fileName);
-        else if (typeof(TMap) == typeof(MapSimfinFinancialCash))
-          return new SimfinFinancialCashCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapStockpupFinancial))
+          return new StockpupFinancialCsvService().SaveCsv(fileName);
       }
       return 0;
     }

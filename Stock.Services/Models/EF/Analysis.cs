@@ -205,5 +205,23 @@ namespace Stock.Services.Models.EF
         public bool HasCrossBelowBollingerLowerStvDev220 { get; set; }
         public bool HasCrossAboveBollingerUpperStvDev2520 { get; set; }
         public bool HasCrossBelowBollingerLowerStvDev2520 { get; set; }
+        public int? Shares { get; set; }
+        public decimal? Revenue { get; set; }
+        public decimal? GrossProfit { get; set; }
+        public decimal? NetIncome { get; set; }
+        public decimal? CurrentAssets { get; set; }
+        public decimal? TtlAssets { get; set; }
+        public decimal? CurrentLiabilities { get; set; }
+        public decimal? TtlLiabilities { get; set; }
+        public decimal? LongTermDebt { get; set; }
+        public decimal? TtlEquity { get; set; }
+        public decimal? CurrentRatio { get; set; }
+        public decimal? DebtToEquityRatio { get; set; }
+        public decimal? FreeCashFlow { get; set; }
+        public decimal? DivPayoutRatio { get; set; }
+        public decimal? Roe { get; set; }
+        public bool? HasGoodFinancial1Yr { get; set; }
+        public bool? HasGoodFinancial2Yr { get; set; }
+        public bool? HasGoodFinancial3Yr { get; set; }
     }
 }

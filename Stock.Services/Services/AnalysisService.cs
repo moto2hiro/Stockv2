@@ -20,6 +20,14 @@ namespace Stock.Services.Services
       var symbols = DB.SymbolMaster.OrderBy(s => s.Symbol).ToList();
       foreach (var symbolMaster in symbols)
       {
+        var financials = DB.Financial.Where(f =>
+          f.Symbol == symbolMaster.Symbol &&
+          f.FreeCashFlow != null).ToList();
+        if (financials == null || financials.Count == 0)
+        {
+          continue;
+        }
+
         var models = new List<Analysis>();
         var symbol = symbolMaster.Symbol;
         var items = DB.StockPrice.Where(s => s.Symbol == symbol).OrderBy(s => s.PriceDate).ToList();
@@ -484,16 +492,104 @@ namespace Stock.Services.Services
           model.HasCrossBelowBollingerLowerStvDev2520 = items[prevIdx].ClosePrice > items[prevIdx].BollingerLowerStvDev25_20 && items[currIdx].ClosePrice < items[currIdx].BollingerLowerStvDev25_20;
           #endregion
 
-          models.Add(model);
+          #region Financials
+          var financial = financials.FirstOrDefault(f => f.PublishDate <= item.model.PriceDate);
+          if (financial != null && 
+              (financial.PublishDate.GetValueOrDefault().Year == item.model.PriceDate.Year ||
+               financial.PublishDate.GetValueOrDefault().Year == item.model.PriceDate.Year - 1))
+          {
+            model.Shares = financial.Shares.GetValueOrDefault();
+            model.Revenue = financial.Revenue.GetValueOrDefault();
+            model.GrossProfit = financial.GrossProfit.GetValueOrDefault();
+            model.NetIncome = financial.NetIncome.GetValueOrDefault();
+            model.CurrentAssets = financial.CurrentAssets.GetValueOrDefault();
+            model.TtlAssets = financial.TtlAssets.GetValueOrDefault();
+            model.CurrentLiabilities = financial.CurrentLiabilities.GetValueOrDefault();
+            model.TtlLiabilities = financial.TtlLiabilities.GetValueOrDefault();
+            model.LongTermDebt = financial.LongTermDebt.GetValueOrDefault();
+            model.TtlEquity = financial.TtlEquity.GetValueOrDefault();
+            model.CurrentRatio = financial.CurrentRatio;
+            model.DebtToEquityRatio = financial.DebtToEquityRatio;
+            model.FreeCashFlow = financial.FreeCashFlow.GetValueOrDefault();
+            model.DivPayoutRatio = financial.DivPayoutRatio.GetValueOrDefault();
+            model.Roe = financial.Roe;
+
+            var last1YrFinancials = financials
+              .Where(f => f.PublishDate <= item.model.PriceDate)
+              .OrderByDescending(f => f.PublishDate)
+              .Take(4)
+              .ToList();
+            var isGood = true;
+            foreach (var pastFinancial in last1YrFinancials)
+            {
+              isGood = isGood && pastFinancial.Revenue.GetValueOrDefault() > 0;
+              isGood = isGood && pastFinancial.GrossProfit.GetValueOrDefault() > 0;
+              isGood = isGood && pastFinancial.NetIncome.GetValueOrDefault() > 0;
+              isGood = isGood && pastFinancial.CurrentRatio > 1;
+              isGood = isGood && pastFinancial.DebtToEquityRatio < 2;
+              isGood = isGood && pastFinancial.FreeCashFlow.GetValueOrDefault() > 0;
+              isGood = isGood && pastFinancial.DivPayoutRatio.GetValueOrDefault() < 0.5m;
+              isGood = isGood && pastFinancial.Roe > 0;
+            }
+            model.HasGoodFinancial1Yr = isGood;
+
+            var last2YrFinancials = financials
+              .Where(f => f.PublishDate <= item.model.PriceDate)
+              .OrderByDescending(f => f.PublishDate)
+              .Skip(4)
+              .Take(4)
+              .ToList();
+            if (last2YrFinancials != null)
+            {
+              foreach (var pastFinancial in last2YrFinancials)
+              {
+                isGood = isGood && pastFinancial.Revenue.GetValueOrDefault() > 0;
+                isGood = isGood && pastFinancial.GrossProfit.GetValueOrDefault() > 0;
+                isGood = isGood && pastFinancial.NetIncome.GetValueOrDefault() > 0;
+                isGood = isGood && pastFinancial.CurrentRatio > 1;
+                isGood = isGood && pastFinancial.DebtToEquityRatio < 2;
+                isGood = isGood && pastFinancial.FreeCashFlow.GetValueOrDefault() > 0;
+                isGood = isGood && pastFinancial.DivPayoutRatio.GetValueOrDefault() < 0.5m;
+                isGood = isGood && pastFinancial.Roe > 0;
+              }
+              model.HasGoodFinancial2Yr = isGood;
+            }
+
+            var last3YrFinancials = financials
+              .Where(f => f.PublishDate <= item.model.PriceDate)
+              .OrderByDescending(f => f.PublishDate)
+              .Skip(8)
+              .Take(4)
+              .ToList();
+            if (last3YrFinancials != null)
+            {
+              foreach (var pastFinancial in last3YrFinancials)
+              {
+                isGood = isGood && pastFinancial.Revenue.GetValueOrDefault() > 0;
+                isGood = isGood && pastFinancial.GrossProfit.GetValueOrDefault() > 0;
+                isGood = isGood && pastFinancial.NetIncome.GetValueOrDefault() > 0;
+                isGood = isGood && pastFinancial.CurrentRatio > 1;
+                isGood = isGood && pastFinancial.DebtToEquityRatio < 2;
+                isGood = isGood && pastFinancial.FreeCashFlow.GetValueOrDefault() > 0;
+                isGood = isGood && pastFinancial.DivPayoutRatio.GetValueOrDefault() < 0.5m;
+                isGood = isGood && pastFinancial.Roe > 0;
+              }
+              model.HasGoodFinancial3Yr = isGood;
+            }
+            
+            models.Add(model);
+          }
+          #endregion
         }
 
-        LogUtils.Debug($"INSERT START={symbol}");
+        LogUtils.Debug($"INSERT START={symbol} {models.Count}");
         var skip = 0;
         while (skip < models.Count)
         {
           var query = models.Skip(skip).Take(100);
           Insert<Analysis>(query.ToList());
           skip += 100;
+          LogUtils.Debug($"Current skip = {skip}");
         }
         LogUtils.Debug($"INSERT END={symbol}");
       }

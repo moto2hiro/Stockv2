@@ -111,6 +111,16 @@ namespace Stock.Services.Models.EF
 
                 entity.Property(e => e.ClosePrice).HasColumnType("decimal(18, 2)");
 
+                entity.Property(e => e.CurrentAssets).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.CurrentLiabilities).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.CurrentRatio).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.DebtToEquityRatio).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.DivPayoutRatio).HasColumnType("decimal(18, 2)");
+
                 entity.Property(e => e.Ema10)
                     .HasColumnName("EMA_10")
                     .HasColumnType("decimal(18, 2)");
@@ -138,6 +148,10 @@ namespace Stock.Services.Models.EF
                 entity.Property(e => e.Ema9)
                     .HasColumnName("EMA_9")
                     .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.FreeCashFlow).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.GrossProfit).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.HasCrossAboveBollingerUpperStvDev220).HasColumnName("HasCrossAboveBollingerUpperStvDev2_20");
 
@@ -337,11 +351,19 @@ namespace Stock.Services.Models.EF
 
                 entity.Property(e => e.IsLocalMin50).HasColumnName("IsLocalMin_50");
 
+                entity.Property(e => e.LongTermDebt).HasColumnType("decimal(18, 2)");
+
                 entity.Property(e => e.LowPrice).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.NetIncome).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.OpenPrice).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.PriceVolume).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Revenue).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Roe).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.Rsi10)
                     .HasColumnName("RSI_10")
@@ -379,6 +401,12 @@ namespace Stock.Services.Models.EF
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.TtlAssets).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TtlEquity).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TtlLiabilities).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.Yactual).HasColumnName("YActual");
 
@@ -528,25 +556,17 @@ namespace Stock.Services.Models.EF
 
                 entity.Property(e => e.CurrentLiabilities).HasColumnType("decimal(18, 2)");
 
-                entity.Property(e => e.CurrentRatio).HasColumnType("decimal(18, 2)");
-
-                entity.Property(e => e.DebtToEquityRatio).HasColumnType("decimal(18, 2)");
-
                 entity.Property(e => e.DivPayoutRatio).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.FreeCashFlow).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.GrossProfit).HasColumnType("decimal(18, 2)");
 
+                entity.Property(e => e.LongTermDebt).HasColumnType("decimal(18, 2)");
+
                 entity.Property(e => e.NetIncome).HasColumnType("decimal(18, 2)");
 
-                entity.Property(e => e.PbRatio).HasColumnType("decimal(18, 2)");
-
-                entity.Property(e => e.PeRatio).HasColumnType("decimal(18, 2)");
-
                 entity.Property(e => e.Revenue).HasColumnType("decimal(18, 2)");
-
-                entity.Property(e => e.Roe).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.Symbol)
                     .IsRequired()
