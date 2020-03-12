@@ -10,7 +10,7 @@ namespace Stock.Services.Services
   public interface IAnalysisService
   {
     void Transform();
-    void SelectTest();
+    void Analyze();
   }
 
   public class AnalysisService : BaseService, IAnalysisService
@@ -494,7 +494,7 @@ namespace Stock.Services.Services
 
           #region Financials
           var financial = financials.FirstOrDefault(f => f.PublishDate <= item.model.PriceDate);
-          if (financial != null && 
+          if (financial != null &&
               (financial.PublishDate.GetValueOrDefault().Year == item.model.PriceDate.Year ||
                financial.PublishDate.GetValueOrDefault().Year == item.model.PriceDate.Year - 1))
           {
@@ -576,7 +576,7 @@ namespace Stock.Services.Services
               }
               model.HasGoodFinancial3Yr = isGood;
             }
-            
+
             models.Add(model);
           }
           #endregion
@@ -600,9 +600,208 @@ namespace Stock.Services.Services
       return (futurePrice > pastPrice) ? Consts.CLASS_UP : Consts.CLASS_DOWN;
     }
 
-    public void SelectTest()
+    private static readonly string[] EXCLUDE_PROPS = new string[]
     {
-      LogUtils.Debug($"tests.Count");
+      "HasGoodFinancial1Yr", "HasGoodFinancial2Yr", "HasGoodFinancial3Yr"
+    };
+    public void Analyze()
+    {
+      var query = DB.Analysis.AsQueryable();
+      query = query.Where(a => a.HasGoodFinancial1Yr == true);
+      ShowResults(query.Where(a => a.HasSma10crossAbove20 == true), "HasSma10crossAbove20");
+      ShowResults(query.Where(a => a.HasSma10crossBelow20 == true), "HasSma10crossBelow20");
+      ShowResults(query.Where(a => a.HasSma10crossAbove50 == true), "HasSma10crossAbove50");
+      ShowResults(query.Where(a => a.HasSma10crossBelow50 == true), "HasSma10crossBelow50");
+      ShowResults(query.Where(a => a.HasSma10crossAbove100 == true), "HasSma10crossAbove100");
+      ShowResults(query.Where(a => a.HasSma10crossBelow100 == true), "HasSma10crossBelow100");
+      ShowResults(query.Where(a => a.HasSma10crossAbove200 == true), "HasSma10crossAbove200");
+      ShowResults(query.Where(a => a.HasSma10crossBelow200 == true), "HasSma10crossBelow200");
+      ShowResults(query.Where(a => a.HasSma20crossAbove50 == true), "HasSma20crossAbove50");
+      ShowResults(query.Where(a => a.HasSma20crossBelow50 == true), "HasSma20crossBelow50");
+      ShowResults(query.Where(a => a.HasSma20crossAbove100 == true), "HasSma20crossAbove100");
+      ShowResults(query.Where(a => a.HasSma20crossBelow100 == true), "HasSma20crossBelow100");
+      ShowResults(query.Where(a => a.HasSma20crossAbove200 == true), "HasSma20crossAbove200");
+      ShowResults(query.Where(a => a.HasSma20crossBelow200 == true), "HasSma20crossBelow200");
+      ShowResults(query.Where(a => a.HasSma50crossAbove100 == true), "HasSma50crossAbove100");
+      ShowResults(query.Where(a => a.HasSma50crossBelow100 == true), "HasSma50crossBelow100");
+      ShowResults(query.Where(a => a.HasSma50crossAbove200 == true), "HasSma50crossAbove200");
+      ShowResults(query.Where(a => a.HasSma50crossBelow200 == true), "HasSma50crossBelow200");
+      ShowResults(query.Where(a => a.HasSma100crossAbove200 == true), "HasSma100crossAbove200");
+      ShowResults(query.Where(a => a.HasSma100crossBelow200 == true), "HasSma100crossBelow200");
+      ShowResults(query.Where(a => a.HasEma5crossAbove9 == true), "HasEma5crossAbove9");
+      ShowResults(query.Where(a => a.HasEma5crossBelow9 == true), "HasEma5crossBelow9");
+      ShowResults(query.Where(a => a.HasEma5crossAbove10 == true), "HasEma5crossAbove10");
+      ShowResults(query.Where(a => a.HasEma5crossBelow10 == true), "HasEma5crossBelow10");
+      ShowResults(query.Where(a => a.HasEma5crossAbove12 == true), "HasEma5crossAbove12");
+      ShowResults(query.Where(a => a.HasEma5crossBelow12 == true), "HasEma5crossBelow12");
+      ShowResults(query.Where(a => a.HasEma5crossAbove13 == true), "HasEma5crossAbove13");
+      ShowResults(query.Where(a => a.HasEma5crossBelow13 == true), "HasEma5crossBelow13");
+      ShowResults(query.Where(a => a.HasEma5crossAbove26 == true), "HasEma5crossAbove26");
+      ShowResults(query.Where(a => a.HasEma5crossBelow26 == true), "HasEma5crossBelow26");
+      ShowResults(query.Where(a => a.HasEma5crossAbove48 == true), "HasEma5crossAbove48");
+      ShowResults(query.Where(a => a.HasEma5crossBelow48 == true), "HasEma5crossBelow48");
+      ShowResults(query.Where(a => a.HasEma9crossAbove10 == true), "HasEma9crossAbove10");
+      ShowResults(query.Where(a => a.HasEma9crossBelow10 == true), "HasEma9crossBelow10");
+      ShowResults(query.Where(a => a.HasEma9crossAbove12 == true), "HasEma9crossAbove12");
+      ShowResults(query.Where(a => a.HasEma9crossBelow12 == true), "HasEma9crossBelow12");
+      ShowResults(query.Where(a => a.HasEma9crossAbove13 == true), "HasEma9crossAbove13");
+      ShowResults(query.Where(a => a.HasEma9crossBelow13 == true), "HasEma9crossBelow13");
+      ShowResults(query.Where(a => a.HasEma9crossAbove26 == true), "HasEma9crossAbove26");
+      ShowResults(query.Where(a => a.HasEma9crossBelow26 == true), "HasEma9crossBelow26");
+      ShowResults(query.Where(a => a.HasEma9crossAbove48 == true), "HasEma9crossAbove48");
+      ShowResults(query.Where(a => a.HasEma9crossBelow48 == true), "HasEma9crossBelow48");
+      ShowResults(query.Where(a => a.HasEma10crossAbove12 == true), "HasEma10crossAbove12");
+      ShowResults(query.Where(a => a.HasEma10crossBelow12 == true), "HasEma10crossBelow12");
+      ShowResults(query.Where(a => a.HasEma10crossAbove13 == true), "HasEma10crossAbove13");
+      ShowResults(query.Where(a => a.HasEma10crossBelow13 == true), "HasEma10crossBelow13");
+      ShowResults(query.Where(a => a.HasEma10crossAbove26 == true), "HasEma10crossAbove26");
+      ShowResults(query.Where(a => a.HasEma10crossBelow26 == true), "HasEma10crossBelow26");
+      ShowResults(query.Where(a => a.HasEma10crossAbove48 == true), "HasEma10crossAbove48");
+      ShowResults(query.Where(a => a.HasEma10crossBelow48 == true), "HasEma10crossBelow48");
+      ShowResults(query.Where(a => a.HasEma12crossAbove13 == true), "HasEma12crossAbove13");
+      ShowResults(query.Where(a => a.HasEma12crossBelow13 == true), "HasEma12crossBelow13");
+      ShowResults(query.Where(a => a.HasEma12crossAbove26 == true), "HasEma12crossAbove26");
+      ShowResults(query.Where(a => a.HasEma12crossBelow26 == true), "HasEma12crossBelow26");
+      ShowResults(query.Where(a => a.HasEma12crossAbove48 == true), "HasEma12crossAbove48");
+      ShowResults(query.Where(a => a.HasEma12crossBelow48 == true), "HasEma12crossBelow48");
+      ShowResults(query.Where(a => a.HasEma13crossAbove26 == true), "HasEma13crossAbove26");
+      ShowResults(query.Where(a => a.HasEma13crossBelow26 == true), "HasEma13crossBelow26");
+      ShowResults(query.Where(a => a.HasEma13crossAbove48 == true), "HasEma13crossAbove48");
+      ShowResults(query.Where(a => a.HasEma13crossBelow48 == true), "HasEma13crossBelow48");
+      ShowResults(query.Where(a => a.HasEma26crossAbove48 == true), "HasEma26crossAbove48");
+      ShowResults(query.Where(a => a.HasEma26crossBelow48 == true), "HasEma26crossBelow48");
+      ShowResults(query.Where(a => a.HasRsi6crossAbove70 == true), "HasRsi6crossAbove70");
+      ShowResults(query.Where(a => a.HasRsi6crossAbove75 == true), "HasRsi6crossAbove75");
+      ShowResults(query.Where(a => a.HasRsi6crossAbove80 == true), "HasRsi6crossAbove80");
+      ShowResults(query.Where(a => a.HasRsi6crossAbove85 == true), "HasRsi6crossAbove85");
+      ShowResults(query.Where(a => a.HasRsi6crossBelow30 == true), "HasRsi6crossBelow30");
+      ShowResults(query.Where(a => a.HasRsi6crossBelow25 == true), "HasRsi6crossBelow25");
+      ShowResults(query.Where(a => a.HasRsi6crossBelow20 == true), "HasRsi6crossBelow20");
+      ShowResults(query.Where(a => a.HasRsi6crossBelow15 == true), "HasRsi6crossBelow15");
+      ShowResults(query.Where(a => a.HasRsi10crossAbove70 == true), "HasRsi10crossAbove70");
+      ShowResults(query.Where(a => a.HasRsi10crossAbove75 == true), "HasRsi10crossAbove75");
+      ShowResults(query.Where(a => a.HasRsi10crossAbove80 == true), "HasRsi10crossAbove80");
+      ShowResults(query.Where(a => a.HasRsi10crossAbove85 == true), "HasRsi10crossAbove85");
+      ShowResults(query.Where(a => a.HasRsi10crossBelow30 == true), "HasRsi10crossBelow30");
+      ShowResults(query.Where(a => a.HasRsi10crossBelow25 == true), "HasRsi10crossBelow25");
+      ShowResults(query.Where(a => a.HasRsi10crossBelow20 == true), "HasRsi10crossBelow20");
+      ShowResults(query.Where(a => a.HasRsi10crossBelow15 == true), "HasRsi10crossBelow15");
+      ShowResults(query.Where(a => a.HasRsi14crossAbove70 == true), "HasRsi14crossAbove70");
+      ShowResults(query.Where(a => a.HasRsi14crossAbove75 == true), "HasRsi14crossAbove75");
+      ShowResults(query.Where(a => a.HasRsi14crossAbove80 == true), "HasRsi14crossAbove80");
+      ShowResults(query.Where(a => a.HasRsi14crossAbove85 == true), "HasRsi14crossAbove85");
+      ShowResults(query.Where(a => a.HasRsi14crossBelow30 == true), "HasRsi14crossBelow30");
+      ShowResults(query.Where(a => a.HasRsi14crossBelow25 == true), "HasRsi14crossBelow25");
+      ShowResults(query.Where(a => a.HasRsi14crossBelow20 == true), "HasRsi14crossBelow20");
+      ShowResults(query.Where(a => a.HasRsi14crossBelow15 == true), "HasRsi14crossBelow15");
+      ShowResults(query.Where(a => a.IsLocalMax10 == true), "IsLocalMax10");
+      ShowResults(query.Where(a => a.IsLocalMax20 == true), "IsLocalMax20");
+      ShowResults(query.Where(a => a.IsLocalMax50 == true), "IsLocalMax50");
+      ShowResults(query.Where(a => a.IsLocalMax200 == true), "IsLocalMax200");
+      ShowResults(query.Where(a => a.IsLocalMin10 == true), "IsLocalMin10");
+      ShowResults(query.Where(a => a.IsLocalMin20 == true), "IsLocalMin20");
+      ShowResults(query.Where(a => a.IsLocalMin50 == true), "IsLocalMin50");
+      ShowResults(query.Where(a => a.IsLocalMin200 == true), "IsLocalMin200");
+      ShowResults(query.Where(a => a.HasCrossAboveBollingerUpperStvDev220 == true), "HasCrossAboveBollingerUpperStvDev220");
+      ShowResults(query.Where(a => a.HasCrossBelowBollingerLowerStvDev220 == true), "HasCrossBelowBollingerLowerStvDev220");
+      ShowResults(query.Where(a => a.HasCrossAboveBollingerUpperStvDev2520 == true), "HasCrossAboveBollingerUpperStvDev2520");
+      ShowResults(query.Where(a => a.HasCrossBelowBollingerLowerStvDev2520 == true), "HasCrossBelowBollingerLowerStvDev2520");
+    }
+
+    public void ShowResults(IQueryable<Analysis> query, string propName)
+    {
+      LogUtils.Debug($"START={propName}");
+      if (query == null)
+      {
+        return;
+      }
+      var totalCnt = query.Count();
+      if (totalCnt == 0)
+      {
+        return;
+      }
+      var pcnts = new Dictionary<string, decimal>();
+      pcnts.Add("Yactual", GetPct(query.Where(c => c.Yactual == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual2", GetPct(query.Where(c => c.Yactual2 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual3", GetPct(query.Where(c => c.Yactual3 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual4", GetPct(query.Where(c => c.Yactual4 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual5", GetPct(query.Where(c => c.Yactual5 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual6", GetPct(query.Where(c => c.Yactual6 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual7", GetPct(query.Where(c => c.Yactual7 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual8", GetPct(query.Where(c => c.Yactual8 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual9", GetPct(query.Where(c => c.Yactual9 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual10", GetPct(query.Where(c => c.Yactual10 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual11", GetPct(query.Where(c => c.Yactual11 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual12", GetPct(query.Where(c => c.Yactual12 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual13", GetPct(query.Where(c => c.Yactual13 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual14", GetPct(query.Where(c => c.Yactual14 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual15", GetPct(query.Where(c => c.Yactual15 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual16", GetPct(query.Where(c => c.Yactual16 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual17", GetPct(query.Where(c => c.Yactual17 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual18", GetPct(query.Where(c => c.Yactual18 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual19", GetPct(query.Where(c => c.Yactual19 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual20", GetPct(query.Where(c => c.Yactual20 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual21", GetPct(query.Where(c => c.Yactual21 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual22", GetPct(query.Where(c => c.Yactual22 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual23", GetPct(query.Where(c => c.Yactual23 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual24", GetPct(query.Where(c => c.Yactual24 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual25", GetPct(query.Where(c => c.Yactual25 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual26", GetPct(query.Where(c => c.Yactual26 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual27", GetPct(query.Where(c => c.Yactual27 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual28", GetPct(query.Where(c => c.Yactual28 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual29", GetPct(query.Where(c => c.Yactual29 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual30", GetPct(query.Where(c => c.Yactual30 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual31", GetPct(query.Where(c => c.Yactual31 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual32", GetPct(query.Where(c => c.Yactual32 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual33", GetPct(query.Where(c => c.Yactual33 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual34", GetPct(query.Where(c => c.Yactual34 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual35", GetPct(query.Where(c => c.Yactual35 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual36", GetPct(query.Where(c => c.Yactual36 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual37", GetPct(query.Where(c => c.Yactual37 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual38", GetPct(query.Where(c => c.Yactual38 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual39", GetPct(query.Where(c => c.Yactual39 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual40", GetPct(query.Where(c => c.Yactual40 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual41", GetPct(query.Where(c => c.Yactual41 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual42", GetPct(query.Where(c => c.Yactual42 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual43", GetPct(query.Where(c => c.Yactual43 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual44", GetPct(query.Where(c => c.Yactual44 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual45", GetPct(query.Where(c => c.Yactual45 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual46", GetPct(query.Where(c => c.Yactual46 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual47", GetPct(query.Where(c => c.Yactual47 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual48", GetPct(query.Where(c => c.Yactual48 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual49", GetPct(query.Where(c => c.Yactual49 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual50", GetPct(query.Where(c => c.Yactual50 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual51", GetPct(query.Where(c => c.Yactual51 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual52", GetPct(query.Where(c => c.Yactual52 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual53", GetPct(query.Where(c => c.Yactual53 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual54", GetPct(query.Where(c => c.Yactual54 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual55", GetPct(query.Where(c => c.Yactual55 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual56", GetPct(query.Where(c => c.Yactual56 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual57", GetPct(query.Where(c => c.Yactual57 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual58", GetPct(query.Where(c => c.Yactual58 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual59", GetPct(query.Where(c => c.Yactual59 == Consts.CLASS_UP).Count(), totalCnt));
+      pcnts.Add("Yactual60", GetPct(query.Where(c => c.Yactual60 == Consts.CLASS_UP).Count(), totalCnt));
+
+      LogUtils.Debug($"TotalCount={totalCnt}");
+
+      var topItems = pcnts.Where(p => p.Value >= 0.75m).OrderByDescending(p => p.Value).Take(10).ToList();
+      foreach (var topItem in topItems)
+      {
+        LogUtils.Debug($"TOP {topItem.Key} {topItem.Value}");
+      }
+
+      var bottomItems = pcnts.Where(p => p.Value <= 0.25m).OrderBy(p => p.Value).Take(10).ToList();
+      foreach (var bottomItem in bottomItems)
+      {
+        LogUtils.Debug($"BOTTOM {bottomItem.Key} {bottomItem.Value}");
+      }
+
+      LogUtils.Debug($"END={propName}");
+    }
+
+    public decimal GetPct(int numerator, int denominator)
+    {
+      return NumberUtils.Round((decimal)numerator / denominator, 4);
     }
   }
 }

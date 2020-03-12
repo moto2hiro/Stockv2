@@ -17,9 +17,9 @@ namespace Stock.Tests.JobRuns
     }
 
     [Test()]
-    public void Run_SelectTest()
+    public void Run_Analyze()
     {
-      new AnalysisService().SelectTest();
+      new AnalysisService().Analyze();
     }
   }
 }
