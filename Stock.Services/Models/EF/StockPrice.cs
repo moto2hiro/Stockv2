@@ -6,7 +6,7 @@ namespace Stock.Services.Models.EF
     public partial class StockPrice
     {
         public int Id { get; set; }
-        public string Symbol { get; set; }
+        public int SymbolId { get; set; }
         public decimal OpenPrice { get; set; }
         public decimal HighPrice { get; set; }
         public decimal LowPrice { get; set; }

@@ -15,21 +15,21 @@ namespace Stock.Services.Services.CsvServices
     protected override int Save(string fileName, List<Financial> records)
     {
       var ret = 0;
-      if (!string.IsNullOrEmpty(fileName) && records != null)
-      {
-        var symbol = Path.GetFileNameWithoutExtension(fileName).Split('_')[0];
-        LogUtils.Debug($"{symbol} {records.Count}");
-        foreach (var record in records)
-        {
-          var financial = DB.Financial.FirstOrDefault(f => f.Symbol == symbol && record.ReportDate == f.ReportDate);
-          if (financial != null)
-          {
-            financial.FreeCashFlow = record.FreeCashFlow;
-            financial.DivPayoutRatio = record.DivPayoutRatio;
-          }
-          Update(financial);
-        }
-      }
+      //if (!string.IsNullOrEmpty(fileName) && records != null)
+      //{
+      //  var symbol = Path.GetFileNameWithoutExtension(fileName).Split('_')[0];
+      //  LogUtils.Debug($"{symbol} {records.Count}");
+      //  foreach (var record in records)
+      //  {
+      //    var financial = DB.Financial.FirstOrDefault(f => f.Symbol == symbol && record.ReportDate == f.ReportDate);
+      //    if (financial != null)
+      //    {
+      //      financial.FreeCashFlow = record.FreeCashFlow;
+      //      financial.DivPayoutRatio = record.DivPayoutRatio;
+      //    }
+      //    Update(financial);
+      //  }
+      //}
       return ret;
     }
   }

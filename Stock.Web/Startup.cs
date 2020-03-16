@@ -23,7 +23,6 @@ namespace Stock.Web
     {
       services.AddMvc().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
       services.AddSingleton<IStockService, StockService>();
-      services.AddSingleton<IQueryService, QueryService>();
       services.AddControllersWithViews();
       // In production, the Angular files will be served from this directory
       services.AddSpaStaticFiles(configuration =>

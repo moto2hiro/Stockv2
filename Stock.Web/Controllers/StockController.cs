@@ -15,36 +15,34 @@ namespace Stock.Web.Controllers
   public class StockController : ControllerBase
   {
     private readonly IStockService _StockService;
-    private readonly IQueryService _QueryService;
 
-    public StockController(IStockService stockService, IQueryService queryService)
+    public StockController(IStockService stockService)
     {
       _StockService = stockService;
-      _QueryService = queryService;
     }
 
-    [HttpGet("symbols")]
-    public List<SymbolMaster> GetSymbols()
-    {
-      return _StockService.GetSymbols();
-    }
+    //[HttpGet("symbols")]
+    //public List<SymbolMaster> GetSymbols()
+    //{
+    //  return _StockService.GetSymbols();
+    //}
 
-    [HttpPost("saveChartImages")]
-    public int SaveChartImages(List<SaveChartImageReq> models)
-    {
-      return _StockService.SaveChartImages(models);
-    }
+    //[HttpPost("saveChartImages")]
+    //public int SaveChartImages(List<SaveChartImageReq> models)
+    //{
+    //  return _StockService.SaveChartImages(models);
+    //}
 
-    [HttpPost("periods")]
-    public List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request)
-    {
-      return _StockService.GetPeriodsOfStockPrices(request);
-    }
+    //[HttpPost("periods")]
+    //public List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request)
+    //{
+    //  return _StockService.GetPeriodsOfStockPrices(request);
+    //}
 
-    [HttpGet("random/{version}")]
-    public List<ChartImage> GetRandomCharts(int version)
-    {
-      return _QueryService.GetRandomCharts(version);
-    }
+    //[HttpGet("random/{version}")]
+    //public List<ChartImage> GetRandomCharts(int version)
+    //{
+    //  return _QueryService.GetRandomCharts(version);
+    //}
   }
 }

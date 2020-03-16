@@ -16,27 +16,8 @@ namespace Stock.Tests.JobRuns
   public class CsvJobRuns : BaseTest
   {
     [Test()]
-    public void Run_SaveCsv_For_SimfinFinancialIncome()
+    public void Run_SaveCsv()
     {
-      var fileName = $"{DOWNLOAD_PATH}us-income-quarterly.csv";
-      new StockService().SaveCsv<Financial, MapSimfinFinancialIncome>(fileName);
-    }
-
-    [Test()]
-    public void Run_SaveCsv_For_SimfinFinancialBalance()
-    {
-      var fileName = $"{DOWNLOAD_PATH}us-balance-quarterly.csv";
-      new StockService().SaveCsv<Financial, MapSimfinFinancialBalance>(fileName);
-    }
-
-    [Test()]
-    public void Run_SaveCsv_For_MapStockpupFinancial()
-    {
-      var fileNames = Directory.GetFiles($"{DOWNLOAD_PATH}financial");
-      foreach (var fileName in fileNames)
-      {
-        new StockService().SaveCsv<Financial, MapStockpupFinancial>(fileName);
-      }
     }
   }
 }
