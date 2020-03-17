@@ -84,11 +84,11 @@ namespace Stock.Services.Models.EF
 
                 entity.Property(e => e.MarketCap).HasColumnType("decimal(18, 2)");
 
-                entity.Property(e => e.NetIncomQqGrowth).HasColumnType("decimal(18, 2)");
-
                 entity.Property(e => e.NetIncome).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.NetIncomeGrowth).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.NetIncomeQqGrowth).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.NopatGrowth).HasColumnType("decimal(18, 2)");
 

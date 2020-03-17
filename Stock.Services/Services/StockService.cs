@@ -28,7 +28,7 @@ namespace Stock.Services.Services
     //List<List<StockPrice>> GetPeriodsOfStockPrices(GetPeriodsOfStockPricesReq request);
     //void CreateCsvForPrediction(string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, int version, bool isExcludeNullYActual);
     //int SavePredictions(string fileName);
-    //int SaveCsv<T, TMap>(string fileName) where TMap : ClassMap;
+    int SaveCsv<T, TMap>(string fileName) where TMap : ClassMap;
   }
 
   public class StockService : BaseService, IStockService
@@ -717,18 +717,24 @@ namespace Stock.Services.Services
     //  return ret;
     //}
 
-    //public int SaveCsv<T, TMap>(string fileName) where TMap : ClassMap
-    //{
-    //  if(typeof(T) == typeof(Financial))
-    //  {
-    //    if (typeof(TMap) == typeof(MapSimfinFinancialIncome))
-    //      return new SimfinFinancialIncomeCsvService().SaveCsv(fileName);
-    //    else if (typeof(TMap) == typeof(MapSimfinFinancialBalance))
-    //      return new SimfinFinancialBalanceCsvService().SaveCsv(fileName);
-    //    else if (typeof(TMap) == typeof(MapStockpupFinancial))
-    //      return new StockpupFinancialCsvService().SaveCsv(fileName);
-    //  }
-    //  return 0;
-    //}
+    public int SaveCsv<T, TMap>(string fileName) where TMap : ClassMap
+    {
+      if (typeof(T) == typeof(Financial))
+      {
+        if (typeof(TMap) == typeof(MapSimfinFinancialIncome))
+          return new SimfinFinancialIncomeCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapSimfinFinancialBalance))
+          return new SimfinFinancialBalanceCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapStockpupFinancial))
+          return new StockpupFinancialCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapIntrinioFinancialIncome))
+          return new IntrinioFinancialIncomeCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapIntrinioFinancialBalance))
+          return new IntrinioFinancialBalanceCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapIntrinioFinancialCalculation))
+          return new IntrinioFinancialCalculationCsvService().SaveCsv(fileName);
+      }
+      return 0;
+    }
   }
 }

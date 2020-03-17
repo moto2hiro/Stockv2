@@ -97,6 +97,13 @@ namespace Stock.Services
     public const string TDAM_FREQUENCY_MONTHLY = "monthly";
     #endregion
 
+    #region Intrinio
+    public const string INTRINIO_PERIOD_SUFFIX_YTD = "YTD";
+    public const string INTRINIO_PERIOD_SUFFIX_TTM = "TTM";
+    public const string INTRINIO_PERIOD_SUFFIX_FY = "FY";
+    public const string INTRINIO_PERIOD_PREFIX = "Q";
+    #endregion
+
     #region WorldPrice
     public const string SYMBOL_GSPC = "^GSPC";
     public const string SYMBOL_SPY = "SPY";

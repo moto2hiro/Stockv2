@@ -10,6 +10,7 @@ namespace Stock.Services.Utils
   {
     public const string Culture_Us = "en-US";
     public const string Format_Mdyyyy = "M/d/yyyy";
+    public const string Format_yyyyMddHHmmss = "yyyy-M-dd HH:mm:ss +0000";
 
     public static DateTime ToDateTime(
         string src,
@@ -17,7 +18,7 @@ namespace Stock.Services.Utils
         string culture = Culture_Us,
         DateTimeStyles styles = DateTimeStyles.None)
     {
-      DateTime ret = DateTime.MinValue;
+      var ret = DateTime.MinValue;
       if (!string.IsNullOrEmpty(src) && !string.IsNullOrEmpty(format))
       {
         var isValid = DateTime.TryParseExact(
