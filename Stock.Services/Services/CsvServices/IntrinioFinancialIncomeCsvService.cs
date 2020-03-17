@@ -29,15 +29,15 @@ namespace Stock.Services.Services.CsvServices
         var skip = 0;
         while (skip < records.Count)
         {
-          var models = records.Skip(skip).Take(Consts.DEFAULT_SKIP).ToList();
-          foreach(var model in models)
-          {
-            var symbol = DB.SymbolMaster.FirstOrDefault(s => s.Symbol == model.Symbol);
-            model.SymbolId = symbol.Id;
-            model.Quarter = StringUtils.ToInt(model.FiscalPeriod.Replace(Consts.INTRINIO_PERIOD_PREFIX, ""));
-          }
-          ret += Insert<Financial>(models);
-          skip += Consts.DEFAULT_SKIP;
+          //var models = records.Skip(skip).Take(Consts.DEFAULT_SKIP).ToList();
+          //foreach(var model in models)
+          //{
+          //  var symbol = DB.SymbolMaster.FirstOrDefault(s => s.Symbol == model.Symbol);
+          //  model.SymbolId = symbol.Id;
+          //  model.Quarter = StringUtils.ToInt(model.FiscalPeriod.Replace(Consts.INTRINIO_PERIOD_PREFIX, ""));
+          //}
+          //ret += Insert<Financial>(models);
+          //skip += Consts.DEFAULT_SKIP;
           LogUtils.Debug($"skip count = {skip}");
         }
       }

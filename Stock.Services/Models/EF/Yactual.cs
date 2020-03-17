@@ -7,6 +7,7 @@ namespace Stock.Services.Models.EF
     {
         public int Id { get; set; }
         public int StockPriceId { get; set; }
+        public int Category { get; set; }
         public int NoOfFutureDays { get; set; }
     }
 }

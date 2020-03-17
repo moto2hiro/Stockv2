@@ -1,6 +1,9 @@
-﻿using Stock.Services.Models.EF;
+﻿using Microsoft.Data.SqlClient;
+using Stock.Services.Models.EF;
+using Stock.Services.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Stock.Services.Services
@@ -42,8 +45,22 @@ namespace Stock.Services.Services
     }
     public int Insert<T>(IEnumerable<T> models) where T : class
     {
-      DB.Set<T>().AddRange(models);
-      return DB.SaveChanges();
+      LogUtils.Debug($"START-INSERT");
+      using (var connection = new SqlConnection(Configs.SandboxDb))
+      {
+        var bulkCopy = new SqlBulkCopy(
+            connection,
+            SqlBulkCopyOptions.TableLock |
+            SqlBulkCopyOptions.FireTriggers |
+            SqlBulkCopyOptions.UseInternalTransaction,
+            null);
+        bulkCopy.DestinationTableName = typeof(T).Name;
+        connection.Open();
+        bulkCopy.WriteToServer(PropUtils.ToDataTable(models));
+        connection.Close();
+      }
+      LogUtils.Debug($"END-INSERT");
+      return 1;
     }
     public int Update<T>(T model) where T : class
     {

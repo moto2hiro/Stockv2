@@ -678,17 +678,6 @@ namespace Stock.Services.Services
     //  {
     //    query = query.Where(c => c.YActual != null);
     //  }
-
-    //  //var badSymbols = new string[] {
-    //  //  "JPM", "FISV", "CBRE", "OMC", "PFE", "APA", "CMA", "CMG", "MGM", "FIS", "AGEN",
-    //  //  "TMO", "BGS", "EWBC", "NAVI", "PNC", "WYND", "ALL", "HRB", "SEAS", "SCHW",
-    //  //  "NSP", "PFG", "RCL", "AIG", "FICO", "CVX", "AEP", "AMTD", "CDW", "DFS",
-    //  //  "WDAY", "UNH", "AES", "AFL", "BAH", "ALLY", "ABT", "C", "GS", "NWSA",
-    //  //  "AWK", "WFC", "BAC", "AMGN", "MO", "BX", "XOM", "IVV", "GEL", "BRK-B",
-    //  //  "PGR", "BK", "PGRE", "CHK", "ETFC", "SABR", "PRU", "FRC", "SIX", "FNF",
-    //  //  "MS", "COF", "EIX", "PMT", "KOS", "MET", "CIT", "USB", "NYT", "ANTM" };
-    //  //query = query.Where(c => !badSymbols.Contains(c.Symbol));
-
     //  CsvUtils.WriteCsv(fileName, query.ToList());
     //}
 

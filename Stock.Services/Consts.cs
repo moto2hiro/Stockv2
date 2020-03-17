@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stock.Services.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
@@ -34,6 +35,29 @@ namespace Stock.Services
     #endregion
 
     #region Stock Analysis
+    public const int YACTUAL_MAX_FUTURE = 150;
+    public const string TECHNICAL_SMA = "SMA";
+    public const string TECHNICAL_EMA = "EMA";
+    public const string TECHNICAL_RSI = "RSI";
+    public static readonly int[] SMA_PERIODS = new int[]
+    {
+      4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 
+      21, 22, 23, 24, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 
+      58, 59, 60, 61, 62, 100, 200
+    };
+    public static readonly int[] EMA_PERIODS = new int[]
+    {
+      4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      21, 22, 23, 24, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+      58, 59, 60, 61, 62, 100, 200
+    };
+    public static readonly int[] RSI_PERIODS = new int[]
+    {
+      4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+    };
+    public static readonly int[] ADTV_PERIODS = new int[] { 50 };
+    public static readonly int[] ADPV_PERIODS = new int[] { 50 };
+
     public const decimal PRICE_VOLUME_THRESHOLD = 20000000;
     public const decimal TRADING_VOLUME_THRESHOLD = 1000000;
     public const decimal RSI_HIGHEST_THRESHOLD = 85;
@@ -50,38 +74,6 @@ namespace Stock.Services
     public const decimal RSI_25 = 25;
     public const decimal RSI_20 = 20;
     public const decimal RSI_15 = 15;
-    public const int MAX_CALC_PERIOD = 200;
-    public const int MAX_FUTURE_PERIOD = 60;
-    public const int SMA_PERIOD_10 = 10;
-    public const int SMA_PERIOD_20 = 20;
-    public const int SMA_PERIOD_50 = 50;
-    public const int SMA_PERIOD_100 = 100;
-    public const int SMA_PERIOD_200 = 200;
-    public const int EMA_PERIOD_5 = 5;
-    public const int EMA_PERIOD_9 = 9;
-    public const int EMA_PERIOD_10 = 10;
-    public const int EMA_PERIOD_12 = 12;
-    public const int EMA_PERIOD_13 = 13;
-    public const int EMA_PERIOD_26 = 26;
-    public const int EMA_PERIOD_48 = 48;
-    public const int ADTV_PERIOD_20 = 20;
-    public const int ADTV_PERIOD_30 = 30;
-    public const int ADTV_PERIOD_50 = 50;
-    public const int ADPV_PERIOD_20 = 20;
-    public const int ADPV_PERIOD_30 = 30;
-    public const int ADPV_PERIOD_50 = 50;
-    public const int RSI_PERIOD_6 = 6;
-    public const int RSI_PERIOD_10 = 10;
-    public const int RSI_PERIOD_14 = 14;
-    public const int LOCAL_MAX_PERIOD_10 = 10;
-    public const int LOCAL_MAX_PERIOD_20 = 20;
-    public const int LOCAL_MAX_PERIOD_50 = 50;
-    public const int LOCAL_MAX_PERIOD_200 = 200;
-    public const int LOCAL_MIN_PERIOD_10 = 10;
-    public const int LOCAL_MIN_PERIOD_20 = 20;
-    public const int LOCAL_MIN_PERIOD_50 = 50;
-    public const int LOCAL_MIN_PERIOD_200 = 200;
-    public const int BOLLINGER_PERIOD_20 = 20;
     #endregion
 
     #region TD Ameritrade

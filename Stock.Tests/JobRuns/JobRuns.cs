@@ -121,10 +121,10 @@ namespace Stock.Tests.JobRuns
     //}
     //#endregion
 
-    //[Test()]
-    //public void Run_Test()
-    //{
-    //  new QueryService().Test();
-    //}
+    [Test()]
+    public void Run_GetYActuals()
+    {
+      new AnalysisService().GetYActuals();
+    }
   }
 }
