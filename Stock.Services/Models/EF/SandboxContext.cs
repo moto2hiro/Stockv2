@@ -148,10 +148,7 @@ namespace Stock.Services.Models.EF
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.CalcValue)
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.CalcValue).HasColumnType("decimal(18, 2)");
             });
 
             modelBuilder.Entity<WorldPrice>(entity =>
@@ -180,6 +177,14 @@ namespace Stock.Services.Models.EF
                     .HasColumnName("X_BSESNDiffNorm")
                     .HasColumnType("decimal(13, 4)");
 
+                entity.Property(e => e.XFtsediffNorm)
+                    .HasColumnName("X_FTSEDiffNorm")
+                    .HasColumnType("decimal(13, 4)");
+
+                entity.Property(e => e.XGdaxidiffNorm)
+                    .HasColumnName("X_GDAXIDiffNorm")
+                    .HasColumnType("decimal(13, 4)");
+
                 entity.Property(e => e.XHsidiffNorm)
                     .HasColumnName("X_HSIDiffNorm")
                     .HasColumnType("decimal(13, 4)");
@@ -198,6 +203,14 @@ namespace Stock.Services.Models.EF
 
                 entity.Property(e => e.XSsecdiffNorm)
                     .HasColumnName("X_SSECDiffNorm")
+                    .HasColumnType("decimal(13, 4)");
+
+                entity.Property(e => e.XSsmidiffNorm)
+                    .HasColumnName("X_SSMIDiffNorm")
+                    .HasColumnType("decimal(13, 4)");
+
+                entity.Property(e => e.XStoxxdiffNorm)
+                    .HasColumnName("X_STOXXDiffNorm")
                     .HasColumnType("decimal(13, 4)");
 
                 entity.Property(e => e.XTwiidiffNorm)

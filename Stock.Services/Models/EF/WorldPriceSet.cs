@@ -27,6 +27,10 @@ namespace Stock.Services.Models.EF
         public int? YDiaactual { get; set; }
         public int? YDiapredicted { get; set; }
         public decimal? YDiapredictedProb { get; set; }
+        public decimal? XFtsediffNorm { get; set; }
+        public decimal? XStoxxdiffNorm { get; set; }
+        public decimal? XGdaxidiffNorm { get; set; }
+        public decimal? XSsmidiffNorm { get; set; }
         public decimal? XN225diffNorm { get; set; }
         public decimal? XAxjodiffNorm { get; set; }
         public decimal? XHsidiffNorm { get; set; }

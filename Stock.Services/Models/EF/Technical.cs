@@ -9,6 +9,6 @@ namespace Stock.Services.Models.EF
         public int StockPriceId { get; set; }
         public string CalcType { get; set; }
         public int CalcPeriod { get; set; }
-        public string CalcValue { get; set; }
+        public decimal CalcValue { get; set; }
     }
 }

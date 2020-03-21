@@ -15,30 +15,6 @@ namespace Stock.Tests.JobRuns
   public class WorldJobRuns : BaseTest
   {
     [Test()]
-    public void Run_AddWorldPriceFromCsvYahoo()
-    {
-      var fileNames = Directory.GetFiles($"{DOWNLOAD_PATH}Yahoo");
-      foreach (var fileName in fileNames)
-      {
-        var symbol = Path.GetFileNameWithoutExtension(fileName);
-        LogUtils.Debug(symbol);
-        new WorldService().AddWorldPriceFromCsv<MapYahooWorldPrice>(symbol, fileName);
-      }
-    }
-
-    [Test()]
-    public void Run_AddWorldPriceFromCsvInvesting()
-    {
-      var fileNames = Directory.GetFiles($"{DOWNLOAD_PATH}Investing");
-      foreach (var fileName in fileNames)
-      {
-        var symbol = Path.GetFileNameWithoutExtension(fileName);
-        LogUtils.Debug(symbol.Replace("_", ""));
-        new WorldService().AddWorldPriceFromCsv<MapInvestingWorldPrice>(symbol.Replace("_", ""), fileName);
-      }
-    }
-
-    [Test()]
     public void Run_TransformWorldPrice()
     {
       new WorldService().TransformWorldPrice();
@@ -47,7 +23,7 @@ namespace Stock.Tests.JobRuns
     [Test()]
     public void Run_CreateCsvForPrediction()
     {
-      var symbol = Consts.SYMBOL_GSPC;
+      var symbol = Consts.SYMBOL_SPY;
       var fileName = $"{DOWNLOAD_PATH}world_{symbol}_a.csv";
       var dateFrom = new DateTime(1800, 1, 1);
       var dateTo = new DateTime(2022, 1, 1);

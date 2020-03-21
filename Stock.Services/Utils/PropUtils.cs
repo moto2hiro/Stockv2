@@ -14,7 +14,8 @@ namespace Stock.Services.Utils
       var table = new DataTable();
       for (int i = 0; i < props.Count; i++)
       {
-        table.Columns.Add(props[i].Name, props[i].PropertyType);
+        table.Columns.Add(props[i].Name, 
+          Nullable.GetUnderlyingType(props[i].PropertyType) ?? props[i].PropertyType);
       }
       var values = new object[props.Count];
       foreach (var model in models)

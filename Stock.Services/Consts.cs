@@ -101,6 +101,10 @@ namespace Stock.Services
     public const string SYMBOL_SPY = "SPY";
     public const string SYMBOL_DJI = "^DJI";
     public const string SYMBOL_DIA = "DIA";
+    public const string SYMBOL_FTSE = "^FTSE";
+    public const string SYMBOL_STOXX = "^STOXX";
+    public const string SYMBOL_GDAXI = "^GDAXI";
+    public const string SYMBOL_SSMI = "^SSMI";
     public const string SYMBOL_N225 = "^N225";
     public const string SYMBOL_AXJO = "^AXJO";
     public const string SYMBOL_HSI = "^HSI";

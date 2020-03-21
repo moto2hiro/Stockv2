@@ -35,5 +35,12 @@ namespace Stock.Tests.JobRuns
       var fileName = $"{DOWNLOAD_PATH}US_INDU_CALCULATIONS.csv";
       new StockService().SaveCsv<Financial, MapIntrinioFinancialCalculation>(fileName);
     }
+
+    [Test()]
+    public void Run_SaveCsv_DukascopyWorldPriceCsvService()
+    {
+      var fileName = $"{DOWNLOAD_PATH}^GDAXI.csv";
+      new StockService().SaveCsv<WorldPrice, MapDukascopyWorldPrice>(fileName);
+    }
   }
 }

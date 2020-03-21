@@ -1,5 +1,6 @@
 ﻿using Stock.Services.Models;
 using Stock.Services.Models.EF;
+using Stock.Services.Services.TechnicalServices;
 using Stock.Services.Utils;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,6 @@ namespace Stock.Services.Services
   {
     int GetTechnicals();
     int GetYActuals();
-    //void Transform();
-    //void Analyze();
   }
 
   public class AnalysisService : BaseService, IAnalysisService
@@ -36,29 +35,17 @@ namespace Stock.Services.Services
 
         foreach (var item in items.Select((value, idx) => (value, idx)))
         {
-          var currIdx = item.idx;
-          var nextIdx = item.idx + 1;
-          var prevIdx = item.idx - 1;
-          if (items.ElementAtOrDefault(currIdx - Consts.SMA_PERIODS.Max()) == null)
-          {
-            continue;
-          }
-          if (items.ElementAtOrDefault(currIdx - Consts.EMA_PERIODS.Max()) == null)
-          {
-            continue;
-          }
-          if (items.ElementAtOrDefault(currIdx - Consts.RSI_PERIODS.Max()) == null)
-          {
-            continue;
-          }
-          if (items.ElementAtOrDefault(currIdx - Consts.ADTV_PERIODS.Max()) == null)
-          {
-            continue;
-          }
-          if (items.ElementAtOrDefault(currIdx - Consts.ADPV_PERIODS.Max()) == null)
-          {
-            continue;
-          }
+          var smas = new SmaTechnicalService().Calculate(
+            item.idx,
+            Consts.SMA_PERIODS,
+            items);
+          smas.ForEach(s => models.Add(s));
+
+          #region EMA
+          // EMA for t1 = Price of t1
+          // EMA for > t1 = Alpha * Price + (1 - Alpha) * Previous EMA
+          // where Alpha = 2 / (N + 1)
+          #endregion
 
 
 
@@ -130,73 +117,7 @@ namespace Stock.Services.Services
     //    var itemCount = items.Count();
     //    foreach (var item in items.Select((model, idx) => (model, idx)))
     //    {
-    //      var currIdx = item.idx;
-    //      var prevIdx = currIdx - 1;
-    //      var nextIdx = currIdx + 1;
-    //      // Need at least 201 days for calculation
-    //      if (currIdx < Consts.MAX_CALC_PERIOD)
-    //      {
-    //        continue;
-    //      }
-    //      // Need at least 60 days of future
-    //      if (currIdx > itemCount - Consts.MAX_FUTURE_PERIOD - 1)
-    //      {
-    //        continue;
-    //      }
-    //      var model = new Analysis();
-    //      model.Symbol = item.model.Symbol;
-    //      model.PriceDate = item.model.PriceDate;
-    //      model.OpenPrice = item.model.OpenPrice;
-    //      model.HighPrice = item.model.HighPrice;
-    //      model.LowPrice = item.model.LowPrice;
-    //      model.ClosePrice = item.model.ClosePrice;
-    //      model.Volume = item.model.Volume;
-    //      model.PriceVolume = item.model.PriceVolume;
-
-    //      #region Declarations
-    //      var sumClosePrice10 = 0m;
-    //      var sumClosePrice20 = 0m;
-    //      var sumClosePrice50 = 0m;
-    //      var sumClosePrice100 = 0m;
-    //      var sumClosePrice200 = 0m;
-    //      var sumVolume20 = 0m;
-    //      var sumVolume30 = 0m;
-    //      var sumVolume50 = 0m;
-    //      var sumPriceVolume20 = 0m;
-    //      var sumPriceVolume30 = 0m;
-    //      var sumPriceVolume50 = 0m;
-    //      var sumClosePriceGain6 = 0m;
-    //      var sumClosePriceGain10 = 0m;
-    //      var sumClosePriceGain14 = 0m;
-    //      var sumClosePriceLoss6 = 0m;
-    //      var sumClosePriceLoss10 = 0m;
-    //      var sumClosePriceLoss14 = 0m;
-    //      #endregion
-
     //      #region Loop past data for metrics
-    //      // Assume Calculation is done at Close; thus inclusive.
-    //      var startIdx = currIdx - Consts.MAX_CALC_PERIOD + 1;
-    //      for (var i = startIdx; i <= currIdx; i++)
-    //      {
-    //        #region SMA
-    //        sumClosePrice200 += items[i].ClosePrice;
-    //        if (i > currIdx - Consts.SMA_PERIOD_10)
-    //        {
-    //          sumClosePrice10 += items[i].ClosePrice;
-    //        }
-    //        if (i > currIdx - Consts.SMA_PERIOD_20)
-    //        {
-    //          sumClosePrice20 += items[i].ClosePrice;
-    //        }
-    //        if (i > currIdx - Consts.SMA_PERIOD_50)
-    //        {
-    //          sumClosePrice50 += items[i].ClosePrice;
-    //        }
-    //        if (i > currIdx - Consts.SMA_PERIOD_100)
-    //        {
-    //          sumClosePrice100 += items[i].ClosePrice;
-    //        }
-    //        #endregion
 
     //        #region ADTV, ADPV
     //        if (i > currIdx - Consts.ADTV_PERIOD_20)
@@ -250,39 +171,6 @@ namespace Stock.Services.Services
     //        }
     //        #endregion
     //      }
-    //      #endregion
-
-    //      #region Calculate SMA
-    //      item.model.SMA_10 = NumberUtils.Round(sumClosePrice10 / Consts.SMA_PERIOD_10);
-    //      item.model.SMA_20 = NumberUtils.Round(sumClosePrice20 / Consts.SMA_PERIOD_20);
-    //      item.model.SMA_50 = NumberUtils.Round(sumClosePrice50 / Consts.SMA_PERIOD_50);
-    //      item.model.SMA_100 = NumberUtils.Round(sumClosePrice100 / Consts.SMA_PERIOD_100);
-    //      item.model.SMA_200 = NumberUtils.Round(sumClosePrice200 / Consts.SMA_PERIOD_200);
-    //      model.Sma10 = item.model.SMA_10;
-    //      model.Sma20 = item.model.SMA_20;
-    //      model.Sma50 = item.model.SMA_50;
-    //      model.Sma100 = item.model.SMA_100;
-    //      model.Sma200 = item.model.SMA_200;
-    //      model.HasSma10crossAbove20 = items[prevIdx].SMA_10 < items[prevIdx].SMA_20 && items[currIdx].SMA_10 > items[currIdx].SMA_20;
-    //      model.HasSma10crossBelow20 = items[prevIdx].SMA_10 > items[prevIdx].SMA_20 && items[currIdx].SMA_10 < items[currIdx].SMA_20;
-    //      model.HasSma10crossAbove50 = items[prevIdx].SMA_10 < items[prevIdx].SMA_50 && items[currIdx].SMA_10 > items[currIdx].SMA_50;
-    //      model.HasSma10crossBelow50 = items[prevIdx].SMA_10 > items[prevIdx].SMA_50 && items[currIdx].SMA_10 < items[currIdx].SMA_50;
-    //      model.HasSma10crossAbove100 = items[prevIdx].SMA_10 < items[prevIdx].SMA_100 && items[currIdx].SMA_10 > items[currIdx].SMA_100;
-    //      model.HasSma10crossBelow100 = items[prevIdx].SMA_10 > items[prevIdx].SMA_100 && items[currIdx].SMA_10 < items[currIdx].SMA_100;
-    //      model.HasSma10crossAbove200 = items[prevIdx].SMA_10 < items[prevIdx].SMA_200 && items[currIdx].SMA_10 > items[currIdx].SMA_200;
-    //      model.HasSma10crossBelow200 = items[prevIdx].SMA_10 > items[prevIdx].SMA_200 && items[currIdx].SMA_10 < items[currIdx].SMA_200;
-    //      model.HasSma20crossAbove50 = items[prevIdx].SMA_20 < items[prevIdx].SMA_50 && items[currIdx].SMA_20 > items[currIdx].SMA_50;
-    //      model.HasSma20crossBelow50 = items[prevIdx].SMA_20 > items[prevIdx].SMA_50 && items[currIdx].SMA_20 < items[currIdx].SMA_50;
-    //      model.HasSma20crossAbove100 = items[prevIdx].SMA_20 < items[prevIdx].SMA_100 && items[currIdx].SMA_20 > items[currIdx].SMA_100;
-    //      model.HasSma20crossBelow100 = items[prevIdx].SMA_20 > items[prevIdx].SMA_100 && items[currIdx].SMA_20 < items[currIdx].SMA_100;
-    //      model.HasSma20crossAbove200 = items[prevIdx].SMA_20 < items[prevIdx].SMA_200 && items[currIdx].SMA_20 > items[currIdx].SMA_200;
-    //      model.HasSma20crossBelow200 = items[prevIdx].SMA_20 > items[prevIdx].SMA_200 && items[currIdx].SMA_20 < items[currIdx].SMA_200;
-    //      model.HasSma50crossAbove100 = items[prevIdx].SMA_50 < items[prevIdx].SMA_100 && items[currIdx].SMA_50 > items[currIdx].SMA_100;
-    //      model.HasSma50crossBelow100 = items[prevIdx].SMA_50 > items[prevIdx].SMA_100 && items[currIdx].SMA_50 < items[currIdx].SMA_100;
-    //      model.HasSma50crossAbove200 = items[prevIdx].SMA_50 < items[prevIdx].SMA_200 && items[currIdx].SMA_50 > items[currIdx].SMA_200;
-    //      model.HasSma50crossBelow200 = items[prevIdx].SMA_50 > items[prevIdx].SMA_200 && items[currIdx].SMA_50 < items[currIdx].SMA_200;
-    //      model.HasSma100crossAbove200 = items[prevIdx].SMA_100 < items[prevIdx].SMA_200 && items[currIdx].SMA_100 > items[currIdx].SMA_200;
-    //      model.HasSma100crossBelow200 = items[prevIdx].SMA_100 > items[prevIdx].SMA_200 && items[currIdx].SMA_100 < items[currIdx].SMA_200;
     //      #endregion
 
     //      #region Calculate EMA

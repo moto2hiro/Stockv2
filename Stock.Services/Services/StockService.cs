@@ -723,6 +723,11 @@ namespace Stock.Services.Services
         else if (typeof(TMap) == typeof(MapIntrinioFinancialCalculation))
           return new IntrinioFinancialCalculationCsvService().SaveCsv(fileName);
       }
+      else if (typeof(T) == typeof(WorldPrice))
+      {
+        if (typeof(TMap) == typeof(MapDukascopyWorldPrice))
+          return new DukascopyWorldPriceCsvService().SaveCsv(fileName);
+      }
       return 0;
     }
   }
