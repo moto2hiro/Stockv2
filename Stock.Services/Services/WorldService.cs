@@ -35,40 +35,39 @@ namespace Stock.Services.Services
   {
     public int GetDataFromWtd()
     {
+      var ret = 0;
       var models = new List<WorldPrice>();
       var indices = DB.WorldPriceIndex.ToList();
       foreach (var index in indices)
       {
         if (index.IsIntraRequired)
         {
-          var items = WtdClient.GetPriceIntra(new WtdPriceIntraReq()
+          var intraItems = WtdClient.GetPriceIntra(new WtdPriceIntraReq()
           {
             symbol = index.Symbol,
             api_token = Configs.WtdApiKey,
             interval = 60,
-            range = 30
+            range = 10
           });
-          if (items == null)
+          if (intraItems == null)
           {
             // TODO: Notification for Error
             continue;
           }
-          foreach (var item in items)
+          foreach (var intraItem in intraItems)
           {
-            var timeZone = TZConvert.IanaToWindows(item.timezone_name);
-            var priceDate = DateUtils.ToDateTime(item.date, "yyyy-MM-dd HH:mm:ss");
+            var timeZone = TZConvert.IanaToWindows(intraItem.timezone_name);
+            var priceDate = DateUtils.ToDateTime(intraItem.date, "yyyy-MM-dd HH:mm:ss");
             var utcDate = DateUtils.ToUtc(priceDate, timeZone);
             var model = new WorldPrice()
             {
               Symbol = index.Symbol,
-              OpenPrice = item.open,
-              ClosePrice = item.close,
+              OpenPrice = intraItem.open,
+              ClosePrice = intraItem.close,
               PriceDate = utcDate
             };
 
-            var org = DB.WorldPrice.FirstOrDefault(w =>
-              w.Symbol == model.Symbol &&
-              w.PriceDate == model.PriceDate);
+            var org = GetWorldPrice(model.Symbol, model.PriceDate);
             if (org == null)
             {
               models.Add(model);
@@ -77,42 +76,38 @@ namespace Stock.Services.Services
         }
         else
         {
+          var dailyItems = WtdClient.GetPriceDaily(new WtdPriceDailyReq()
+          {
+            symbol = index.Symbol,
+            api_token = Configs.WtdApiKey,
+            date_from = DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd")
+          });
+          if (dailyItems == null)
+          {
+            // TODO: Notification for Error
+            continue;
+          }
+          foreach (var dailyItem in dailyItems)
+          {
+            var model = new WorldPrice()
+            {
+              Symbol = index.Symbol,
+              OpenPrice = dailyItem.open,
+              ClosePrice = dailyItem.close,
+              PriceDate = DateUtils.ToDateTime(dailyItem.date, "yyyy-MM-dd")
+            };
 
+            var org = GetWorldPrice(model.Symbol, model.PriceDate);
+            if (org == null)
+            {
+              models.Add(model);
+            }
+          }
         }
       }
 
-
-      //var reqs = new List<WtdPriceIntraReq>();
-      //foreach (var index in Consts.WORLD_PRICE_INDICES)
-      //{
-      //  reqs.Add(new WtdPriceIntraReq()
-      //  {
-      //    symbol = index,
-      //    api_token = Configs.WtdApiKey,
-      //    interval = 60, // hourly data
-      //    range = 10, // days
-      //  });
-      //}
-      //var resps = WtdClient.GetPriceIntra(reqs);
-      //if (resps == null)
-      //{
-      //  // TODO: Notification for Error
-      //  return 0;
-      //}
-
-      //foreach (var resp in resps)
-      //{
-      //  var model = new WorldPrice()
-      //  {
-      //    //priceDate = DateUtils.ToDateTime(price.Name, "yyyy-MM-dd HH:mm:ss"),
-      //    Symbol = resp.symbol,
-      //    OpenPrice = resp.open,
-      //    ClosePrice = resp.close,
-      //  };
-      //}
-
-      return 0;
-      //return Insert<WorldPrice>(models);
+      ret += Insert<WorldPrice>(models);
+      return ret;
     }
 
     private static readonly DateTime MIN_DATE = new DateTime(2014, 10, 21);
@@ -125,110 +120,114 @@ namespace Stock.Services.Services
     {
       var ret = 0;
       var models = new List<WorldPriceSet>();
-      var spyPrices = DB.WorldPrice
-        .Where(w => w.Symbol == Consts.SYMBOL_SPY && w.PriceDate >= MIN_DATE)
-        .OrderBy(w => w.PriceDate)
-        .ToList();
-      if (spyPrices == null)
+
+      var now = DateTime.Now;
+      var currDate = MIN_DATE;
+      while (currDate <= now)
       {
-        return ret;
-      }
-      foreach (var spyPrice in spyPrices)
-      {
-        LogUtils.Debug($"Begin {spyPrice.PriceDate}");
+        LogUtils.Debug($"Begin {currDate}");
 
         var model = new WorldPriceSet();
-        var isValid = true;
-        var yesterday = DateUtils.AddBusinessDays(spyPrice.PriceDate, -1);
+        model.PriceDate = currDate;
 
-        var yestSpyPrice = GetWorldPrice(Consts.SYMBOL_SPY, yesterday);
-        isValid = isValid && yestSpyPrice != null && yestSpyPrice.ClosePrice > 0;
-        if (isValid)
-        {
-          model.PriceDate = spyPrice.PriceDate;
-          model.YSpydiffActual = GetDiffActual(spyPrice);
-          model.YSpyactual = GetClass(spyPrice);
-        }
+        #region Y (SPY and DIA)
+        var spyCurrPrice = GetWorldPrice(Consts.SYMBOL_SPY, currDate);
+        model.YSpydiffActual = GetDiffActual(spyCurrPrice);
+        model.YSpyactual = GetClass(spyCurrPrice);
 
-        var diaPrice = GetWorldPrice(Consts.SYMBOL_DIA, model.PriceDate);
-        var yestDiaPrice = GetWorldPrice(Consts.SYMBOL_DIA, yesterday);
-        if (diaPrice != null && yestDiaPrice != null)
-        {
-          model.YDiadiffActual = GetDiffActual(diaPrice);
-          model.YDiaactual = GetClass(diaPrice);
-        }
+        var diaCurrPrice = GetWorldPrice(Consts.SYMBOL_DIA, currDate);
+        model.YDiadiffActual = GetDiffActual(diaCurrPrice);
+        model.YDiaactual = GetClass(diaCurrPrice);
+        #endregion
 
         #region X Features
-        var ftseStartPrice = GetWorldPrice(Consts.SYMBOL_FTSE, yesterday, CLOSE_HOUR_UTC_FTSE);
-        var ftseEndPrice = GetWorldPrice(Consts.SYMBOL_FTSE, model.PriceDate, CALC_HOUR_UTC);
+        var isValid = true;
+        var prevDate = DateUtils.AddBusinessDays(currDate, -1);
+        var ftsePrevPrice = GetWorldPrice(Consts.SYMBOL_FTSE, prevDate, CLOSE_HOUR_UTC_FTSE);
+        var ftseCurrPrice = GetWorldPrice(Consts.SYMBOL_FTSE, currDate, CALC_HOUR_UTC);
         isValid = isValid &&
-          ftseStartPrice != null &&
-          ftseStartPrice.ClosePrice > 0 &&
-          ftseEndPrice != null &&
-          ftseEndPrice.ClosePrice > 0;
+          ftsePrevPrice != null &&
+          ftsePrevPrice.ClosePrice > 0 &&
+          ftseCurrPrice != null &&
+          ftseCurrPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XFtsediffNorm = GetDiffNorm(ftseStartPrice.ClosePrice, ftseEndPrice.ClosePrice);
+          model.XFtsediffNorm = GetDiffNorm(ftsePrevPrice.ClosePrice, ftseCurrPrice.ClosePrice);
         }
 
-        var stoxxStartPrice = GetWorldPrice(Consts.SYMBOL_STOXX, yesterday, CLOSE_HOUR_UTC_STOXX);
-        var stoxxEndPrice = GetWorldPrice(Consts.SYMBOL_STOXX, model.PriceDate, CALC_HOUR_UTC);
-        isValid = isValid &&
-          stoxxStartPrice != null &&
-          stoxxStartPrice.ClosePrice > 0 &&
-          stoxxEndPrice != null &&
-          stoxxEndPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XStoxxdiffNorm = GetDiffNorm(stoxxStartPrice.ClosePrice, stoxxEndPrice.ClosePrice);
+          var stoxxPrevPrice = GetWorldPrice(Consts.SYMBOL_STOXX, prevDate, CLOSE_HOUR_UTC_STOXX);
+          var stoxxCurrPrice = GetWorldPrice(Consts.SYMBOL_STOXX, currDate, CALC_HOUR_UTC);
+          isValid = isValid &&
+            stoxxPrevPrice != null &&
+            stoxxPrevPrice.ClosePrice > 0 &&
+            stoxxCurrPrice != null &&
+            stoxxCurrPrice.ClosePrice > 0;
+          if (isValid)
+          {
+            model.XStoxxdiffNorm = GetDiffNorm(stoxxPrevPrice.ClosePrice, stoxxCurrPrice.ClosePrice);
+          }
         }
 
-        var gdaxiStartPrice = GetWorldPrice(Consts.SYMBOL_GDAXI, yesterday, CLOSE_HOUR_UTC_GDAXI);
-        var gdaxiEndPrice = GetWorldPrice(Consts.SYMBOL_GDAXI, model.PriceDate, CALC_HOUR_UTC);
-        isValid = isValid &&
-          gdaxiStartPrice != null &&
-          gdaxiStartPrice.ClosePrice > 0 &&
-          gdaxiEndPrice != null &&
-          gdaxiEndPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XGdaxidiffNorm = GetDiffNorm(gdaxiStartPrice.ClosePrice, gdaxiEndPrice.ClosePrice);
+          var gdaxiPrevPrice = GetWorldPrice(Consts.SYMBOL_GDAXI, prevDate, CLOSE_HOUR_UTC_GDAXI);
+          var gdaxiCurrPrice = GetWorldPrice(Consts.SYMBOL_GDAXI, currDate, CALC_HOUR_UTC);
+          isValid = isValid &&
+            gdaxiPrevPrice != null &&
+            gdaxiPrevPrice.ClosePrice > 0 &&
+            gdaxiCurrPrice != null &&
+            gdaxiCurrPrice.ClosePrice > 0;
+          if (isValid)
+          {
+            model.XGdaxidiffNorm = GetDiffNorm(gdaxiPrevPrice.ClosePrice, gdaxiCurrPrice.ClosePrice);
+          }
         }
 
-        var yestN225Price = GetWorldPrice(Consts.SYMBOL_N225, yesterday);
-        var n225Price = GetWorldPrice(Consts.SYMBOL_N225, model.PriceDate);
-        isValid = isValid &&
-          yestN225Price != null &&
-          yestN225Price.ClosePrice > 0 &&
-          n225Price != null &&
-          n225Price.ClosePrice > 0;
         if (isValid)
         {
-          model.XN225diffNorm = GetDiffNorm(yestN225Price.ClosePrice, n225Price.ClosePrice);
+          var n225PrevPrice = GetWorldPrice(Consts.SYMBOL_N225, prevDate);
+          var n225CurrPrice = GetWorldPrice(Consts.SYMBOL_N225, currDate);
+          isValid = isValid &&
+            n225PrevPrice != null &&
+            n225PrevPrice.ClosePrice > 0 &&
+            n225CurrPrice != null &&
+            n225CurrPrice.ClosePrice > 0;
+          if (isValid)
+          {
+            model.XN225diffNorm = GetDiffNorm(n225PrevPrice.ClosePrice, n225CurrPrice.ClosePrice);
+          }
         }
 
-        var yestAxjoPrice = GetWorldPrice(Consts.SYMBOL_AXJO, yesterday);
-        var axjoPrice = GetWorldPrice(Consts.SYMBOL_AXJO, model.PriceDate);
-        isValid = isValid &&
-          yestAxjoPrice != null &&
-          yestAxjoPrice.ClosePrice > 0 &&
-          axjoPrice != null &&
-          axjoPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XAxjodiffNorm = GetDiffNorm(yestAxjoPrice.ClosePrice, axjoPrice.ClosePrice);
+          var axjoPrevPrice = GetWorldPrice(Consts.SYMBOL_AXJO, prevDate);
+          var axjoCurrPrice = GetWorldPrice(Consts.SYMBOL_AXJO, currDate);
+          isValid = isValid &&
+            axjoPrevPrice != null &&
+            axjoPrevPrice.ClosePrice > 0 &&
+            axjoCurrPrice != null &&
+            axjoCurrPrice.ClosePrice > 0;
+          if (isValid)
+          {
+            model.XAxjodiffNorm = GetDiffNorm(axjoPrevPrice.ClosePrice, axjoCurrPrice.ClosePrice);
+          }
         }
 
-        var yestHsiPrice = GetWorldPrice(Consts.SYMBOL_HSI, yesterday);
-        var hsiPrice = GetWorldPrice(Consts.SYMBOL_HSI, model.PriceDate);
-        isValid = isValid &&
-          yestHsiPrice != null &&
-          yestHsiPrice.ClosePrice > 0 &&
-          hsiPrice != null &&
-          hsiPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XHsidiffNorm = GetDiffNorm(yestHsiPrice.ClosePrice, hsiPrice.ClosePrice);
+          var hsiPrevPrice = GetWorldPrice(Consts.SYMBOL_HSI, prevDate);
+          var hsiCurrPrice = GetWorldPrice(Consts.SYMBOL_HSI, currDate);
+          isValid = isValid &&
+            hsiPrevPrice != null &&
+            hsiPrevPrice.ClosePrice > 0 &&
+            hsiCurrPrice != null &&
+            hsiCurrPrice.ClosePrice > 0;
+          if (isValid)
+          {
+            model.XHsidiffNorm = GetDiffNorm(hsiPrevPrice.ClosePrice, hsiCurrPrice.ClosePrice);
+          }
         }
         #endregion
 
@@ -236,6 +235,7 @@ namespace Stock.Services.Services
         {
           models.Add(model);
         }
+        currDate = currDate.AddDays(1);
       }
 
       ret += DeleteAll<WorldPriceSet>();

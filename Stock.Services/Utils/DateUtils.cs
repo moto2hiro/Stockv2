@@ -51,9 +51,9 @@ namespace Stock.Services.Utils
       while (numberOfDays > 0)
       {
         if (isAdd && ret != DateTime.MaxValue)
-          ret.AddDays(1);
+          ret = ret.AddDays(1);
         else if (!isAdd && ret != DateTime.MinValue)
-          ret.AddDays(-1);
+          ret = ret.AddDays(-1);
 
         if (ret.DayOfWeek < DayOfWeek.Saturday &&
             ret.DayOfWeek > DayOfWeek.Sunday)
