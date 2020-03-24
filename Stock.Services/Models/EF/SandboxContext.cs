@@ -199,6 +199,14 @@ namespace Stock.Services.Models.EF
                     .HasColumnName("X_N225DiffNorm")
                     .HasColumnType("decimal(13, 4)");
 
+                entity.Property(e => e.XSensexdiffNorm)
+                    .HasColumnName("X_SENSEXDiffNorm")
+                    .HasColumnType("decimal(13, 4)");
+
+                entity.Property(e => e.XSsmidiffNorm)
+                    .HasColumnName("X_SSMIDiffNorm")
+                    .HasColumnType("decimal(13, 4)");
+
                 entity.Property(e => e.XStoxxdiffNorm)
                     .HasColumnName("X_STOXXDiffNorm")
                     .HasColumnType("decimal(13, 4)");

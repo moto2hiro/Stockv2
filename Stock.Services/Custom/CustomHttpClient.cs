@@ -52,6 +52,8 @@ namespace Stock.Services.Custom
     {
       _UriBuilder.Query = _Params.ToString();
       var url = _UriBuilder.ToString();
+      LogUtils.Debug($"REQUEST={url}");
+
       return new HttpClient().GetStringAsync(url);
     }
   }

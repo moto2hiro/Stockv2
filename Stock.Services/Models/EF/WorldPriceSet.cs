@@ -18,8 +18,10 @@ namespace Stock.Services.Models.EF
         public decimal? XFtsediffNorm { get; set; }
         public decimal? XStoxxdiffNorm { get; set; }
         public decimal? XGdaxidiffNorm { get; set; }
+        public decimal? XSsmidiffNorm { get; set; }
         public decimal? XN225diffNorm { get; set; }
         public decimal? XAxjodiffNorm { get; set; }
         public decimal? XHsidiffNorm { get; set; }
+        public decimal? XSensexdiffNorm { get; set; }
     }
 }

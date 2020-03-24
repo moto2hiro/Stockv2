@@ -115,6 +115,7 @@ namespace Stock.Services.Services
     private static readonly int CLOSE_HOUR_UTC_FTSE = 16;  // 16 UTC
     private static readonly int CLOSE_HOUR_UTC_STOXX = 18; // 17 CET
     private static readonly int CLOSE_HOUR_UTC_GDAXI = 18; // 17 CET 
+    private static readonly int CLOSE_HOUR_UTC_SSMI = 18; // 17 CET 
 
     public int TransformWorldPrice()
     {
@@ -187,6 +188,21 @@ namespace Stock.Services.Services
 
         if (isValid)
         {
+          var ssmiPrevPrice = GetWorldPrice(Consts.SYMBOL_SSMI, prevDate, CLOSE_HOUR_UTC_SSMI);
+          var ssmiCurrPrice = GetWorldPrice(Consts.SYMBOL_SSMI, currDate, CALC_HOUR_UTC);
+          isValid = isValid &&
+            ssmiPrevPrice != null &&
+            ssmiPrevPrice.ClosePrice > 0 &&
+            ssmiCurrPrice != null &&
+            ssmiCurrPrice.ClosePrice > 0;
+          if (isValid)
+          {
+            model.XSsmidiffNorm = GetDiffNorm(ssmiPrevPrice.ClosePrice, ssmiCurrPrice.ClosePrice);
+          }
+        }
+
+        if (isValid)
+        {
           var n225PrevPrice = GetWorldPrice(Consts.SYMBOL_N225, prevDate);
           var n225CurrPrice = GetWorldPrice(Consts.SYMBOL_N225, currDate);
           isValid = isValid &&
@@ -227,6 +243,21 @@ namespace Stock.Services.Services
           if (isValid)
           {
             model.XHsidiffNorm = GetDiffNorm(hsiPrevPrice.ClosePrice, hsiCurrPrice.ClosePrice);
+          }
+        }
+
+        if (isValid)
+        {
+          var sensexPrevPrice = GetWorldPrice(Consts.SYMBOL_SENSEX, prevDate);
+          var sensexCurrPrice = GetWorldPrice(Consts.SYMBOL_SENSEX, currDate);
+          isValid = isValid &&
+            sensexPrevPrice != null &&
+            sensexPrevPrice.ClosePrice > 0 &&
+            sensexCurrPrice != null &&
+            sensexCurrPrice.ClosePrice > 0;
+          if (isValid)
+          {
+            model.XSensexdiffNorm = GetDiffNorm(sensexPrevPrice.ClosePrice, sensexCurrPrice.ClosePrice);
           }
         }
         #endregion

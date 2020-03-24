@@ -727,6 +727,8 @@ namespace Stock.Services.Services
       {
         if (typeof(TMap) == typeof(MapDukascopyWorldPrice))
           return new DukascopyWorldPriceCsvService().SaveCsv(fileName);
+        if (typeof(TMap) == typeof(MapYahooWorldPrice))
+          return new YahooWorldPriceCsvService().SaveCsv(fileName);
       }
       return 0;
     }

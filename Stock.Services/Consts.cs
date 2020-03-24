@@ -105,12 +105,14 @@ namespace Stock.Services
     #region WorldPrice
     public const string SYMBOL_SPY = "SPY";
     public const string SYMBOL_DIA = "DIA";
-    public const string SYMBOL_FTSE = "^UKX"; // FTSE 100
-    public const string SYMBOL_STOXX = "^SX5E"; // STOXX
-    public const string SYMBOL_GDAXI = "^DAX"; // GDAXI 
-    public const string SYMBOL_N225 = "^NI225"; // N225
-    public const string SYMBOL_AXJO = "^XJO"; // AXJO 
-    public const string SYMBOL_HSI = "^HSI"; // HSI
+    public const string SYMBOL_FTSE = "^UKX";
+    public const string SYMBOL_STOXX = "^SX5E";
+    public const string SYMBOL_GDAXI = "^DAX";
+    public const string SYMBOL_SSMI = "^SSMI"; //"^SXGE";
+    public const string SYMBOL_N225 = "^NI225";
+    public const string SYMBOL_AXJO = "^XJO";
+    public const string SYMBOL_HSI = "^HSI";
+    public const string SYMBOL_SENSEX = "^SENSEX"; //
     #endregion
   }
 }

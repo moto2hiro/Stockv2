@@ -39,8 +39,15 @@ namespace Stock.Tests.JobRuns
     [Test()]
     public void Run_SaveCsv_DukascopyWorldPriceCsvService()
     {
-      var fileName = $"{DOWNLOAD_PATH}^GDAXI.csv";
+      var fileName = $"{DOWNLOAD_PATH}^SSMI.csv";
       new StockService().SaveCsv<WorldPrice, MapDukascopyWorldPrice>(fileName);
+    }
+
+    [Test()]
+    public void Run_SaveCsv()
+    {
+      var fileName = $"{DOWNLOAD_PATH}^SENSEX.csv";
+      new StockService().SaveCsv<WorldPrice, MapYahooWorldPrice>(fileName);
     }
   }
 }

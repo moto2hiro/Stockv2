@@ -16,7 +16,7 @@ namespace Stock.Tests.Clients
       // ARRANGE
       var req = new WtdPriceIntraReq()
       {
-        symbol = Consts.SYMBOL_FTSE,
+        symbol = Consts.SYMBOL_SSMI,
         api_token = Configs.WtdApiKey,
         interval = 60,
         range = 30
