@@ -4,44 +4,122 @@ using Stock.Services.Models;
 using Stock.Services.Models.CsvHelper;
 using Stock.Services.Models.EF;
 using Stock.Services.Models.TDAm;
+using Stock.Services.Models.Wtd;
 using Stock.Services.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TimeZoneConverter;
 
 namespace Stock.Services.Services
 {
   public interface IWorldService
   {
+    int GetDataFromWtd();
     int TransformWorldPrice();
     void CreateCsvForPrediction(string symbol, string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, bool isExcludeNullYActual);
   }
 
   /// <summary>
-  /// - Run Prediction at 9:00 ET
+  /// - Run Prediction at 9:00 ET (14 UTC)
   /// - New York Opens 9:30 ET
-  /// - London (FTSE) is 1:00 PM GMT at 9:00 AM ET Dukascopy (2008)
-  /// - Europe (STOXX) is 2:00 PM CET at 9:00 AM ET Dukascopy (2014)
-  /// - Germany (GDAXI) is 2:00 PM CET at 9:00 AM ET Dukascopy (2012)
-  /// - Switzerland (SSMI) is 2:00 PM CET at 9:00 AM ET Dukascopy (2013)
-  /// - Japan (N225) Close 3:00 PM JST (1:00 AM ET Same Day) Yahoo.com
-  /// - Australia (AXJO) Close 5:30 PM AEDT (1:30 AM ET Same Day) Yahoo.com
-  /// - Hong Kong (HSI) Close 4:00 PM HKT (3 AM ET Same Day) Yahoo.com
-  /// - Shanghai (SSEC) Close 3:00 PM CST (2:00 AM ET Same Day) Investing.com
-  /// - Bombay (BSESN) Close 3:30 PM IST (5:00 AM ET Same Day) Yahoo.com
-  /// - India (NIFTY) Close 3:30 PM IST (5:00 AM ET Same Day) Investing.com
-  /// - Korea (KS11) Close 3:30 PM KST (1:30 AM ET Same Day) Yahoo.com
-  /// - Taiwan (TWII) Close 3:30 PM CST (2:00 AM ET Same Day) Yahoo.com
+  /// - London (FTSE) is 1:00 PM GMT at 9:00 AM ET Dukascopy
+  /// - Europe (STOXX) is 2:00 PM CET at 9:00 AM ET Dukascopy
+  /// - Germany (GDAXI) is 2:00 PM CET at 9:00 AM ET Dukascopy
+  /// - Japan (N225) Closes 3:00 PM JST (1:00 AM ET Same Day) Yahoo.com
+  /// - Australia (AXJO) Closes 5:30 PM AEDT (1:30 AM ET Same Day) Yahoo.com
+  /// - Hong Kong (HSI) Closes 4:00 PM HKT (3 AM ET Same Day) Yahoo.com
   /// </summary>
   public class WorldService : BaseService, IWorldService
   {
-    private static readonly DateTime MIN_DATE = new DateTime(2014, 10, 20);
+    public int GetDataFromWtd()
+    {
+      var models = new List<WorldPrice>();
+      var indices = DB.WorldPriceIndex.ToList();
+      foreach (var index in indices)
+      {
+        if (index.IsIntraRequired)
+        {
+          var items = WtdClient.GetPriceIntra(new WtdPriceIntraReq()
+          {
+            symbol = index.Symbol,
+            api_token = Configs.WtdApiKey,
+            interval = 60,
+            range = 30
+          });
+          if (items == null)
+          {
+            // TODO: Notification for Error
+            continue;
+          }
+          foreach (var item in items)
+          {
+            var timeZone = TZConvert.IanaToWindows(item.timezone_name);
+            var priceDate = DateUtils.ToDateTime(item.date, "yyyy-MM-dd HH:mm:ss");
+            var utcDate = DateUtils.ToUtc(priceDate, timeZone);
+            var model = new WorldPrice()
+            {
+              Symbol = index.Symbol,
+              OpenPrice = item.open,
+              ClosePrice = item.close,
+              PriceDate = utcDate
+            };
+
+            var org = DB.WorldPrice.FirstOrDefault(w =>
+              w.Symbol == model.Symbol &&
+              w.PriceDate == model.PriceDate);
+            if (org == null)
+            {
+              models.Add(model);
+            }
+          }
+        }
+        else
+        {
+
+        }
+      }
+
+
+      //var reqs = new List<WtdPriceIntraReq>();
+      //foreach (var index in Consts.WORLD_PRICE_INDICES)
+      //{
+      //  reqs.Add(new WtdPriceIntraReq()
+      //  {
+      //    symbol = index,
+      //    api_token = Configs.WtdApiKey,
+      //    interval = 60, // hourly data
+      //    range = 10, // days
+      //  });
+      //}
+      //var resps = WtdClient.GetPriceIntra(reqs);
+      //if (resps == null)
+      //{
+      //  // TODO: Notification for Error
+      //  return 0;
+      //}
+
+      //foreach (var resp in resps)
+      //{
+      //  var model = new WorldPrice()
+      //  {
+      //    //priceDate = DateUtils.ToDateTime(price.Name, "yyyy-MM-dd HH:mm:ss"),
+      //    Symbol = resp.symbol,
+      //    OpenPrice = resp.open,
+      //    ClosePrice = resp.close,
+      //  };
+      //}
+
+      return 0;
+      //return Insert<WorldPrice>(models);
+    }
+
+    private static readonly DateTime MIN_DATE = new DateTime(2014, 10, 21);
     private static readonly int CALC_HOUR_UTC = 14;
-    private static readonly int OPEN_HOUR_UTC_FTSE = 8;
-    private static readonly int OPEN_HOUR_UTC_STOXX = 7;
-    private static readonly int OPEN_HOUR_UTC_GDAXI = 7;
-    private static readonly int OPEN_HOUR_UTC_SSMI = 8;
+    private static readonly int CLOSE_HOUR_UTC_FTSE = 16;  // 16 UTC
+    private static readonly int CLOSE_HOUR_UTC_STOXX = 18; // 17 CET
+    private static readonly int CLOSE_HOUR_UTC_GDAXI = 18; // 17 CET 
 
     public int TransformWorldPrice()
     {
@@ -58,145 +136,99 @@ namespace Stock.Services.Services
       foreach (var spyPrice in spyPrices)
       {
         LogUtils.Debug($"Begin {spyPrice.PriceDate}");
+
         var model = new WorldPriceSet();
         var isValid = true;
+        var yesterday = DateUtils.AddBusinessDays(spyPrice.PriceDate, -1);
 
-        isValid = isValid && spyPrice.OpenPrice > 0;
+        var yestSpyPrice = GetWorldPrice(Consts.SYMBOL_SPY, yesterday);
+        isValid = isValid && yestSpyPrice != null && yestSpyPrice.ClosePrice > 0;
         if (isValid)
         {
           model.PriceDate = spyPrice.PriceDate;
-          model.YSpydiffNorm = GetDiffNorm(spyPrice.OpenPrice, spyPrice.ClosePrice);
           model.YSpydiffActual = GetDiffActual(spyPrice);
           model.YSpyactual = GetClass(spyPrice);
         }
 
-        var gspcPrice = GetWorldPrice(Consts.SYMBOL_GSPC, model.PriceDate);
-        if (gspcPrice != null)
-        {
-          model.YGspcdiffNorm = GetDiffNorm(gspcPrice.OpenPrice, gspcPrice.ClosePrice);
-          model.YGspcdiffActual = GetDiffActual(gspcPrice);
-          model.YGspcactual = GetClass(gspcPrice);
-        }
-
-        var djiPrice = GetWorldPrice(Consts.SYMBOL_DJI, model.PriceDate);
-        if (djiPrice != null)
-        {
-          model.YDjidiffNorm = GetDiffNorm(djiPrice.OpenPrice, djiPrice.ClosePrice);
-          model.YDjidiffActual = GetDiffActual(djiPrice);
-          model.YDjiactual = GetClass(djiPrice);
-        }
-
         var diaPrice = GetWorldPrice(Consts.SYMBOL_DIA, model.PriceDate);
-        if (diaPrice != null)
+        var yestDiaPrice = GetWorldPrice(Consts.SYMBOL_DIA, yesterday);
+        if (diaPrice != null && yestDiaPrice != null)
         {
-          model.YDiadiffNorm = GetDiffNorm(diaPrice.OpenPrice, diaPrice.ClosePrice);
           model.YDiadiffActual = GetDiffActual(diaPrice);
           model.YDiaactual = GetClass(diaPrice);
         }
 
         #region X Features
-        var ftseOpenPrice = GetWorldPrice(Consts.SYMBOL_FTSE, model.PriceDate, OPEN_HOUR_UTC_FTSE);
+        var ftseStartPrice = GetWorldPrice(Consts.SYMBOL_FTSE, yesterday, CLOSE_HOUR_UTC_FTSE);
         var ftseEndPrice = GetWorldPrice(Consts.SYMBOL_FTSE, model.PriceDate, CALC_HOUR_UTC);
         isValid = isValid &&
-          ftseOpenPrice != null &&
-          ftseOpenPrice.OpenPrice > 0 &&
+          ftseStartPrice != null &&
+          ftseStartPrice.ClosePrice > 0 &&
           ftseEndPrice != null &&
-          ftseEndPrice.OpenPrice > 0;
+          ftseEndPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XFtsediffNorm = GetDiffNorm(ftseOpenPrice.OpenPrice, ftseEndPrice.ClosePrice);
+          model.XFtsediffNorm = GetDiffNorm(ftseStartPrice.ClosePrice, ftseEndPrice.ClosePrice);
         }
 
-        var stoxxOpenPrice = GetWorldPrice(Consts.SYMBOL_STOXX, model.PriceDate, OPEN_HOUR_UTC_STOXX);
+        var stoxxStartPrice = GetWorldPrice(Consts.SYMBOL_STOXX, yesterday, CLOSE_HOUR_UTC_STOXX);
         var stoxxEndPrice = GetWorldPrice(Consts.SYMBOL_STOXX, model.PriceDate, CALC_HOUR_UTC);
         isValid = isValid &&
-          stoxxOpenPrice != null &&
-          stoxxOpenPrice.OpenPrice > 0 &&
+          stoxxStartPrice != null &&
+          stoxxStartPrice.ClosePrice > 0 &&
           stoxxEndPrice != null &&
-          stoxxEndPrice.OpenPrice > 0;
+          stoxxEndPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XStoxxdiffNorm = GetDiffNorm(stoxxOpenPrice.OpenPrice, stoxxEndPrice.ClosePrice);
+          model.XStoxxdiffNorm = GetDiffNorm(stoxxStartPrice.ClosePrice, stoxxEndPrice.ClosePrice);
         }
 
-        var gdaxiOpenPrice = GetWorldPrice(Consts.SYMBOL_GDAXI, model.PriceDate, OPEN_HOUR_UTC_GDAXI);
+        var gdaxiStartPrice = GetWorldPrice(Consts.SYMBOL_GDAXI, yesterday, CLOSE_HOUR_UTC_GDAXI);
         var gdaxiEndPrice = GetWorldPrice(Consts.SYMBOL_GDAXI, model.PriceDate, CALC_HOUR_UTC);
         isValid = isValid &&
-          gdaxiOpenPrice != null &&
-          gdaxiOpenPrice.OpenPrice > 0 &&
+          gdaxiStartPrice != null &&
+          gdaxiStartPrice.ClosePrice > 0 &&
           gdaxiEndPrice != null &&
-          gdaxiEndPrice.OpenPrice > 0;
+          gdaxiEndPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XGdaxidiffNorm = GetDiffNorm(gdaxiOpenPrice.OpenPrice, gdaxiEndPrice.ClosePrice);
+          model.XGdaxidiffNorm = GetDiffNorm(gdaxiStartPrice.ClosePrice, gdaxiEndPrice.ClosePrice);
         }
 
-        var ssmiOpenPrice = GetWorldPrice(Consts.SYMBOL_SSMI, model.PriceDate, OPEN_HOUR_UTC_SSMI);
-        var ssmiEndPrice = GetWorldPrice(Consts.SYMBOL_SSMI, model.PriceDate, CALC_HOUR_UTC);
-        isValid = isValid &&
-          ssmiOpenPrice != null &&
-          ssmiOpenPrice.OpenPrice > 0 &&
-          ssmiEndPrice != null &&
-          ssmiEndPrice.OpenPrice > 0;
-        if (isValid)
-        {
-          model.XSsmidiffNorm = GetDiffNorm(ssmiOpenPrice.OpenPrice, ssmiEndPrice.ClosePrice);
-        }
-
+        var yestN225Price = GetWorldPrice(Consts.SYMBOL_N225, yesterday);
         var n225Price = GetWorldPrice(Consts.SYMBOL_N225, model.PriceDate);
-        isValid = isValid && n225Price != null && n225Price.OpenPrice > 0;
+        isValid = isValid &&
+          yestN225Price != null &&
+          yestN225Price.ClosePrice > 0 &&
+          n225Price != null &&
+          n225Price.ClosePrice > 0;
         if (isValid)
         {
-          model.XN225diffNorm = GetDiffNorm(n225Price.OpenPrice, n225Price.ClosePrice);
+          model.XN225diffNorm = GetDiffNorm(yestN225Price.ClosePrice, n225Price.ClosePrice);
         }
 
+        var yestAxjoPrice = GetWorldPrice(Consts.SYMBOL_AXJO, yesterday);
         var axjoPrice = GetWorldPrice(Consts.SYMBOL_AXJO, model.PriceDate);
-        isValid = isValid && axjoPrice != null && axjoPrice.OpenPrice > 0;
+        isValid = isValid &&
+          yestAxjoPrice != null &&
+          yestAxjoPrice.ClosePrice > 0 &&
+          axjoPrice != null &&
+          axjoPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XAxjodiffNorm = GetDiffNorm(axjoPrice.OpenPrice, axjoPrice.ClosePrice);
+          model.XAxjodiffNorm = GetDiffNorm(yestAxjoPrice.ClosePrice, axjoPrice.ClosePrice);
         }
 
+        var yestHsiPrice = GetWorldPrice(Consts.SYMBOL_HSI, yesterday);
         var hsiPrice = GetWorldPrice(Consts.SYMBOL_HSI, model.PriceDate);
-        isValid = isValid && hsiPrice != null && hsiPrice.OpenPrice > 0;
+        isValid = isValid &&
+          yestHsiPrice != null &&
+          yestHsiPrice.ClosePrice > 0 &&
+          hsiPrice != null &&
+          hsiPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XHsidiffNorm = GetDiffNorm(hsiPrice.OpenPrice, hsiPrice.ClosePrice);
-        }
-
-        var ssecPrice = GetWorldPrice(Consts.SYMBOL_SSEC, model.PriceDate);
-        isValid = isValid && ssecPrice != null && ssecPrice.OpenPrice > 0;
-        if (isValid)
-        {
-          model.XSsecdiffNorm = GetDiffNorm(ssecPrice.OpenPrice, ssecPrice.ClosePrice);
-        }
-
-        var bsesnPrice = GetWorldPrice(Consts.SYMBOL_BSESN, model.PriceDate);
-        isValid = isValid && bsesnPrice != null && bsesnPrice.OpenPrice > 0;
-        if (isValid)
-        {
-          model.XBsesndiffNorm = GetDiffNorm(bsesnPrice.OpenPrice, bsesnPrice.ClosePrice);
-        }
-
-        var niftyPrice = GetWorldPrice(Consts.SYMBOL_NIFTY, model.PriceDate);
-        isValid = isValid && niftyPrice != null && niftyPrice.OpenPrice > 0;
-        if (isValid)
-        {
-          model.XNiftydiffNorm = GetDiffNorm(niftyPrice.OpenPrice, niftyPrice.ClosePrice);
-        }
-
-        var ks11Price = GetWorldPrice(Consts.SYMBOL_KS11, model.PriceDate);
-        isValid = isValid && ks11Price != null && ks11Price.OpenPrice > 0;
-        if (isValid)
-        {
-          model.XKs11diffNorm = GetDiffNorm(ks11Price.OpenPrice, ks11Price.ClosePrice);
-        }
-
-        var twiiPrice = GetWorldPrice(Consts.SYMBOL_TWII, model.PriceDate);
-        isValid = isValid && twiiPrice != null && twiiPrice.OpenPrice > 0;
-        if (isValid)
-        {
-          model.XTwiidiffNorm = GetDiffNorm(twiiPrice.OpenPrice, twiiPrice.ClosePrice);
+          model.XHsidiffNorm = GetDiffNorm(yestHsiPrice.ClosePrice, hsiPrice.ClosePrice);
         }
         #endregion
 
@@ -249,17 +281,9 @@ namespace Stock.Services.Services
     public void CreateCsvForPrediction(string symbol, string fileName, DateTime dateFrom, DateTime dateTo, bool isBetween, bool isExcludeNullYActual)
     {
       var query = DB.WorldPriceSet.AsQueryable();
-      if (symbol == Consts.SYMBOL_GSPC && isExcludeNullYActual)
-      {
-        query = query.Where(w => w.YGspcactual != null);
-      }
-      else if (symbol == Consts.SYMBOL_SPY && isExcludeNullYActual)
+      if (symbol == Consts.SYMBOL_SPY && isExcludeNullYActual)
       {
         query = query.Where(w => w.YSpyactual != null);
-      }
-      else if (symbol == Consts.SYMBOL_DJI && isExcludeNullYActual)
-      {
-        query = query.Where(w => w.YDjiactual != null);
       }
       else if (symbol == Consts.SYMBOL_DIA && isExcludeNullYActual)
       {

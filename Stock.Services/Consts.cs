@@ -89,6 +89,12 @@ namespace Stock.Services
     public const string TDAM_FREQUENCY_MONTHLY = "monthly";
     #endregion
 
+    #region World Trading Data
+    public const string WTD_URL_PRICE_CURRENT = "https://api.worldtradingdata.com/api/v1/stock";
+    public const string WTD_URL_PRICE_INTRA = "https://intraday.worldtradingdata.com/api/v1/intraday";
+    public const string WTD_URL_PRICE_DAILY = "https://api.worldtradingdata.com/api/v1/history";
+    #endregion
+
     #region Intrinio
     public const string INTRINIO_PERIOD_SUFFIX_YTD = "YTD";
     public const string INTRINIO_PERIOD_SUFFIX_TTM = "TTM";
@@ -97,22 +103,14 @@ namespace Stock.Services
     #endregion
 
     #region WorldPrice
-    public const string SYMBOL_GSPC = "^GSPC";
     public const string SYMBOL_SPY = "SPY";
-    public const string SYMBOL_DJI = "^DJI";
     public const string SYMBOL_DIA = "DIA";
-    public const string SYMBOL_FTSE = "^FTSE";
-    public const string SYMBOL_STOXX = "^STOXX";
-    public const string SYMBOL_GDAXI = "^GDAXI";
-    public const string SYMBOL_SSMI = "^SSMI";
-    public const string SYMBOL_N225 = "^N225";
-    public const string SYMBOL_AXJO = "^AXJO";
-    public const string SYMBOL_HSI = "^HSI";
-    public const string SYMBOL_SSEC = "^SSEC";
-    public const string SYMBOL_BSESN = "^BSESN";
-    public const string SYMBOL_NIFTY = "^NIFTY";
-    public const string SYMBOL_KS11 = "^KS11";
-    public const string SYMBOL_TWII = "^TWII";
+    public const string SYMBOL_FTSE = "^UKX"; // FTSE 100
+    public const string SYMBOL_STOXX = "^SX5E"; // STOXX
+    public const string SYMBOL_GDAXI = "^DAX"; // GDAXI 
+    public const string SYMBOL_N225 = "^NI225"; // N225
+    public const string SYMBOL_AXJO = "^XJO"; // AXJO 
+    public const string SYMBOL_HSI = "^HSI"; // HSI
     #endregion
   }
 }

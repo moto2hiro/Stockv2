@@ -3,12 +3,11 @@ using System.Collections.Generic;
 
 namespace Stock.Services.Models.EF
 {
-    public partial class WorldPrice
+    public partial class WorldPriceIndex
     {
         public int Id { get; set; }
         public string Symbol { get; set; }
-        public decimal OpenPrice { get; set; }
-        public decimal ClosePrice { get; set; }
-        public DateTime PriceDate { get; set; }
+        public string Description { get; set; }
+        public bool IsIntraRequired { get; set; }
     }
 }

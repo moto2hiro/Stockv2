@@ -32,6 +32,17 @@ namespace Stock.Services.Utils
       return ret;
     }
 
+    public static DateTime ToUtc(DateTime src, string timezone)
+    {
+      var ret = src;
+      if (!string.IsNullOrEmpty(timezone))
+      {
+        var zoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timezone);
+        ret = TimeZoneInfo.ConvertTimeToUtc(src, zoneInfo);
+      }
+      return ret;
+    }
+
     public static DateTime AddBusinessDays(DateTime src, int numberOfDays)
     {
       var ret = src;

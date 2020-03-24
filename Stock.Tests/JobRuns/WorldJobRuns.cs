@@ -15,6 +15,12 @@ namespace Stock.Tests.JobRuns
   public class WorldJobRuns : BaseTest
   {
     [Test()]
+    public void Run_GetDataFromWtd()
+    {
+      new WorldService().GetDataFromWtd();
+    }
+
+    [Test()]
     public void Run_TransformWorldPrice()
     {
       new WorldService().TransformWorldPrice();
