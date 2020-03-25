@@ -10,7 +10,7 @@ using System.Text;
 namespace Stock.Tests.Services.TechnicalServices
 {
   [TestFixture()]
-  public class SmaTechnicalServiceTests : BaseTest
+  public class EmaTechnicalServiceTests : BaseTest
   {
     [Test()]
     public void Calculate_Should_Return_If_Not_Enough_Items()
@@ -21,7 +21,7 @@ namespace Stock.Tests.Services.TechnicalServices
       var items = new List<StockPrice>();
 
       // ACT
-      var result = new SmaTechnicalService().Calculate(idx, periods, items);
+      var result = new EmaTechnicalService().Calculate(idx, periods, items);
 
       // ASSERT
       Assert.IsNotNull(result);
@@ -29,10 +29,10 @@ namespace Stock.Tests.Services.TechnicalServices
     }
 
     [Test()]
-    public void Calculate_Should_Return_Average()
+    public void Calculate_Should_Return_Ema()
     {
       // ARRANGE
-      var idx = 3;
+      var currIdx = 3;
       var periods = new int[] { 2, 4 };
       var items = new List<StockPrice>() 
       { 
@@ -43,14 +43,14 @@ namespace Stock.Tests.Services.TechnicalServices
       };
 
       // ACT
-      var result = new SmaTechnicalService().Calculate(idx, periods, items);
+      var result = new EmaTechnicalService().Calculate(currIdx, periods, items);
 
       // ASSERT
       Assert.IsNotNull(result);
       Assert.AreEqual(periods.Count(), result.Count);
-      Assert.AreEqual(Consts.TECHNICAL_SMA, result[0].CalcType);
-      Assert.AreEqual(7, result[0].CalcValue);
-      Assert.AreEqual(5, result[1].CalcValue);
+      Assert.AreEqual(Consts.TECHNICAL_EMA, result[0].CalcType);
+      Assert.AreEqual(7.33, result[0].CalcValue);
+      Assert.AreEqual(5.65, result[1].CalcValue);
     }
   }
 }

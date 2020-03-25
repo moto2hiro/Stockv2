@@ -38,22 +38,22 @@ namespace Stock.Services
     public const int YACTUAL_MAX_FUTURE = 150;
     public const string TECHNICAL_SMA = "SMA";
     public const string TECHNICAL_EMA = "EMA";
+    public const string TECHNICAL_ADTV = "ADTV";
+    public const string TECHNICAL_ADPV = "ADPV";
     public const string TECHNICAL_RSI = "RSI";
     public static readonly int[] SMA_PERIODS = new int[]
     {
-      4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 
-      21, 22, 23, 24, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 
-      58, 59, 60, 61, 62, 100, 200
+      12, 13, 14, 15, 48, 49, 50, 51, 52,
+      98, 99, 100, 198, 199, 200, 201, 202
     };
     public static readonly int[] EMA_PERIODS = new int[]
     {
-      4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-      21, 22, 23, 24, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
-      58, 59, 60, 61, 62, 100, 200
+      12, 13, 14, 15, 48, 49, 50, 51, 52,
+      98, 99, 100, 198, 199, 200, 201, 202
     };
     public static readonly int[] RSI_PERIODS = new int[]
     {
-      4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+      5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
     };
     public static readonly int[] ADTV_PERIODS = new int[] { 50 };
     public static readonly int[] ADPV_PERIODS = new int[] { 50 };

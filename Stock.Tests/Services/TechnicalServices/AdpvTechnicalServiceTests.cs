@@ -10,7 +10,7 @@ using System.Text;
 namespace Stock.Tests.Services.TechnicalServices
 {
   [TestFixture()]
-  public class SmaTechnicalServiceTests : BaseTest
+  public class AdpvTechnicalServiceTests : BaseTest
   {
     [Test()]
     public void Calculate_Should_Return_If_Not_Enough_Items()
@@ -21,7 +21,7 @@ namespace Stock.Tests.Services.TechnicalServices
       var items = new List<StockPrice>();
 
       // ACT
-      var result = new SmaTechnicalService().Calculate(idx, periods, items);
+      var result = new AdpvTechnicalService().Calculate(idx, periods, items);
 
       // ASSERT
       Assert.IsNotNull(result);
@@ -36,21 +36,21 @@ namespace Stock.Tests.Services.TechnicalServices
       var periods = new int[] { 2, 4 };
       var items = new List<StockPrice>() 
       { 
-        new StockPrice() { ClosePrice = 2 },
-        new StockPrice() { ClosePrice = 4 },
-        new StockPrice() { ClosePrice = 6 },
-        new StockPrice() { ClosePrice = 8 }
+        new StockPrice() { ClosePrice = 2, Volume = 2 },
+        new StockPrice() { ClosePrice = 4, Volume = 4 },
+        new StockPrice() { ClosePrice = 6, Volume = 6 },
+        new StockPrice() { ClosePrice = 8, Volume = 8 }
       };
 
       // ACT
-      var result = new SmaTechnicalService().Calculate(idx, periods, items);
+      var result = new AdpvTechnicalService().Calculate(idx, periods, items);
 
       // ASSERT
       Assert.IsNotNull(result);
       Assert.AreEqual(periods.Count(), result.Count);
-      Assert.AreEqual(Consts.TECHNICAL_SMA, result[0].CalcType);
-      Assert.AreEqual(7, result[0].CalcValue);
-      Assert.AreEqual(5, result[1].CalcValue);
+      Assert.AreEqual(Consts.TECHNICAL_ADPV, result[0].CalcType);
+      Assert.AreEqual(50, result[0].CalcValue);
+      Assert.AreEqual(30, result[1].CalcValue);
     }
   }
 }

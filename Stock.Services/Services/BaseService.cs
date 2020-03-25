@@ -3,6 +3,7 @@ using Stock.Services.Models.EF;
 using Stock.Services.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -45,7 +46,11 @@ namespace Stock.Services.Services
     }
     public int Insert<T>(IEnumerable<T> models) where T : class
     {
-      LogUtils.Debug($"START-INSERT");
+      var sp = new Stopwatch();
+      sp.Start();
+
+      var cnt = (models == null) ? 0 : models.Count();
+      LogUtils.Debug($"START-INSERT={cnt} records");
       using (var connection = new SqlConnection(Configs.SandboxDb))
       {
         var bulkCopy = new SqlBulkCopy(
@@ -59,7 +64,9 @@ namespace Stock.Services.Services
         bulkCopy.WriteToServer(PropUtils.ToDataTable(models));
         connection.Close();
       }
-      LogUtils.Debug($"END-INSERT");
+
+      sp.Stop();
+      LogUtils.Debug($"END-INSERT={sp.Elapsed}");
       return 1;
     }
     public int Update<T>(T model) where T : class
