@@ -24,8 +24,10 @@ namespace Stock.Services.Services.CsvServices
       {
         return ret;
       }
+
       records.ForEach(r => r.Symbol = symbol);
-      ret += Insert<WorldPrice>(records);
+
+      //ret += Insert<WorldPrice>(records);
 
       return ret;
     }

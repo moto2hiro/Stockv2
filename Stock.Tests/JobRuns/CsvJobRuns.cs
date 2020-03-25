@@ -46,7 +46,7 @@ namespace Stock.Tests.JobRuns
     [Test()]
     public void Run_SaveCsv()
     {
-      var fileName = $"{DOWNLOAD_PATH}^SENSEX.csv";
+      var fileName = $"{DOWNLOAD_PATH}SPY.csv";
       new StockService().SaveCsv<WorldPrice, MapYahooWorldPrice>(fileName);
     }
   }

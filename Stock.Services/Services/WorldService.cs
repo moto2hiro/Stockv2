@@ -112,10 +112,10 @@ namespace Stock.Services.Services
 
     private static readonly DateTime MIN_DATE = new DateTime(2014, 10, 21);
     private static readonly int CALC_HOUR_UTC = 14;
-    private static readonly int CLOSE_HOUR_UTC_FTSE = 16;  // 16 UTC
-    private static readonly int CLOSE_HOUR_UTC_STOXX = 18; // 17 CET
-    private static readonly int CLOSE_HOUR_UTC_GDAXI = 18; // 17 CET 
-    private static readonly int CLOSE_HOUR_UTC_SSMI = 18; // 17 CET 
+    private static readonly int CLOSE_HOUR_UTC_FTSE = 20;  // 16 UTC
+    private static readonly int CLOSE_HOUR_UTC_STOXX = 20; // 17 CET
+    private static readonly int CLOSE_HOUR_UTC_GDAXI = 20; // 17 CET 
+    private static readonly int CLOSE_HOUR_UTC_SSMI = 19; // 17 CET 
 
     public int TransformWorldPrice()
     {
@@ -144,16 +144,19 @@ namespace Stock.Services.Services
         #region X Features
         var isValid = true;
         var prevDate = DateUtils.AddBusinessDays(currDate, -1);
-        var ftsePrevPrice = GetWorldPrice(Consts.SYMBOL_FTSE, prevDate, CLOSE_HOUR_UTC_FTSE);
-        var ftseCurrPrice = GetWorldPrice(Consts.SYMBOL_FTSE, currDate, CALC_HOUR_UTC);
-        isValid = isValid &&
-          ftsePrevPrice != null &&
-          ftsePrevPrice.ClosePrice > 0 &&
-          ftseCurrPrice != null &&
-          ftseCurrPrice.ClosePrice > 0;
         if (isValid)
         {
-          model.XFtsediffNorm = GetDiffNorm(ftsePrevPrice.ClosePrice, ftseCurrPrice.ClosePrice);
+          var ftsePrevPrice = GetWorldPrice(Consts.SYMBOL_FTSE, prevDate, CLOSE_HOUR_UTC_FTSE);
+          var ftseCurrPrice = GetWorldPrice(Consts.SYMBOL_FTSE, currDate, CALC_HOUR_UTC);
+          isValid = isValid &&
+            ftsePrevPrice != null &&
+            ftsePrevPrice.ClosePrice > 0 &&
+            ftseCurrPrice != null &&
+            ftseCurrPrice.ClosePrice > 0;
+          if (isValid)
+          {
+            model.XFtsediffNorm = GetDiffNorm(ftsePrevPrice.ClosePrice, ftseCurrPrice.ClosePrice);
+          }
         }
 
         if (isValid)

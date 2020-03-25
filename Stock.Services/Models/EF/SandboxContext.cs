@@ -215,7 +215,7 @@ namespace Stock.Services.Models.EF
 
                 entity.Property(e => e.YDiadiffActual)
                     .HasColumnName("Y_DIADiffActual")
-                    .HasColumnType("decimal(13, 2)");
+                    .HasColumnType("decimal(13, 4)");
 
                 entity.Property(e => e.YDiapredicted).HasColumnName("Y_DIAPredicted");
 
@@ -227,7 +227,7 @@ namespace Stock.Services.Models.EF
 
                 entity.Property(e => e.YSpydiffActual)
                     .HasColumnName("Y_SPYDiffActual")
-                    .HasColumnType("decimal(13, 2)");
+                    .HasColumnType("decimal(13, 4)");
 
                 entity.Property(e => e.YSpypredicted).HasColumnName("Y_SPYPredicted");
 
