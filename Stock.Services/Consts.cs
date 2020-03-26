@@ -35,7 +35,7 @@ namespace Stock.Services
     #endregion
 
     #region Stock Analysis
-    public const int YACTUAL_MAX_FUTURE = 150;
+    public const int YACTUAL_MAX_FUTURE = 90;
     public const string TECHNICAL_SMA = "SMA";
     public const string TECHNICAL_EMA = "EMA";
     public const string TECHNICAL_ADTV = "ADTV";

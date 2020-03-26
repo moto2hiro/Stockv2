@@ -118,7 +118,7 @@ namespace Stock.Services.Services
         }
 
         // TO DO Check if it exists already.
-        //ret += Insert<Yactual>(models);
+        ret += Insert<Yactual>(models);
       }
       return ret;
     }

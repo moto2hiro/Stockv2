@@ -63,7 +63,7 @@ namespace Stock.Services.Models.EF
                 entity.Property(e => e.Condition1)
                     .IsRequired()
                     .HasColumnName("Condition")
-                    .HasMaxLength(500)
+                    .HasMaxLength(200)
                     .IsUnicode(false);
             });
 
@@ -146,10 +146,10 @@ namespace Stock.Services.Models.EF
             {
                 entity.Property(e => e.CalcType)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .IsUnicode(false);
 
-                entity.Property(e => e.CalcValue).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.CalcValue).HasColumnType("decimal(13, 4)");
             });
 
             modelBuilder.Entity<WorldPrice>(entity =>
