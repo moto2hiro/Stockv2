@@ -10,9 +10,16 @@ namespace Stock.Services.Services
 {
   public interface IAnalysisService
   {
+    void BackTest();
   }
 
   public class AnalysisService : BaseService, IAnalysisService
   {
+    public void BackTest()
+    {
+
+
+
+    }
   }
 }

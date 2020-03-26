@@ -25,12 +25,12 @@ namespace Stock.Tests.JobRuns
     //  }
     //}
 
-    //[Test()]
-    //public void Run_GetRecentPriceHistoryForAllStocks()
-    //{
-    //  var service = new StockService();
-    //  service.GetRecentPriceHistoryForAllStocks();
-    //}
+    [Test()]
+    public void Run_GetRecentPriceHistoryForAllStocks()
+    {
+      var service = new StockService();
+      service.GetRecentPriceHistoryForAllStocks();
+    }
 
     //[Test()]
     //public void Run_SaveChartImagesV2()

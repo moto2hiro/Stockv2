@@ -8,5 +8,6 @@ namespace Stock.Services.Models.EF
         public int Id { get; set; }
         public string Symbol { get; set; }
         public string Name { get; set; }
+        public int Status { get; set; }
     }
 }

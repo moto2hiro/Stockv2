@@ -8,7 +8,7 @@ namespace Stock.Services
 {
   public class Consts
   {
-    public const int DEFAULT_SKIP = 500;
+    public const int STATUS_ACTIVE = 1;
     public const int CLASS_UP = 1;
     public const int CLASS_DOWN = 0;
     public const string SYMBOL_DOW_JONES = "^DJI";

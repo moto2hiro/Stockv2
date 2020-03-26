@@ -18,7 +18,7 @@ namespace Stock.Services.Services
 {
   public interface IStockService
   {
-    //List<SymbolMaster> GetSymbols();
+    List<SymbolMaster> GetSymbols();
     //StockPrice GetStockPrice(string symbol, DateTime priceDate);
     //ChartImage GetChartImage(string symbol, DateTime priceDate, int version);
     //int AddStockPriceFromCsv(string symbol, string filePath);
@@ -33,16 +33,15 @@ namespace Stock.Services.Services
 
   public class StockService : BaseService, IStockService
   {
-    //public List<SymbolMaster> GetSymbols()
-    //{
-    //  return DB.SymbolMaster.Where(s => s.Symbol != Consts.SYMBOL_DOW_ETF && s.Symbol != Consts.SYMBOL_DOW_JONES).OrderBy(s => s.Symbol).ToList();
-    //}
+    public List<SymbolMaster> GetSymbols()
+    {
+      return DB.SymbolMaster.Where(s => s.Status == Consts.STATUS_ACTIVE).OrderBy(s => s.Symbol).ToList();
+    }
 
-    //public StockPrice GetStockPrice(string symbol, DateTime priceDate)
-    //{
-    //  if (string.IsNullOrEmpty(symbol)) return null;
-    //  return DB.StockPrice.FirstOrDefault(c => c.Symbol.ToUpper() == symbol.ToUpper() && c.PriceDate == priceDate);
-    //}
+    public StockPrice GetStockPrice(int symbolId, DateTime priceDate)
+    {
+      return DB.StockPrice.FirstOrDefault(c => c.SymbolId == symbolId && c.PriceDate == priceDate);
+    }
 
     //public ChartImage GetChartImage(string symbol, DateTime priceDate, int version)
     //{
@@ -74,69 +73,83 @@ namespace Stock.Services.Services
     //  return ret;
     //}
 
-    ///// <summary>
-    ///// Gets Recent Price History for all Stocks
-    ///// TO DO Refactor this out with other 
-    ///// Data Collection stuff
-    ///// </summary>
-    ///// <returns></returns>
-    //public int GetRecentPriceHistoryForAllStocks()
-    //{
-    //  var ret = 0;
-    //  var symbols = GetSymbols();
-    //  if (symbols != null)
-    //  {
-    //    var requests = new List<TDAmPriceHistoryReq>();
-    //    foreach (var symbol in symbols)
-    //    {
-    //      requests.Add(new TDAmPriceHistoryReq()
-    //      {
-    //        Symbol = symbol.Symbol,
-    //        apikey = Configs.TDAmApiKey,
-    //        periodType = Consts.TDAM_PERIOD_MONTH,
-    //        period = 1,
-    //        frequencyType = Consts.TDAM_FREQUENCY_DAILY,
-    //        frequency = 1
-    //      });
-    //    }
+    /// <summary>
+    /// Gets Recent Price History for all Stocks
+    /// TO DO Refactor this out with other 
+    /// </summary>
+    /// <returns></returns>
+    public int GetRecentPriceHistoryForAllStocks()
+    {
+      var ret = 0;
+      var symbols = GetSymbols();
+      if (symbols == null)
+      {
+        return ret;
+      }
 
-    //    var responses = TDAmClient.GetPriceHistory(requests);
-    //    if (responses != null)
-    //    {
-    //      var models = new List<StockPrice>();
-    //      foreach (var response in responses)
-    //      {
-    //        if (response != null && response.candles != null && !string.IsNullOrEmpty(response.symbol))
-    //        {
-    //          LogUtils.Debug($"Prices for {response.symbol} found.");
-    //          foreach (var candle in response.candles)
-    //          {
-    //            if (candle != null)
-    //            {
-    //              var orgPrice = GetStockPrice(response.symbol, candle.PriceDateWithoutTime);
-    //              if (orgPrice == null)
-    //              {
-    //                // Insert
-    //                models.Add(new StockPrice()
-    //                {
-    //                  Symbol = response.symbol.ToUpper(),
-    //                  OpenPrice = candle.open,
-    //                  HighPrice = candle.high,
-    //                  LowPrice = candle.low,
-    //                  ClosePrice = candle.close,
-    //                  Volume = candle.volume,
-    //                  PriceDate = candle.PriceDateWithoutTime
-    //                });
-    //              }
-    //            }
-    //          }
-    //        }
-    //      }
-    //      ret += Insert<StockPrice>(models);
-    //    }
-    //  }
-    //  return ret;
-    //}
+      var models = new List<StockPrice>();
+      foreach (var symbol in symbols)
+      {
+        // Get Request
+        var req = new List<TDAmPriceHistoryReq>()
+        { 
+          new TDAmPriceHistoryReq()
+          {
+            Symbol = symbol.Symbol,
+            apikey = Configs.TDAmApiKey,
+            periodType = Consts.TDAM_PERIOD_MONTH,
+            period = 1,
+            frequencyType = Consts.TDAM_FREQUENCY_DAILY,
+            frequency = 1
+          }
+        };
+
+        // Get Response
+        var resps = TDAmClient.GetPriceHistory(req);
+        if (resps == null)
+        {
+          continue;
+        }
+
+        foreach (var resp in resps)
+        {
+          if (resp == null || resp.candles == null)
+          {
+            continue;
+          }
+
+          LogUtils.Debug($"Prices for {resp.symbol} found.");
+          foreach (var candle in resp.candles)
+          {
+            if (candle == null)
+            {
+              continue;
+            }
+
+            var orgPrice = GetStockPrice(symbol.Id, candle.PriceDateWithoutTime);
+            if (orgPrice == null)
+            {
+              // Insert
+              models.Add(new StockPrice()
+              {
+                SymbolId = symbol.Id,
+                OpenPrice = candle.open,
+                HighPrice = candle.high,
+                LowPrice = candle.low,
+                ClosePrice = candle.close,
+                Volume = candle.volume,
+                PriceDate = candle.PriceDateWithoutTime
+              });
+            }
+          }
+        }
+      }
+
+      // Insert
+      ret += Insert<StockPrice>(models);
+      
+      return ret;
+    }
 
     ///// <summary>
     ///// Saves Chart Images
