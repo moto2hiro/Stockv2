@@ -16,13 +16,7 @@ namespace Stock.Tests.JobRuns
     [Test()]
     public void Run_GetTechnicals()
     {
-      new AnalysisService().GetTechnicals();
-    }
-
-    [Test()]
-    public void Run_GetYActuals()
-    {
-      new AnalysisService().GetYActuals();
+      //new AnalysisService().GetTechnicals();
     }
   }
 }

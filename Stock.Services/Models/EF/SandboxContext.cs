@@ -16,15 +16,12 @@ namespace Stock.Services.Models.EF
         }
 
         public virtual DbSet<ChartImage> ChartImage { get; set; }
-        public virtual DbSet<Condition> Condition { get; set; }
         public virtual DbSet<Financial> Financial { get; set; }
         public virtual DbSet<StockPrice> StockPrice { get; set; }
         public virtual DbSet<SymbolMaster> SymbolMaster { get; set; }
-        public virtual DbSet<Technical> Technical { get; set; }
         public virtual DbSet<WorldPrice> WorldPrice { get; set; }
         public virtual DbSet<WorldPriceIndex> WorldPriceIndex { get; set; }
         public virtual DbSet<WorldPriceSet> WorldPriceSet { get; set; }
-        public virtual DbSet<Yactual> Yactual { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -56,15 +53,6 @@ namespace Stock.Services.Models.EF
                 entity.Property(e => e.YPredictedProbability)
                     .HasColumnName("Y_PredictedProbability")
                     .HasColumnType("decimal(13, 2)");
-            });
-
-            modelBuilder.Entity<Condition>(entity =>
-            {
-                entity.Property(e => e.Condition1)
-                    .IsRequired()
-                    .HasColumnName("Condition")
-                    .HasMaxLength(200)
-                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Financial>(entity =>
@@ -140,16 +128,6 @@ namespace Stock.Services.Models.EF
                     .IsRequired()
                     .HasMaxLength(15)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Technical>(entity =>
-            {
-                entity.Property(e => e.CalcType)
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.CalcValue).HasColumnType("decimal(13, 4)");
             });
 
             modelBuilder.Entity<WorldPrice>(entity =>
@@ -234,11 +212,6 @@ namespace Stock.Services.Models.EF
                 entity.Property(e => e.YSpypredictedProb)
                     .HasColumnName("Y_SPYPredictedProb")
                     .HasColumnType("decimal(13, 2)");
-            });
-
-            modelBuilder.Entity<Yactual>(entity =>
-            {
-                entity.ToTable("YActual");
             });
 
             OnModelCreatingPartial(modelBuilder);
