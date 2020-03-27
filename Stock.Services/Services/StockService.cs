@@ -49,30 +49,6 @@ namespace Stock.Services.Services
     //  return DB.ChartImage.FirstOrDefault(c => c.Symbol.ToUpper() == symbol.ToUpper() && c.PriceDate == priceDate && c.Version == version);
     //}
 
-    //public int AddStockPriceFromCsv(string symbol, string fileName)
-    //{
-    //  var ret = 0;
-    //  if (!string.IsNullOrEmpty(symbol) && File.Exists(fileName))
-    //  {
-    //    var models = new List<StockPrice>();
-    //    var records = CsvUtils.ParseCsv<StockPrice, MapYahooStockPrice>(fileName);
-    //    if (records != null)
-    //    {
-    //      foreach (var record in records)
-    //      {
-    //        var orgStockPrice = GetStockPrice(symbol, record.PriceDate);
-    //        if (orgStockPrice == null)
-    //        {
-    //          record.Symbol = symbol;
-    //          models.Add(record);
-    //        }
-    //      }
-    //      Insert<StockPrice>(models);
-    //    }
-    //  }
-    //  return ret;
-    //}
-
     /// <summary>
     /// Gets Recent Price History for all Stocks
     /// TO DO Refactor this out with other 
@@ -742,6 +718,11 @@ namespace Stock.Services.Services
           return new DukascopyWorldPriceCsvService().SaveCsv(fileName);
         if (typeof(TMap) == typeof(MapYahooWorldPrice))
           return new YahooWorldPriceCsvService().SaveCsv(fileName);
+      }
+      else if (typeof(T) == typeof(StockPrice))
+      {
+        if (typeof(TMap) == typeof(MapYahooStockPrice))
+          return new YahooStockPriceCsvService().SaveCsv(fileName);
       }
       return 0;
     }

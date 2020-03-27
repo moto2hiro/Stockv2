@@ -44,10 +44,10 @@ namespace Stock.Tests.JobRuns
     }
 
     [Test()]
-    public void Run_SaveCsv()
+    public void Run_YahooStockPriceCsvService()
     {
-      var fileName = $"{DOWNLOAD_PATH}SPY.csv";
-      new StockService().SaveCsv<WorldPrice, MapYahooWorldPrice>(fileName);
+      var fileName = $"{DOWNLOAD_PATH}DIA.csv";
+      new StockService().SaveCsv<StockPrice, MapYahooStockPrice>(fileName);
     }
   }
 }

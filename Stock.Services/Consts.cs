@@ -9,6 +9,8 @@ namespace Stock.Services
   public class Consts
   {
     public const int STATUS_ACTIVE = 1;
+    public const string ACTION_BUY = "Buy";
+    public const string ACTION_SHORT = "Short";
     public const int CLASS_UP = 1;
     public const int CLASS_DOWN = 0;
     public const string SYMBOL_DOW_JONES = "^DJI";
@@ -35,12 +37,7 @@ namespace Stock.Services
     #endregion
 
     #region Stock Analysis
-    public const int YACTUAL_MAX_FUTURE = 90;
-    public const string TECHNICAL_SMA = "SMA";
-    public const string TECHNICAL_EMA = "EMA";
-    public const string TECHNICAL_ADTV = "ADTV";
-    public const string TECHNICAL_ADPV = "ADPV";
-    public const string TECHNICAL_RSI = "RSI";
+    public const int MAX_CALC_PERIOD = 201;
     public static readonly int[] SMA_PERIODS = new int[]
     {
       12, 13, 14, 15, 48, 49, 50, 51, 52,

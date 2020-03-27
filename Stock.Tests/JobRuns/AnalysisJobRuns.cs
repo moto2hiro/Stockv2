@@ -14,9 +14,9 @@ namespace Stock.Tests.JobRuns
   public class AnalysisJobRuns : BaseTest
   {
     [Test()]
-    public void Run_BackTest()
+    public void Run_BackTest_SMA()
     {
-      new AnalysisService().BackTest();
+      new AnalysisService().BackTest("Turning Tuesdays");
     }
   }
 }

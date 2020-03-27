@@ -119,6 +119,11 @@ namespace Stock.Services.Models.EF
 
             modelBuilder.Entity<SymbolMaster>(entity =>
             {
+                entity.Property(e => e.Instrument)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(200)
