@@ -723,6 +723,8 @@ namespace Stock.Services.Services
       {
         if (typeof(TMap) == typeof(MapYahooStockPrice))
           return new YahooStockPriceCsvService().SaveCsv(fileName);
+        else if (typeof(TMap) == typeof(MapKibotStockPrice))
+          return new KibotStockPriceCsvService().SaveCsv(fileName);
       }
       return 0;
     }

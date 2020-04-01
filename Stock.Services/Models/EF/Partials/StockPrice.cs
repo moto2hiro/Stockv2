@@ -6,5 +6,7 @@ namespace Stock.Services.Models.EF
 {
   public partial class StockPrice
   {
+    [NotMapped]
+    public string TimeStr { get; set; }
   }
 }

@@ -24,7 +24,7 @@ namespace Stock.Services.Utils
       }
     }
 
-    public static List<T> ParseCsv<T, TMap>(string fileName) where TMap : ClassMap
+    public static List<T> ParseCsv<T, TMap>(string fileName, bool hasHeaderRecord = true) where TMap : ClassMap
     {
       var ret = new List<T>();
       if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -34,6 +34,7 @@ namespace Stock.Services.Utils
         {
           if (csv != null && csv.Configuration != null)
           {
+            csv.Configuration.HasHeaderRecord = hasHeaderRecord;
             csv.Configuration.RegisterClassMap<TMap>();
             var records = csv.GetRecords<T>();
             if (records != null)

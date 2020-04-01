@@ -49,5 +49,12 @@ namespace Stock.Tests.JobRuns
       var fileName = $"{DOWNLOAD_PATH}DIA.csv";
       new StockService().SaveCsv<StockPrice, MapYahooStockPrice>(fileName);
     }
+
+    [Test()]
+    public void Run_KibotStockPriceCsvService()
+    {
+      var fileName = $"{DOWNLOAD_PATH}A.txt";
+      new StockService().SaveCsv<StockPrice, MapKibotStockPrice>(fileName);
+    }
   }
 }

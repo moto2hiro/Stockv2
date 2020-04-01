@@ -8,6 +8,9 @@ namespace Stock.Services
 {
   public class Consts
   {
+    public const string INSTRUMENT_STOCK = "stock";
+    public const string INSTRUMENT_ETF = "etf";
+    public const string INSTRUMENT_INDEX = "index";
     public const int STATUS_ACTIVE = 1;
     public const string ACTION_BUY = "Buy";
     public const string ACTION_SHORT = "Short";
