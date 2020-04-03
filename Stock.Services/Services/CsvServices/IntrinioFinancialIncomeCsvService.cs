@@ -18,28 +18,36 @@ namespace Stock.Services.Services.CsvServices
       if (records != null)
       {
         LogUtils.Debug($"Save Financial Income = {records.Count}");
-        records = records.Where(r =>
-          !string.IsNullOrEmpty(r.Symbol) &&
-          !string.IsNullOrEmpty(r.CompanyName) &&
-          !string.IsNullOrEmpty(r.FiscalPeriod) &&
-          !r.FiscalPeriod.EndsWith(Consts.INTRINIO_PERIOD_SUFFIX_YTD) &&
-          !r.FiscalPeriod.EndsWith(Consts.INTRINIO_PERIOD_SUFFIX_TTM) &&
-          !r.FiscalPeriod.EndsWith(Consts.INTRINIO_PERIOD_SUFFIX_FY)).ToList();
+        var query = from r in records
+                    join s in DB.SymbolMaster
+                      on r.Symbol equals s.Symbol into rs
+                    from s in rs.DefaultIfEmpty()
+                    where
+                      !string.IsNullOrEmpty(r.Symbol) &&
+                      !string.IsNullOrEmpty(r.CompanyName) &&
+                      !string.IsNullOrEmpty(r.FiscalPeriod) &&
+                      !r.FiscalPeriod.EndsWith(Consts.INTRINIO_PERIOD_SUFFIX_YTD) &&
+                      !r.FiscalPeriod.EndsWith(Consts.INTRINIO_PERIOD_SUFFIX_TTM) &&
+                      !r.FiscalPeriod.EndsWith(Consts.INTRINIO_PERIOD_SUFFIX_FY) &&
+                      s != null
+                    select new Financial
+                    {
+                      SymbolId = s.Id,
+                      Symbol = r.Symbol,
+                      Year = r.Year,
+                      Quarter = StringUtils.ToInt(r.FiscalPeriod.Replace(Consts.INTRINIO_PERIOD_PREFIX, "")),
+                      FiscalPeriod = r.FiscalPeriod,
+                      QuarterEndDate = r.QuarterEndDate,
+                      FileDate = r.FileDate,
+                      Revenue = r.Revenue,
+                      GrossProfit = r.GrossProfit,
+                      OperatingIncome = r.OperatingIncome,
+                      NetIncome = r.NetIncome,
+                    };
+        var items = query.ToList();
 
-        var skip = 0;
-        while (skip < records.Count)
-        {
-          //var models = records.Skip(skip).Take(Consts.DEFAULT_SKIP).ToList();
-          //foreach(var model in models)
-          //{
-          //  var symbol = DB.SymbolMaster.FirstOrDefault(s => s.Symbol == model.Symbol);
-          //  model.SymbolId = symbol.Id;
-          //  model.Quarter = StringUtils.ToInt(model.FiscalPeriod.Replace(Consts.INTRINIO_PERIOD_PREFIX, ""));
-          //}
-          //ret += Insert<Financial>(models);
-          //skip += Consts.DEFAULT_SKIP;
-          LogUtils.Debug($"skip count = {skip}");
-        }
+        LogUtils.Debug($"record count = {items.Count}");
+        ret += Insert<Financial>(items);
       }
       return ret;
     }

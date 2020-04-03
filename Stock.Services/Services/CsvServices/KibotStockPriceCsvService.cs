@@ -27,25 +27,38 @@ namespace Stock.Services.Services.CsvServices
         return ret;
       }
 
+      LogUtils.Debug(symbol);
+
       //var org = new SymbolMaster()
       //{
-      //  org.Symbol = symbol,
-      //  org.Name = "",
-      //  org.Status = Consts.STATUS_ACTIVE,
-      //  org.Instrument = Consts.ins
-      //});
+      //  Symbol = symbol,
+      //  Name = "",
+      //  Status = Consts.STATUS_ACTIVE,
+      //  Instrument = Consts.INSTRUMENT_STOCK
+      //};
       //ret += Insert(org);
 
-      ////var org = DB.SymbolMaster.FirstOrDefault(s => s.Symbol == symbol);
-      ////if (org == null)
-      ////{
-      ////  LogUtils.Debug($"{symbol} not found.");
-      ////  return ret;
-      ////}
+      var orgSymbol = DB.SymbolMaster.FirstOrDefault(s => s.Symbol == symbol);
+      if (orgSymbol == null)
+      {
+        return ret;
+      }
 
-      //records.ForEach(r => r.SymbolId = org.Id);
+      var orgPrice = DB.StockPrice.FirstOrDefault(s => s.SymbolId == orgSymbol.Id);
+      if (orgPrice != null)
+      {
+        return ret;
+      }
 
-      //ret += Insert<StockPrice>(records);
+      foreach (var record in records)
+      {
+        record.SymbolId = orgSymbol.Id;
+        record.PriceDate = record.PriceDate
+          .AddHours(record.Hours)
+          .AddMinutes(record.Minutes);
+      }
+
+      ret += Insert<StockPrice>(records);
 
       return ret;
     }

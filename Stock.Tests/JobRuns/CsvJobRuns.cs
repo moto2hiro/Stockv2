@@ -53,8 +53,11 @@ namespace Stock.Tests.JobRuns
     [Test()]
     public void Run_KibotStockPriceCsvService()
     {
-      var fileName = $"{DOWNLOAD_PATH}A.txt";
-      new StockService().SaveCsv<StockPrice, MapKibotStockPrice>(fileName);
+      var fileNames = Directory.GetFiles(@"D:\Files\Datasets\US_Stock_5");
+      foreach (var fileName in fileNames)
+      {
+        new StockService().SaveCsv<StockPrice, MapKibotStockPrice>(fileName);
+      }
     }
   }
 }

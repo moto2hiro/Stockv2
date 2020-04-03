@@ -28,7 +28,7 @@ namespace Stock.Services.Models.EF
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=hwsrv-706369.hostwindsdns.com,1433;Initial Catalog=Sandbox;User ID=sandboxuser;Password=T0rranc3");
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-2JHG1EA\\SQLEXPRESS;Initial Catalog=Sandbox;Integrated Security=True");
             }
         }
 
@@ -108,6 +108,9 @@ namespace Stock.Services.Models.EF
 
             modelBuilder.Entity<StockPrice>(entity =>
             {
+                entity.HasIndex(e => new { e.SymbolId, e.PriceDate })
+                    .HasName("StockPriceIndexSymbolDate");
+
                 entity.Property(e => e.ClosePrice).HasColumnType("decimal(13, 2)");
 
                 entity.Property(e => e.HighPrice).HasColumnType("decimal(13, 2)");

@@ -13,18 +13,6 @@ namespace Stock.Tests.JobRuns
   [TestFixture()]
   public class JobRuns : BaseTest
   {
-    //[Test()]
-    //public void Run_AddStockPriceFromCsv()
-    //{
-    //  var fileNames = Directory.GetFiles($"{DOWNLOAD_PATH}Temp");
-    //  foreach (var fileName in fileNames)
-    //  {
-    //    var symbol = Path.GetFileNameWithoutExtension(fileName);
-    //    LogUtils.Debug(symbol);
-    //    new StockService().AddStockPriceFromCsv(symbol, fileName);
-    //  }
-    //}
-
     [Test()]
     public void Run_GetRecentPriceHistoryForAllStocks()
     {
