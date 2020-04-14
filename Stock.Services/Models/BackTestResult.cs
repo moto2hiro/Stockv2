@@ -56,7 +56,7 @@ namespace Stock.Services.Models
       NumberUtils.Pct(TtlNoProfitTrans, TtlNoTrans) : 0;
 
     public decimal AvgHoldLength => (HasTrans) ?
-      NumberUtils.Round(Transactions.Average(t => (decimal)t.HoldLength)) : 0;
+      NumberUtils.Round(Transactions.Average(t => t.HoldLength)) : 0;
 
     public decimal MaxHoldLength => (HasTrans) ?
       NumberUtils.Round(Transactions.Max(t => t.HoldLength)) : 0;
@@ -79,7 +79,9 @@ namespace Stock.Services.Models
     #endregion
 
     #region Readonly Props
-    public int HoldLength => (EndDate - StartDate).Days;
+    public decimal HoldLength => NumberUtils.Round(HoldLengthHours + HoldLengthMinutes / 60m);
+    public int HoldLengthHours => (EndDate - StartDate).Hours;
+    public int HoldLengthMinutes => (EndDate - StartDate).Minutes;
 
     public decimal PctChangeInCapital =>
       (Action == Consts.ACTION_BUY && StartPrice > 0) ?

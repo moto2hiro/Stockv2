@@ -9,6 +9,10 @@ namespace Stock.Services.Models
   public class BackTestReq
   {
     public string Title { get; set; }
-
+    
+    public int LookBack { get; set; }
+    public int LookBackSegs { get; set; }
+    
+    public decimal SmoothingAlpha { get; set; }
   }
 }

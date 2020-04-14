@@ -8,7 +8,7 @@ namespace Stock.Services
   // TO DO: AppSettings?
   public class Configs
   {
-    public static string SandboxDb => @"Data Source=DESKTOP-2JHG1EA\SQLEXPRESS;Initial Catalog=Sandbox;Integrated Security=True";
+    public static string SandboxDb => @"Data Source=(local);Initial Catalog=Sandbox;Integrated Security=True";
     public static string TDAmApiKey => "QLKKOSWCWHMNWUWAOL9Z1D1MIIXYGSLF";
     public static string WtdApiKey => "YASOkww60BbNqur3z3bp0HAFrKpdDx0aAxVdvdQZqt0D7M9UveqP1sTxx0Dg";
 

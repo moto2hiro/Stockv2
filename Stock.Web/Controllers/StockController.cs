@@ -15,10 +15,18 @@ namespace Stock.Web.Controllers
   public class StockController : ControllerBase
   {
     private readonly IStockService _StockService;
+    private readonly IAnalysisService _AnalysisService;
 
-    public StockController(IStockService stockService)
+    public StockController(IStockService stockService, IAnalysisService analysisService)
     {
       _StockService = stockService;
+      _AnalysisService = analysisService;
+    }
+
+    [HttpPost("getPricesForCharts")]
+    public List<List<StockPrice>> GetPricesForCharts(BackTestReq req)
+    {
+      return _AnalysisService.GetPricesForCharts(req);
     }
 
     //[HttpGet("symbols")]

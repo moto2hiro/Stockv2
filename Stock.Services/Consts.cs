@@ -8,6 +8,11 @@ namespace Stock.Services
 {
   public class Consts
   {
+    public const int NY_OPEN_H = 9;
+    public const int NY_OPEN_M = 30;
+    public const int NY_CLOSE_H = 4;
+    public const int NY_CLOSE_M = 0;
+
     public const string INSTRUMENT_STOCK = "stock";
     public const string INSTRUMENT_ETF = "etf";
     public const string INSTRUMENT_INDEX = "index";
@@ -56,7 +61,7 @@ namespace Stock.Services
       5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
     };
     public static readonly int[] ADTV_PERIODS = new int[] { 50 };
-    public static readonly int[] ADPV_PERIODS = new int[] { 50 };
+    public const int ADPV_PERIODS = 50;
 
     public const decimal PRICE_VOLUME_THRESHOLD = 20000000;
     public const decimal TRADING_VOLUME_THRESHOLD = 1000000;
@@ -74,6 +79,9 @@ namespace Stock.Services
     public const decimal RSI_25 = 25;
     public const decimal RSI_20 = 20;
     public const decimal RSI_15 = 15;
+    #endregion
+
+    #region Strategies
     #endregion
 
     #region TD Ameritrade

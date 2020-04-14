@@ -26,8 +26,7 @@ import { ViewChartsComponent } from './components/view-charts/view-charts.compon
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'chart-generation', component: ChartGenerationComponent },
       { path: 'chart-generation/:symbol', component: ChartGenerationComponent },
-      { path: 'view-charts', component: ViewChartsComponent },
-      { path: 'view-charts/:version', component: ViewChartsComponent },
+      { path: 'view-charts', component: ViewChartsComponent }
     ])
   ],
   providers: [],

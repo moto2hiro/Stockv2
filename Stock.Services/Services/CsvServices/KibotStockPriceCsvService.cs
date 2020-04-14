@@ -58,7 +58,7 @@ namespace Stock.Services.Services.CsvServices
           .AddMinutes(record.Minutes);
       }
 
-      ret += Insert<StockPrice>(records);
+      //ret += Insert<StockPrice>(records);
 
       return ret;
     }

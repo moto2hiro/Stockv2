@@ -5,6 +5,7 @@ import { SaveChartImageReq } from '../models/save-chart-image-req';
 import { SymbolMaster } from '../models/symbol-master';
 import { ChartImage } from '../models/chart-image';
 import { GetPeriodsOfStockPricesReq } from '../models/get-periods-of-stock-prices-req';
+import { BackTestReq } from '../models/back-test-req';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,10 @@ export class StockService {
   static readonly serviceUrl: string = '/api/stock';
 
   constructor(private http: HttpClient) { }
+
+  getPricesForCharts(req: BackTestReq) {
+    return this.http.post<StockPrice[][]>(`${StockService.serviceUrl}/getPricesForCharts`, req);
+  }
 
   getSymbols() {
     return this.http.get<SymbolMaster[]>(`${StockService.serviceUrl}/symbols`);
