@@ -11,8 +11,15 @@ export class StockPrice {
   //#region NotMapped
 
   SmoothedPrice: number;
+  PolynomialPrice: number;
+  IsPolynomialMax: boolean;
+  IsPolynomialMin: boolean;
   IsLocalMax: boolean;
   IsLocalMin: boolean;
+  SupportPriceTop1: number;
+  SupportPriceTop2: number;
+  ResistancePriceTop1: number;
+  ResistancePriceTop2: number;
 
   //#endregion
 }

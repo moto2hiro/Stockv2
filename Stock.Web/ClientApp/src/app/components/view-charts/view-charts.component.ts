@@ -30,6 +30,8 @@ export class ViewChartsComponent implements OnInit {
       Title: '',
       LookBack: 100,
       SmoothingAlpha: 0.5,
+      PolynomialOrder: 25,
+      SupportResistanceProximityPct: 0.8
     };
 
     self.stockService.getPricesForCharts(this.req).subscribe(resp => {
@@ -40,17 +42,25 @@ export class ViewChartsComponent implements OnInit {
       self.periods = resp;
       self.periods.forEach((period, i) => {
 
+        console.log(period);
+
         // Transform Date
         var candleItems = [];
         period.forEach((item, k) => {
           candleItems.push([
             item.PriceDate.toString(),
-            item.LowPrice * 0.99,
-            item.OpenPrice * 0.99,
-            item.ClosePrice * 0.99,
-            item.HighPrice * 0.99,
-            item.SmoothedPrice,
-            (item.IsLocalMax || item.IsLocalMin) ? item.SmoothedPrice : null
+            item.LowPrice,
+            item.OpenPrice,
+            item.ClosePrice,
+            item.HighPrice,
+            //item.SmoothedPrice * 1.01,
+            item.PolynomialPrice,
+            (item.IsPolynomialMax || item.IsPolynomialMin) ? item.PolynomialPrice : null,
+            //(item.IsLocalMax || item.IsLocalMin) ? item.SmoothedPrice : null,
+            item.SupportPriceTop1,
+            //item.SupportPriceTop2,
+            item.ResistancePriceTop1,
+            //item.ResistancePriceTop2
           ]);
         });
 
@@ -59,7 +69,10 @@ export class ViewChartsComponent implements OnInit {
 
         // Add Series
         var smoothedSeries = self.chartService.getLineSeries(Consts.COLOR_YELLOW);
+        var polynomialSeries = self.chartService.getLineSeries(Consts.COLOR_YELLOW);
         var localMaxMins = self.chartService.getScatterSeries(Consts.COLOR_ORANGE);
+        var supportLines = self.chartService.getLineSeries(Consts.COLOR_BROWN);
+        var resistanceLines = self.chartService.getLineSeries(Consts.COLOR_BROWN);
 
         // Draw
         candleChart.draw(
@@ -67,7 +80,15 @@ export class ViewChartsComponent implements OnInit {
           self.chartService.getCandleChartOptions(
             500,
             900,
-            [smoothedSeries, localMaxMins])
+            [
+              //smoothedSeries,
+              polynomialSeries,
+              localMaxMins,
+              supportLines,
+              //supportLines,
+              resistanceLines,
+              //resistanceLines
+            ])
         );
 
       });

@@ -11,6 +11,7 @@ export class ChartService {
   constructor() { }
 
   getCandleChartObj(divId) {
+    document.getElementById(divId).appendChild(document.createElement('br')); 
     var container = document.getElementById(divId).appendChild(document.createElement('div'));
     return new GoogleCharts.api.visualization.CandlestickChart(container);
   }
@@ -74,7 +75,7 @@ export class ChartService {
   getScatterSeries(color) {
     return {
       type: 'scatter',
-      pointSize: 5,
+      pointSize: 10,
       color: color,
       dataOpacity: 0.5
     };

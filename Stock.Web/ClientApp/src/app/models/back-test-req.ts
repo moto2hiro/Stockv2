@@ -3,4 +3,6 @@ export class BackTestReq {
   LookBack: number;
   //LookBackSegs?: number;
   SmoothingAlpha: number;
+  PolynomialOrder: number;
+  SupportResistanceProximityPct: number;
 }

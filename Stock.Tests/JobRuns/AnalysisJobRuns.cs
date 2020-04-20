@@ -22,6 +22,9 @@ namespace Stock.Tests.JobRuns
         LookBack = 100,
         LookBackSegs = 5,
         SmoothingAlpha = 0.6m,
+        PolynomialOrder = 17,
+        FirstDerivativeThreshold = 0.002m,
+        SupportResistanceProximityPct = 1.3m
       });
     }
 

@@ -14,5 +14,7 @@ namespace Stock.Services.Models
     public int LookBackSegs { get; set; }
     
     public decimal SmoothingAlpha { get; set; }
+    public int PolynomialOrder { get; set; }
+    public decimal SupportResistanceProximityPct { get; set; }
   }
 }
